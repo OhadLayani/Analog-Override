@@ -6,26 +6,27 @@ namespace AnalogOverride
     /// <summary>
     /// Shared spring bar manager for the project.
     /// </summary>
+    [DefaultExecutionOrder(-50)]
     public class SpringManager : MonoBehaviour
     {
-        // Singleton instance
         public static SpringManager Instance { get; private set; }
 
-        // Removing 'static' allows this to appear in the Unity Inspector
         [SerializeField] private int bars = 20;
 
-        // The event is now instance-based
+        // Event for game over state
         public event Action BarsReachedZero;
+        
+        // Event to notify the UI whenever the bar count changes
+        public event Action<int> BarsChanged;
 
         public int Bars
         {
             get => bars;
-            set => ReduceBars(value);
+            set => ReduceBars(value); 
         }
 
         private void Awake()
         {
-            // Standard Singleton enforcement
             if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
@@ -45,7 +46,11 @@ namespace AnalogOverride
                 return;
             }
 
+            // Reduce the bars
             bars = Mathf.Max(0, bars - amountToSubtract);
+            
+            // Fire the event to update the UI with the new count
+            BarsChanged?.Invoke(bars);
 
             if (bars <= 0)
             {

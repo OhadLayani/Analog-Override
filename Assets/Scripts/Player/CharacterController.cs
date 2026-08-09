@@ -2,7 +2,7 @@
 using AnalogOverride;
 using AnalogOverride.GridSystem;
 
-public class TopDownCharacterController : GridEntity
+public class CharacterController : GridEntity
 {
     private Animator animator;
     private SpringManager springManager;
