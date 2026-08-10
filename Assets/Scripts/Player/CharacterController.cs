@@ -6,7 +6,7 @@ public class CharacterController : GridEntity
 {
     private Animator animator;
     private SpringManager springManager;
-    public int stepCounter;
+    private int stepCounter;
     [SerializeField] private int stepsPerBar = 3;
 
 
@@ -18,7 +18,7 @@ public class CharacterController : GridEntity
     protected override void Start()
     {
         base.Start(); // Snaps the player to the grid's center on spawn
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
         springManager ??= SpringManager.Instance;
     }
 
@@ -42,12 +42,6 @@ public class CharacterController : GridEntity
 
     private void Update()
     {
-        // If the visual slide from the last step is still playing, ignore new input
-        if (IsMoving)
-        {
-            animator.SetBool("IsMoving", true);
-            return;
-        }
 
         Vector2Int dir = Vector2Int.zero;
 
@@ -88,9 +82,6 @@ public class CharacterController : GridEntity
                 }
             }
         }
-
-        // Update the animator based on whether a valid move was accepted
-        animator.SetBool("IsMoving", IsMoving);
     }
 
     private void HandleBarsReachedZero()
