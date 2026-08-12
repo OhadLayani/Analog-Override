@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using AnalogOverride;
 using AnalogOverride.GridSystem;
 
 public class CharacterController : GridEntity
@@ -9,7 +8,6 @@ public class CharacterController : GridEntity
     private int stepCounter;
     [SerializeField] private int stepsPerBar = 3;
 
-
     private void Awake()
     {
         springManager = SpringManager.Instance;
@@ -17,7 +15,13 @@ public class CharacterController : GridEntity
 
     protected override void Start()
     {
-        base.Start(); // Snaps the player to the grid's center on spawn
+        // If a checkpoint is saved, teleport to it BEFORE snapping to the grid
+        if (GameManager.Instance != null && GameManager.Instance.HasCheckpoint)
+        {
+            transform.position = GridManager.Instance.CellToWorld(GameManager.Instance.RespawnCell);
+        }
+
+        base.Start(); // Snaps the player to the grid's center on spawn and claims the cell
         animator = GetComponentInChildren<Animator>();
         springManager ??= SpringManager.Instance;
     }
@@ -42,7 +46,6 @@ public class CharacterController : GridEntity
 
     private void Update()
     {
-
         Vector2Int dir = Vector2Int.zero;
 
         // Determine discrete grid direction based on input
@@ -83,9 +86,17 @@ public class CharacterController : GridEntity
             }
         }
     }
-
     private void HandleBarsReachedZero()
     {
         Debug.Log("GAME OVER");
+        // Reload the scene when the player dies
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ReloadScene();
+        }
+    }
+    public void ResetStepCounter()
+    {
+        stepCounter = 0;
     }
 }
