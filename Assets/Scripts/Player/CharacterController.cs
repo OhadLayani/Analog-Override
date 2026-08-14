@@ -1,14 +1,12 @@
 ﻿using UnityEngine;
-using AnalogOverride;
 using AnalogOverride.GridSystem;
 
 public class CharacterController : GridEntity
 {
     private Animator animator;
     private SpringManager springManager;
-    public int stepCounter;
+    private int stepCounter;
     [SerializeField] private int stepsPerBar = 3;
-
 
     private void Awake()
     {
@@ -17,8 +15,14 @@ public class CharacterController : GridEntity
 
     protected override void Start()
     {
-        base.Start(); // Snaps the player to the grid's center on spawn
-        animator = GetComponent<Animator>();
+        // If a checkpoint is saved, teleport to it BEFORE snapping to the grid
+        if (GameManager.Instance != null && GameManager.Instance.HasCheckpoint)
+        {
+            transform.position = GridManager.Instance.CellToWorld(GameManager.Instance.RespawnCell);
+        }
+
+        base.Start(); // Snaps the player to the grid's center on spawn and claims the cell
+        animator = GetComponentInChildren<Animator>();
         springManager ??= SpringManager.Instance;
     }
 
@@ -42,13 +46,6 @@ public class CharacterController : GridEntity
 
     private void Update()
     {
-        // If the visual slide from the last step is still playing, ignore new input
-        if (IsMoving)
-        {
-            animator.SetBool("IsMoving", true);
-            return;
-        }
-
         Vector2Int dir = Vector2Int.zero;
 
         // Determine discrete grid direction based on input
@@ -88,13 +85,18 @@ public class CharacterController : GridEntity
                 }
             }
         }
-
-        // Update the animator based on whether a valid move was accepted
-        animator.SetBool("IsMoving", IsMoving);
     }
-
     private void HandleBarsReachedZero()
     {
         Debug.Log("GAME OVER");
+        // Reload the scene when the player dies
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ReloadScene();
+        }
+    }
+    public void ResetStepCounter()
+    {
+        stepCounter = 0;
     }
 }
