@@ -11,11 +11,17 @@ namespace AnalogOverride.Entities
     /// </summary>
     public class PushableBlock : GridEntity
     {
-        // Reset() only sets the inspector default when this component is first added
-        // (or via the right-click Reset menu) — it can still be unchecked by hand afterwards.
+        // Reset() only sets inspector defaults when this component is first added (or via
+        // the right-click Reset menu) — both can still be changed by hand afterwards.
         private void Reset()
         {
             pushable = true;
+
+            // Default a shoved block to NOT climb ledges on its own — without this it'd
+            // inherit GridEntity's climbHeight of 1, so pushing a crate towards a climbable
+            // cliff edge would silently shove it up the ledge. If you want a specific block
+            // that CAN be pushed up/down a ledge, raise ClimbHeight on that instance/prefab.
+            climbHeight = 0;
         }
     }
 }

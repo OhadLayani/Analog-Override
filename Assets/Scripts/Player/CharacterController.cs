@@ -8,6 +8,9 @@ public class CharacterController : GridEntity
     private int stepCounter;
     [SerializeField] private int stepsPerBar = 3;
 
+    [Tooltip("Energy bars charged per unit of Weight pushed, on top of (not counted towards) the normal per-step cost above. E.g. pushing a Weight-3 crate at 1 bar/weight costs 3 bars immediately, and doesn't advance stepCounter.")]
+    [SerializeField] private float energyCostPerWeight = 1f;
+
     private void Awake()
     {
         springManager = SpringManager.Instance;
@@ -73,15 +76,30 @@ public class CharacterController : GridEntity
         // If a directional key is pressed, attempt to step on the grid
         if (dir != Vector2Int.zero)
         {
-            // TryStep handles checking for walls, pushing blocks, and starting the movement coroutine
-            if (TryStep(dir))
+            // TryStep handles checking for walls, pushing blocks, and starting the movement
+            // coroutine. pushedWeight is the combined Weight of whatever got shoved along
+            // (0 if this step didn't push anything) — see GridEntity.TryStep.
+            if (TryStep(dir, out var pushedWeight))
             {
-                stepCounter++;
-
-                if (stepCounter >= stepsPerBar)
+                if (pushedWeight > 0f)
                 {
-                    springManager?.ReduceBars(1);
-                    stepCounter = 0;
+                    // Pushing costs energy scaled by what got moved, charged immediately —
+                    // heavier objects cost more, and this doesn't touch stepCounter, so a
+                    // push is never "free" by landing on a lucky step-counter reset.
+                    // Max(1, ...) guarantees pushing always costs *something*, even a very
+                    // light object, so it can never round down to a free push.
+                    var cost = Mathf.Max(1, Mathf.RoundToInt(pushedWeight * energyCostPerWeight));
+                    springManager?.ReduceBars(cost);
+                }
+                else
+                {
+                    stepCounter++;
+
+                    if (stepCounter >= stepsPerBar)
+                    {
+                        springManager?.ReduceBars(1);
+                        stepCounter = 0;
+                    }
                 }
             }
         }

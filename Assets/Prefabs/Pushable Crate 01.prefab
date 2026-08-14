@@ -223,3 +223,5 @@ MonoBehaviour:
   m_EditorClassIdentifier:
   moveDuration: 0.12
   pushable: 1
+  weight: 1
+  climbHeight: 0
