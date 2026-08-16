@@ -25,6 +25,7 @@ public class SpringManager : MonoBehaviour
         get => bars;
         set => ReduceBars(value);
     }
+    public int MaxBars => maxBars;
 
     private void Awake()
     {

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 4dc429070f299426ca17efdc38a2000e
+guid: 7c243fefa01c2474fad00f9b952e3475
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7372357851687523299
-    second: robotoy right final_0
+      213: 118910303440878641
+    second: Click 1.1 SIDE IN-GAME SIZE 128x64_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: robotoy right final_0
+      name: Click 1.1 SIDE IN-GAME SIZE 128x64_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 12
         y: 0
-        width: 1240
-        height: 3000
+        width: 41
+        height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d1c6a15289f10b990800000000000000
-      internalID: -7372357851687523299
+      spriteID: 13c3abc7a4476a100800000000000000
+      internalID: 118910303440878641
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 4a95513b6fd2945cea75a94378f17ee6
     internalID: 0
     vertices: []
     indices: 
@@ -133,9 +133,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      robotoy right final_0: -7372357851687523299
+      Click 1.1 SIDE IN-GAME SIZE 128x64_0: 118910303440878641
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

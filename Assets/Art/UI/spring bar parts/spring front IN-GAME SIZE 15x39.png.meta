@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: affe537d964344767a0581e83694e348
+guid: bdff1e39923f3495fa261bab9bc490db
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8545978078147727107
-    second: robotoy back no detail_0
+      213: 3735703318788869496
+    second: spring front IN-GAME SIZE 15x39_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: robotoy back no detail_0
+      name: spring front IN-GAME SIZE 15x39_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1783
-        height: 3000
+        width: 15
+        height: 39
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: df0bab96736966980800000000000000
-      internalID: -8545978078147727107
+      spriteID: 87d88a63062e7d330800000000000000
+      internalID: 3735703318788869496
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5dc2953eb0c9244f694edadeec0db450
     internalID: 0
     vertices: []
     indices: 
@@ -133,9 +133,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      robotoy back no detail_0: -8545978078147727107
+      spring front IN-GAME SIZE 15x39_0: 3735703318788869496
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

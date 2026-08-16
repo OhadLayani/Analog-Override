@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9d749a903dd984d35bb5b05e109ff2ae
+guid: c536656dcca144a9c8d59d481ecfe87a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8465162186385537297
-    second: robotoy front final_0
+      213: -7880559590149157777
+    second: spring bar LAYER 1 IN-GAME SIZE 365x57_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: robotoy front final_0
+      name: spring bar LAYER 1 IN-GAME SIZE 365x57_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1783
-        height: 3000
+        width: 365
+        height: 57
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 119349d782c4a7570800000000000000
-      internalID: 8465162186385537297
+      spriteID: f6c8cd54ec0a2a290800000000000000
+      internalID: -7880559590149157777
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      robotoy front final_0: 8465162186385537297
+      spring bar LAYER 1 IN-GAME SIZE 365x57_0: -7880559590149157777
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

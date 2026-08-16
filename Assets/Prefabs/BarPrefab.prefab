@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -10.182495, y: 12.091019}
-  m_SizeDelta: {x: 10, y: 30}
+  m_SizeDelta: {x: 15, y: 39}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1793316046579527847
 CanvasRenderer:
@@ -58,14 +58,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.30962425, g: 0.735849, b: 0.2880918, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 3735703318788869496, guid: bdff1e39923f3495fa261bab9bc490db, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
