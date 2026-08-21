@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -13,6 +14,11 @@ namespace AnalogOverride.GridSystem
     /// - World-space &lt;-&gt; cell-space conversion (delegates to Unity's own Grid component).
     /// - Static walkability, read from an optional collision Tilemap (walls, pits, ...).
     /// - Dynamic occupancy: which IGridOccupant, if any, currently sits in each cell.
+    /// - Height: which elevation "level" a cell is on (read from a stack of Tilemaps) and
+    ///   whether a cell can be climbed into/out of across a height difference (read from an
+    ///   optional Climbable Tilemap). GridManager only exposes this data — the actual climb
+    ///   rules (how big a difference is climbable) live on GridEntity, since that's a
+    ///   per-entity capability, not a world property.
     ///
     /// This is a scene-scoped singleton — exactly one should exist per scene. If your
     /// game ever needs more than one active grid (e.g. two arenas loaded additively),
@@ -33,6 +39,13 @@ namespace AnalogOverride.GridSystem
         [Header("Collision")]
         [Tooltip("Optional tilemap whose populated cells are treated as non-walkable (walls, pits, etc). Leave empty if walkability is driven entirely by occupancy.")]
         [SerializeField] private Tilemap collisionTilemap;
+
+        [Header("Height")]
+        [Tooltip("Tilemaps ordered lowest to highest (index 0 = height 0, index 1 = height 1, ...) — paint each floor/platform level on its own layer. A cell's height is the index of the TOPMOST layer that has a tile there; a cell with no tile on any layer defaults to height 0. Leave empty entirely to keep the whole grid flat (height 0 everywhere) — existing scenes with no height layers configured behave exactly as before this feature existed.")]
+        [SerializeField] private List<Tilemap> heightLayers = new List<Tilemap>();
+
+        [Tooltip("Optional tilemap marking cells that can be climbed into/out of across a height difference (ladders, cliff edges, ledges). A cell with no tile here can only be entered/exited at the same height as the mover's current cell. Leave empty to disable climbing entirely.")]
+        [SerializeField] private Tilemap climbableTilemap;
 
         /// <summary>
         /// Raised whenever a cell's occupant changes — after TryPlaceOccupant or RemoveOccupant.
@@ -95,6 +108,29 @@ namespace AnalogOverride.GridSystem
             if (!InBounds(cell)) return false;
             if (collisionTilemap != null && collisionTilemap.HasTile(new Vector3Int(cell.x, cell.y, 0))) return false;
             return true;
+        }
+
+        /// <summary>
+        /// The elevation "level" of a cell, per the heightLayers stack (topmost populated
+        /// layer wins). Cells not covered by any height layer default to 0 — with no
+        /// heightLayers configured at all, every cell is height 0, so climbing never
+        /// triggers and movement behaves exactly as it did before height existed.
+        /// </summary>
+        public int GetHeight(Vector2Int cell)
+        {
+            var cellPos = new Vector3Int(cell.x, cell.y, 0);
+            for (var i = heightLayers.Count - 1; i >= 0; i--)
+            {
+                var layer = heightLayers[i];
+                if (layer != null && layer.HasTile(cellPos)) return i;
+            }
+            return 0;
+        }
+
+        /// <summary>True if this cell can be entered/exited across a height difference (a ladder, cliff edge, etc). Irrelevant for two cells at the same height, which never need to "climb" anything.</summary>
+        public bool IsClimbable(Vector2Int cell)
+        {
+            return climbableTilemap != null && climbableTilemap.HasTile(new Vector3Int(cell.x, cell.y, 0));
         }
 
         public IGridOccupant GetOccupant(Vector2Int cell)
