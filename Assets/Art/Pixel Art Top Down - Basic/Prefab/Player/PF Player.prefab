@@ -78,7 +78,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: -1869315837
+  m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_MaskInteraction: 0
@@ -162,6 +162,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveDuration: 0.57
   pushable: 0
+  sortingSprite: {fileID: 5482738451431363123}
+  sortingOrderPrecision: 100
   stepsPerBar: 3
 --- !u!61 &5628018141983903116
 BoxCollider2D:
