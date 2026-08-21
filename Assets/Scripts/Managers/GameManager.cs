@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-
-
 [DefaultExecutionOrder(-60)] // Runs before standard scripts, after GridManager
 public class GameManager : MonoBehaviour
 {
@@ -12,6 +10,9 @@ public class GameManager : MonoBehaviour
     [Header("Checkpoint Data")]
     public Vector2Int RespawnCell { get; private set; }
     public bool HasCheckpoint { get; private set; }
+
+    // --- NEW PAUSE STATE ---
+    public bool IsGamePaused { get; private set; }
 
     private List<Checkpoint> allCheckpoints = new List<Checkpoint>();
 
@@ -28,7 +29,6 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    // Checkpoints register themselves here when they are loaded
     public void RegisterCheckpoint(Checkpoint checkpoint)
     {
         if (!allCheckpoints.Contains(checkpoint))
@@ -56,10 +56,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Call this when the player dies/runs out of bars
+    /// <summary>
+    /// Centralized method to handle pause state and time scaling.
+    /// </summary>
+    public void SetPauseState(bool isPaused)
+    {
+        IsGamePaused = isPaused;
+        Time.timeScale = IsGamePaused ? 0f : 1f;
+    }
+
+    // Call this when the player dies/runs out of bars or clicks Restart
     public void ReloadScene()
     {
+        // ALWAYS unpause and restore time before loading a scene to prevent a frozen reload
+        SetPauseState(false); 
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
-

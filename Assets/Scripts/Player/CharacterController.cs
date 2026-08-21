@@ -49,6 +49,12 @@ public class CharacterController : GridEntity
 
     private void Update()
     {
+        // GUARD CLAUSE: Read the centralized state from GameManager
+        if (GameManager.Instance != null && GameManager.Instance.IsGamePaused)
+        {
+            return;
+        }
+
         Vector2Int dir = Vector2Int.zero;
 
         // Determine discrete grid direction based on input
@@ -76,18 +82,10 @@ public class CharacterController : GridEntity
         // If a directional key is pressed, attempt to step on the grid
         if (dir != Vector2Int.zero)
         {
-            // TryStep handles checking for walls, pushing blocks, and starting the movement
-            // coroutine. pushedWeight is the combined Weight of whatever got shoved along
-            // (0 if this step didn't push anything) — see GridEntity.TryStep.
             if (TryStep(dir, out var pushedWeight))
             {
                 if (pushedWeight > 0f)
                 {
-                    // Pushing costs energy scaled by what got moved, charged immediately —
-                    // heavier objects cost more, and this doesn't touch stepCounter, so a
-                    // push is never "free" by landing on a lucky step-counter reset.
-                    // Max(1, ...) guarantees pushing always costs *something*, even a very
-                    // light object, so it can never round down to a free push.
                     var cost = Mathf.Max(1, Mathf.RoundToInt(pushedWeight * energyCostPerWeight));
                     springManager?.ReduceBars(cost);
                 }
@@ -104,6 +102,7 @@ public class CharacterController : GridEntity
             }
         }
     }
+    
     private void HandleBarsReachedZero()
     {
         Debug.Log("GAME OVER");
@@ -113,6 +112,7 @@ public class CharacterController : GridEntity
             GameManager.Instance.ReloadScene();
         }
     }
+    
     public void ResetStepCounter()
     {
         stepCounter = 0;

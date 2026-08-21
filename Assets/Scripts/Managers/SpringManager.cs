@@ -11,7 +11,7 @@ public class SpringManager : MonoBehaviour
 {
     public static SpringManager Instance { get; private set; }
 
-    private int bars;
+    public int bars;
     [SerializeField] private int maxBars = 20;
 
     // Event for game over state
