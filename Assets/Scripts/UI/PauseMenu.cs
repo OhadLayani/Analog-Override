@@ -9,6 +9,12 @@ public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private GameObject pauseMenuUI;
 
+    private void Awake()
+    {
+        if (pauseMenuUI == null)
+            Resume(); // Ensure the pause menu is hidden on start
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
