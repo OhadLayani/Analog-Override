@@ -14,6 +14,10 @@ namespace AnalogOverride.GridSystem
     /// movement, pushing and bump-interaction for free — you only need to add your
     /// own behaviour on top (see PushableBlock for the minimal example, or drive
     /// TryStep() from your own logic the way CharacterController drives it from input).
+    ///
+    /// Optionally also owns draw order between grid entities (see sortingSprite) by
+    /// writing its Order in Layer directly from this entity's world Y every time it
+    /// moves, rather than trusting the render pipeline's own distance-based sort.
     /// </summary>
     [DisallowMultipleComponent]
     public class GridEntity : MonoBehaviour, IGridOccupant
@@ -32,6 +36,16 @@ namespace AnalogOverride.GridSystem
         [Tooltip("Max height difference (in levels, see GridManager's height layers) this entity can climb in a single step. Only consulted when stepping into an EMPTY cell at a different height — pushing/interacting with an occupant always requires being at the same height regardless of this value.")]
         [Min(0)]
         [SerializeField] protected int climbHeight = 1;
+
+        [Header("Draw Order")]
+        [Tooltip("The sprite whose Order in Layer this entity should keep in sync with its own world Y position, so entities on the grid always draw correctly in front of/behind each other and don't depend on the render pipeline's own distance-based sort (which is easy to accidentally break with a stray Order in Layer override elsewhere, or thrown off by a visual rig with an offset child sprite). Leave empty to opt out and let the renderer's own sorting handle this entity instead.")]
+        [SerializeField] private SpriteRenderer sortingSprite;
+
+        [Tooltip("Multiplier from world Y to Order-in-Layer units. Needs to be large enough that two entities half a cell apart in Y still land on different integer sorting orders — 100 comfortably covers sub-cell movement during the tween without overflowing Order in Layer's int range for any reasonably sized level.")]
+        [SerializeField] private int sortingOrderPrecision = 100;
+
+        [Tooltip("Constant added on top of the computed value, so this entity's Order in Layer never sinks below whatever static Order in Layer terrain/background sprites on the SAME Sorting Layer use — those are typically small numbers (0-10ish). Must stay bigger than sortingOrderPrecision * (the largest world Y this entity could ever reach), or a far-enough-back position could still underflow past terrain. 10000 gives huge headroom for any grid this size.")]
+        [SerializeField] private int sortingOrderBase = 10000;
 
         /// <summary>
         /// The cell this entity is logically standing in. This updates the instant a
@@ -79,6 +93,20 @@ namespace AnalogOverride.GridSystem
             CurrentCell = Manager.WorldToCell(transform.position);
             Manager.TryPlaceOccupant(this, CurrentCell);
             transform.position = Manager.CellToWorld(CurrentCell);
+            UpdateSortingOrder(transform.position.y);
+        }
+
+        /// <summary>
+        /// Keeps sortingSprite's Order in Layer tied to a world Y so entities always draw
+        /// correctly relative to each other, independent of the render pipeline's own
+        /// distance sort. Lower Y (visually lower on screen, closer to the viewer in a
+        /// top-down game) must draw IN FRONT, i.e. get a HIGHER Order in Layer — hence the
+        /// negation. No-ops if sortingSprite isn't assigned (opted out for this entity).
+        /// </summary>
+        private void UpdateSortingOrder(float worldY)
+        {
+            if (sortingSprite == null) return;
+            sortingSprite.sortingOrder = sortingOrderBase - Mathf.RoundToInt(worldY * sortingOrderPrecision);
         }
 
         /// <summary>Convenience overload for callers that don't care what (if anything) got pushed — see the other overload for the actual resolution rules.</summary>
@@ -167,10 +195,14 @@ namespace AnalogOverride.GridSystem
             {
                 t += Time.deltaTime;
                 transform.position = Vector3.Lerp(fromWorld, toWorld, Mathf.Clamp01(t / moveDuration));
+                // Updated every frame, not just at the end, so draw order stays correct
+                // WHILE sliding past another entity mid-tween, not only once at rest.
+                UpdateSortingOrder(transform.position.y);
                 yield return null;
             }
 
             transform.position = toWorld;
+            UpdateSortingOrder(transform.position.y);
             IsMoving = false;
         }
     }
