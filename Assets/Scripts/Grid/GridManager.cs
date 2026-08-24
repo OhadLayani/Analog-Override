@@ -47,6 +47,10 @@ namespace AnalogOverride.GridSystem
         [Tooltip("Optional tilemap marking cells that can be climbed into/out of across a height difference (ladders, cliff edges, ledges). A cell with no tile here can only be entered/exited at the same height as the mover's current cell. Leave empty to disable climbing entirely.")]
         [SerializeField] private Tilemap climbableTilemap;
 
+        [Header("Friction")]
+        [Tooltip("Optional tilemap marking high-friction cells (carpet, etc). Walking on these costs energy faster than normal floor — see CharacterController's stepsPerBarHighFriction. Leave empty to disable entirely; existing scenes with no friction tilemap configured behave exactly as before this feature existed.")]
+        [SerializeField] private Tilemap frictionTilemap;
+
         /// <summary>
         /// Raised whenever a cell's occupant changes — after TryPlaceOccupant or RemoveOccupant.
         /// Occupant is null when the cell became empty. Useful for e.g. a minimap, a fog-of-war
@@ -131,6 +135,12 @@ namespace AnalogOverride.GridSystem
         public bool IsClimbable(Vector2Int cell)
         {
             return climbableTilemap != null && climbableTilemap.HasTile(new Vector3Int(cell.x, cell.y, 0));
+        }
+
+        /// <summary>True if this cell is high-friction terrain (carpet, etc) — costs energy faster to walk across. False everywhere if no frictionTilemap is configured.</summary>
+        public bool IsHighFriction(Vector2Int cell)
+        {
+            return frictionTilemap != null && frictionTilemap.HasTile(new Vector3Int(cell.x, cell.y, 0));
         }
 
         public IGridOccupant GetOccupant(Vector2Int cell)

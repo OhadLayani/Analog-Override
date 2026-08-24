@@ -6,9 +6,20 @@ public class CharacterController : GridEntity
     private Animator animator;
     private SpringManager springManager;
     private int stepCounter;
+
+    // The entity's own configured move duration (GridEntity's Inspector-set Move Duration),
+    // cached once so it can be restored after a high-friction step.
+    private float baseMoveDuration;
     [SerializeField] private int stepsPerBar = 3;
 
-    [Tooltip("Energy bars charged per unit of Weight pushed, on top of (not counted towards) the normal per-step cost above. E.g. pushing a Weight-3 crate at 1 bar/weight costs 3 bars immediately, and doesn't advance stepCounter.")]
+    [Tooltip("Steps per energy bar when standing on a high-friction cell (e.g. carpet, per GridManager.IsHighFriction) instead of the normal stepsPerBar above. Lower than stepsPerBar means friction drains energy faster.")]
+    [SerializeField] private int stepsPerBarHighFriction = 2;
+
+    [Tooltip("Seconds the visual slide takes while stepping onto a high-friction cell (e.g. carpet, per GridManager.IsHighFriction), overriding this entity's normal move duration for that one step. Higher than the base value makes the slow-down feel heavy/sluggish, visually matching the extra energy cost already charged for the same terrain via stepsPerBarHighFriction.")]
+    [Min(0f)]
+    [SerializeField] private float highFrictionMoveDuration = 1.2f;
+
+    [Tooltip("Energy bars charged per unit of Weight pushed, on top of (not counted towards) the normal per-step cost above. E.g. pushing a Weight-3 crate at 1 bar/weight costs 3 bars immediately, and doesn't advance stepCounter. Scaled up further by the friction ratio (stepsPerBar / stepsPerBarHighFriction) when the pusher ends up standing on a high-friction cell.")]
     [SerializeField] private float energyCostPerWeight = 1f;
 
     private void Awake()
@@ -25,6 +36,7 @@ public class CharacterController : GridEntity
         }
 
         base.Start(); // Snaps the player to the grid's center on spawn and claims the cell
+        baseMoveDuration = MoveDuration; // Remember the Inspector-configured slide speed before we ever override it
         animator = GetComponentInChildren<Animator>();
         springManager ??= SpringManager.Instance;
     }
@@ -82,18 +94,34 @@ public class CharacterController : GridEntity
         // If a directional key is pressed, attempt to step on the grid
         if (dir != Vector2Int.zero)
         {
+            // "Currently standing on carpet": read BEFORE calling TryStep, i.e. the cell the player
+            // occupies right now (the step's origin), not the destination. The step that ENTERS carpet
+            // from normal ground therefore plays at normal speed; only a step taken while already
+            // resting on carpet — including the step that leaves it — is slow. Intentionally a
+            // different cell than the post-step check below (which drives energy cost from the
+            // destination cell instead), so the two are independent reads, not shared.
+            bool startingOnCarpet = GridManager.Instance != null && GridManager.Instance.IsHighFriction(CurrentCell);
+            MoveDuration = startingOnCarpet ? highFrictionMoveDuration : baseMoveDuration;
+
             if (TryStep(dir, out var pushedWeight))
             {
+                bool onHighFriction = GridManager.Instance != null && GridManager.Instance.IsHighFriction(CurrentCell);
+
                 if (pushedWeight > 0f)
                 {
-                    var cost = Mathf.Max(1, Mathf.RoundToInt(pushedWeight * energyCostPerWeight));
+                    // Friction slows pushing too: scale the weight-based cost by the same
+                    // ratio that governs plain-step friction (e.g. 3/2 = 1.5x by default),
+                    // so the two costs stay derived from one pair of tunable numbers.
+                    var frictionMultiplier = onHighFriction ? (float)stepsPerBar / stepsPerBarHighFriction : 1f;
+                    var cost = Mathf.Max(1, Mathf.RoundToInt(pushedWeight * energyCostPerWeight * frictionMultiplier));
                     springManager?.ReduceBars(cost);
                 }
                 else
                 {
                     stepCounter++;
 
-                    if (stepCounter >= stepsPerBar)
+                    var threshold = onHighFriction ? stepsPerBarHighFriction : stepsPerBar;
+                    if (stepCounter >= threshold)
                     {
                         springManager?.ReduceBars(1);
                         stepCounter = 0;

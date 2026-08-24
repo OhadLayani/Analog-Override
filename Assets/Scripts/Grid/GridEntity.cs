@@ -56,6 +56,20 @@ namespace AnalogOverride.GridSystem
         /// </summary>
         public Vector2Int CurrentCell { get; private set; }
 
+        /// <summary>
+        /// Seconds the *next* accepted step's visual slide will take (see MoveRoutine). Exposed to
+        /// subclasses that want to vary the cosmetic slide speed situationally — e.g. CharacterController
+        /// slowing the slide while stepping onto high-friction terrain. Grid logic itself never reads
+        /// this; only MoveRoutine does, and TryStep hands MoveRoutine whatever this is set to AT THE
+        /// MOMENT TryStep is called — so a subclass MUST set this BEFORE calling TryStep for the change
+        /// to apply to that step. Setting it after TryStep returns only affects the step after that.
+        /// </summary>
+        protected float MoveDuration
+        {
+            get => moveDuration;
+            set => moveDuration = value;
+        }
+
         public bool IsPushable => pushable;
 
         /// <summary>How much this entity should "count for" when something pushes it. See the tooltip above — this class assigns it no meaning of its own.</summary>
@@ -191,10 +205,14 @@ namespace AnalogOverride.GridSystem
             IsMoving = true;
 
             var t = 0f;
-            while (t < moveDuration)
+            var duration = moveDuration; // Snapshot at slide-start: this step's slide must not be
+                                           // retroactively sped up/slowed down by a later Update() frame
+                                           // changing MoveDuration in anticipation of a future step while
+                                           // this one is still animating.
+            while (t < duration)
             {
                 t += Time.deltaTime;
-                transform.position = Vector3.Lerp(fromWorld, toWorld, Mathf.Clamp01(t / moveDuration));
+                transform.position = Vector3.Lerp(fromWorld, toWorld, Mathf.Clamp01(t / duration));
                 // Updated every frame, not just at the end, so draw order stays correct
                 // WHILE sliding past another entity mid-tween, not only once at rest.
                 UpdateSortingOrder(transform.position.y);
