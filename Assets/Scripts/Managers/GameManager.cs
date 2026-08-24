@@ -57,6 +57,17 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Clears the saved checkpoint so the next reload/respawn starts the level from scratch
+    /// instead of returning to the last activated checkpoint. Scene-local Checkpoint components
+    /// reset themselves on scene reload; this only needs to clear the state GameManager itself
+    /// persists across scenes via DontDestroyOnLoad.
+    /// </summary>
+    public void ClearCheckpoint()
+    {
+        HasCheckpoint = false;
+    }
+
+    /// <summary>
     /// Centralized method to handle pause state and time scaling.
     /// </summary>
     public void SetPauseState(bool isPaused)
