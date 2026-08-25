@@ -80,7 +80,28 @@ public class GameManager : MonoBehaviour
     public void ReloadScene()
     {
         // ALWAYS unpause and restore time before loading a scene to prevent a frozen reload
-        SetPauseState(false); 
+        SetPauseState(false);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    /// <summary>
+    /// Advances to the next scene in the Build Settings list, or loops back to the main
+    /// menu (by name) once the last level has been completed.
+    /// </summary>
+    public void LoadNextScene()
+    {
+        // ALWAYS unpause and restore time before loading a scene to prevent a frozen reload
+        SetPauseState(false);
+
+        int nextIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        if (nextIndex < SceneManager.sceneCountInBuildSettings)
+        {
+            SceneManager.LoadScene(nextIndex);
+        }
+        else
+        {
+            // SceneManager.LoadScene("MainMenuScene");
+            SceneManager.LoadScene("Tutorial");
+        }
     }
 }
