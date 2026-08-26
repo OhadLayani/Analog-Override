@@ -14,6 +14,13 @@ public class GameManager : MonoBehaviour
     // --- NEW PAUSE STATE ---
     public bool IsGamePaused { get; private set; }
 
+    [Header("Keys")]
+    // Keyed by keyId so multiple distinct key/Door pairs can coexist. Collecting a key
+    // doesn't consume it - the same key opens every Door sharing its keyId, and stays
+    // collected across a scene reload/respawn (persisted here via DontDestroyOnLoad,
+    // same as checkpoint state).
+    private readonly HashSet<string> collectedKeys = new HashSet<string>();
+
     private List<Checkpoint> allCheckpoints = new List<Checkpoint>();
 
     private void Awake()
@@ -65,6 +72,13 @@ public class GameManager : MonoBehaviour
     public void ClearCheckpoint()
     {
         HasCheckpoint = false;
+    }
+
+    public bool HasKey(string keyId) => collectedKeys.Contains(keyId);
+
+    public void CollectKey(string keyId)
+    {
+        collectedKeys.Add(keyId);
     }
 
     /// <summary>

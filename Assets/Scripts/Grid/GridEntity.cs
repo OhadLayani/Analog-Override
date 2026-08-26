@@ -7,8 +7,8 @@ namespace AnalogOverride.GridSystem
     /// Base class for anything that lives on the grid: the player, pushable blocks,
     /// enemies, NPCs, etc. Owns its own cell registration with GridManager and knows
     /// how to attempt a single-cell step — including pushing a pushable occupant out
-    /// of the way (recursively, so block-chains work) and bump-interacting with an
-    /// occupant that implements IInteractable.
+    /// of the way (single-object only, never cascades into a chain — see TryBePushed)
+    /// and bump-interacting with an occupant that implements IInteractable.
     ///
     /// To add a new kind of grid object: extend this class. You get registration,
     /// movement, pushing and bump-interaction for free — you only need to add your
@@ -134,9 +134,11 @@ namespace AnalogOverride.GridSystem
         ///      a. At a different height than this entity's current cell -> refused.
         ///         Pushing and bump-interacting both require being at the SAME height as
         ///         the occupant — climbing (see below) never applies to occupied cells.
-        ///      b. Occupied by a pushable GridEntity -> recursively try to push it first;
-        ///         only proceed if that push succeeds. This is what makes block-chains
-        ///         work: pushing A into B into C only succeeds if C also has somewhere to go.
+        ///      b. Occupied by a pushable GridEntity -> try to push it (see TryBePushed).
+        ///         Pushing is single-object only and never cascades: if THAT object's own
+        ///         destination cell is occupied by anything at all — pushable or not — the
+        ///         push (and this whole step) is refused, full stop. Pushing A that has B
+        ///         sitting right behind it does nothing; it does NOT shove both.
         ///      c. Occupied by a non-pushable IInteractable -> Interact() fires, but this
         ///         entity does NOT move (a "bump" — see IInteractable for the contract).
         ///      d. Occupied by anything else non-pushable -> refused, nothing happens.
@@ -146,10 +148,9 @@ namespace AnalogOverride.GridSystem
         ///   4. Otherwise -> accepted: grid state (CurrentCell, GridManager occupancy) updates
         ///      immediately and synchronously; only the visual slide is animated over time.
         ///
-        /// `pushedWeight` is the combined Weight of every occupant this step displaced —
-        /// 0 if the step didn't push anything, or if the step was refused. For a chain
-        /// (pushing A which pushes B), it's the sum of every link's Weight, so a caller
-        /// that wants to charge a cost for pushing doesn't need to know chains exist.
+        /// `pushedWeight` is the pushed occupant's Weight — 0 if the step didn't push
+        /// anything, or if the step was refused. Callers that want to charge a cost for
+        /// pushing (e.g. an energy/stamina system) can use it directly.
         /// </summary>
         public bool TryStep(Vector2Int direction, out float pushedWeight)
         {
@@ -171,10 +172,8 @@ namespace AnalogOverride.GridSystem
 
                 if (occupant is GridEntity other && other.IsPushable)
                 {
-                    if (!other.TryStep(direction, out var restOfChainWeight)) return false;
-                    // `other` has now vacated targetCell (its own TryStep already updated
-                    // GridManager occupancy synchronously), so we fall through and claim it.
-                    pushedWeight = other.Weight + restOfChainWeight;
+                    if (!other.TryBePushed(direction)) return false;
+                    pushedWeight = other.Weight;
                 }
                 else
                 {
@@ -191,6 +190,36 @@ namespace AnalogOverride.GridSystem
                 if (!Manager.IsClimbable(targetCell)) return false;
             }
 
+            return CommitStep(targetCell);
+        }
+
+        /// <summary>
+        /// Called on THIS entity by whoever is trying to push it — never call this to move
+        /// yourself; use TryStep for that. Deliberately does not reuse TryStep's occupant
+        /// handling: unlike a normal step, a push only succeeds into a cell that's entirely
+        /// empty (Manager.IsFree), so pushing never cascades into pushing something else.
+        /// That's what keeps pushing single-object-only rather than a domino chain.
+        /// </summary>
+        private bool TryBePushed(Vector2Int direction)
+        {
+            if (Manager == null || IsMoving) return false;
+
+            var targetCell = CurrentCell + direction;
+            if (!Manager.IsFree(targetCell)) return false;
+
+            var heightDiff = Manager.GetHeight(targetCell) - Manager.GetHeight(CurrentCell);
+            if (heightDiff != 0)
+            {
+                if (Mathf.Abs(heightDiff) > climbHeight) return false;
+                if (!Manager.IsClimbable(targetCell)) return false;
+            }
+
+            return CommitStep(targetCell);
+        }
+
+        /// <summary>Shared tail of TryStep/TryBePushed once a destination cell has been fully validated: claims it in GridManager and starts the visual slide.</summary>
+        private bool CommitStep(Vector2Int targetCell)
+        {
             var fromCell = CurrentCell;
             if (!Manager.TryMoveOccupant(this, fromCell, targetCell)) return false;
 
