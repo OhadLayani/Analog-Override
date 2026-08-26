@@ -1,29 +1,35 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using AnalogOverride;
 
 public class UiManager : MonoBehaviour
 {
     [Header("UI References")]
-    [Tooltip("The parent RectTransform containing the HorizontalLayoutGroup")]
-    [SerializeField] private Transform barsContainer;
+    [Tooltip("The root RectTransform that contains the start, the bars container, and the key (SpringItemsContainer)")]
+    [SerializeField] private RectTransform rootLayoutRect;
 
-    [Tooltip("The UI Image Prefab representing a single vertical bar")]
+    [Tooltip("The HorizontalLayoutGroup component on the SpringBarsContainer")]
+    [SerializeField] private HorizontalLayoutGroup springLayoutGroup;
+
+    [Tooltip("The UI Image Prefab representing a single middle coil of the spring")]
     [SerializeField] private GameObject barPrefab;
 
-    [Header("Colors")]
-    [SerializeField] private Color activeColor = Color.green;
-    [SerializeField] private Color depletedColor = Color.black;
+    [Header("Spring Tension Settings")]
+    [Tooltip("Spacing when energy is full (spring is compressed/dense)")]
+    [SerializeField] private float compressedSpacing = -7f;
 
-    // Cache the spawned images to avoid calling GetComponent later
-    private List<Image> spawnedBars = new List<Image>();
+    [Tooltip("Spacing when energy is empty (spring is released/loose)")]
+    [SerializeField] private float releasedSpacing = -0.65f;
+
     private SpringManager springManager;
+    
+    // Cached to avoid GetComponent allocations during gameplay
+    private RectTransform springBarsRect; 
 
     private void Start()
     {
-        // Cache the reference on Start to avoid Update allocations
+        // Cache references
         springManager = SpringManager.Instance;
+        springBarsRect = springLayoutGroup.GetComponent<RectTransform>();
 
         if (springManager == null)
         {
@@ -31,10 +37,13 @@ public class UiManager : MonoBehaviour
             return;
         }
 
-        // Spawn the initial UI based on the starting value
-        InitializeBars(springManager.Bars);
+        // Spawn the physical pieces of the spring based on the maximum capacity
+        InitializeBars(springManager.MaxBars);
         
-        // Subscribe to the event so we only update when values actually change
+        // Set initial tension based on current bars
+        UpdateBarsUI(springManager.Bars);
+
+        // Subscribe to the event so we only update spacing when values change
         springManager.BarsChanged += UpdateBarsUI;
     }
 
@@ -49,35 +58,37 @@ public class UiManager : MonoBehaviour
 
     private void InitializeBars(int totalBars)
     {
-        spawnedBars.Clear();
+        // Clear any placeholder coils that might have been left in the editor
+        foreach (Transform child in springLayoutGroup.transform)
+        {
+            Destroy(child.gameObject);
+        }
 
+        // Instantiate the coils into the layout group
         for (int i = 0; i < totalBars; i++)
         {
-            // THE FIX: Passing 'false' prevents Unity from crushing the UI scale
-            GameObject newBar = Instantiate(barPrefab, barsContainer);
-            
-            if (newBar.TryGetComponent<Image>(out var barImage))
-            {
-                barImage.color = activeColor;
-                spawnedBars.Add(barImage);
-            }
+            Instantiate(barPrefab, springLayoutGroup.transform);
         }
     }
 
     private void UpdateBarsUI(int currentBars)
     {
-        // Loop through all our cached UI images
-        for (int i = 0; i < spawnedBars.Count; i++)
+        // Calculate the relative energy remaining from 0.0 to 1.0
+        float energyPercentage = (float)currentBars / springManager.MaxBars;
+
+        // Apply the new spacing
+        springLayoutGroup.spacing = Mathf.Lerp(releasedSpacing, compressedSpacing, energyPercentage);
+
+        // 1. Force the ContentSizeFitter on the coils container to recalculate its width immediately
+        if (springBarsRect != null)
         {
-            // If the index is less than our current bars, it is active. Otherwise, it is lost.
-            if (i < currentBars)
-            {
-                spawnedBars[i].color = activeColor;
-            }
-            else
-            {
-                spawnedBars[i].color = depletedColor;
-            }
+            LayoutRebuilder.ForceRebuildLayoutImmediate(springBarsRect);
+        }
+        
+        // 2. Force the parent container to immediately reposition the key based on the new width
+        if (rootLayoutRect != null)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rootLayoutRect);
         }
     }
 }

@@ -1,0 +1,9 @@
+In my game the player character has a stamina system (managed by springManager) the mechanics are that every action consumes energy (reduces bars) moving objects will reduce energy according to the weight of the object and normal walking reduces one bar for every 3 steps.
+I want to add a walking mechanism on different surfaces with high friction (like carpet). On these surfaces it will be harder to walk (compared to a normal floor) and this will use more energy. On such surfaces with high friction, the energy bar will decrease for every 2 steps (instead of every 3).
+My way of working is with tile map
+There is a separate object that represents the carpet which is tilemap
+Let's plan together how to implement this mechanism
+Should I use gridManager if necessary or define it somewhere else
+Currently during the planning you do not have permission to change any code, but you do have permission to read all the cs files of the project.
+After we come up with a plan together - I will give you the ok to execute it.
+If you have any questions or are missing context, ask me one question at a time
