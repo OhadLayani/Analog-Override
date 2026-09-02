@@ -82,6 +82,17 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Forgets every collected key, so the next reload requires collecting them again
+    /// instead of every Door with a matching keyId silently staying unlockable. Pair this
+    /// with ClearCheckpoint() for a genuine "start over" reset — don't call it from a plain
+    /// death respawn (ReloadScene alone), where keys should stay collected same as checkpoint progress.
+    /// </summary>
+    public void ClearKeys()
+    {
+        collectedKeys.Clear();
+    }
+
+    /// <summary>
     /// Centralized method to handle pause state and time scaling.
     /// </summary>
     public void SetPauseState(bool isPaused)

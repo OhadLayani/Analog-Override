@@ -47,9 +47,11 @@ public class PauseMenu : MonoBehaviour
     {
         if (GameManager.Instance != null)
         {
-            // Full reset (not a death respawn): forget the saved checkpoint so the reload
-            // starts the level from scratch instead of returning to the last checkpoint.
+            // Full reset (not a death respawn): forget the saved checkpoint AND any
+            // collected keys so the reload starts the level completely from scratch
+            // instead of returning to the last checkpoint with doors already unlocked.
             GameManager.Instance.ClearCheckpoint();
+            GameManager.Instance.ClearKeys();
             // GameManager handles unpausing internally now
             GameManager.Instance.ReloadScene();
         }
