@@ -7,9 +7,10 @@ public class CharacterController : GridEntity
     private SpringManager springManager;
     private int stepCounter;
 
-    // The entity's own configured move duration (GridEntity's Inspector-set Move Duration),
-    // cached once so it can be restored after a high-friction step.
+    // The entity's own configured move duration/curve (GridEntity's Inspector-set values),
+    // cached once so they can be restored after a high-friction step.
     private float baseMoveDuration;
+    private AnimationCurve baseMoveCurve;
     [SerializeField] private int stepsPerBar = 3;
 
     [Tooltip("Steps per energy bar when standing on a high-friction cell (e.g. carpet, per GridManager.IsHighFriction) instead of the normal stepsPerBar above. Lower than stepsPerBar means friction drains energy faster.")]
@@ -18,6 +19,14 @@ public class CharacterController : GridEntity
     [Tooltip("Seconds the visual slide takes while stepping onto a high-friction cell (e.g. carpet, per GridManager.IsHighFriction), overriding this entity's normal move duration for that one step. Higher than the base value makes the slow-down feel heavy/sluggish, visually matching the extra energy cost already charged for the same terrain via stepsPerBarHighFriction.")]
     [Min(0f)]
     [SerializeField] private float highFrictionMoveDuration = 1.2f;
+
+    [Tooltip("Motion shape for a high-friction step, overriding the base Move Curve for that one step so slow doesn't just mean 'the same smooth glide, stretched out'. Default is a lurch-drag-lurch shape (quick initial movement, a stall in the middle, a quick final snap) meant to read as pushing through resistance rather than sliding on ice. Tune the curve directly in the Inspector to taste — this shape is a starting point, not a precisely dialed-in one.")]
+    [SerializeField]
+    private AnimationCurve highFrictionMoveCurve = new AnimationCurve(
+        new Keyframe(0f, 0f, 0f, 3f),
+        new Keyframe(0.3f, 0.55f, 0.3f, 0.3f),
+        new Keyframe(0.7f, 0.65f, 0.3f, 0.3f),
+        new Keyframe(1f, 1f, 3f, 0f));
 
     [Tooltip("Energy bars charged per unit of Weight pushed, on top of (not counted towards) the normal per-step cost above. E.g. pushing a Weight-3 crate at 1 bar/weight costs 3 bars immediately, and doesn't advance stepCounter. Scaled up further by the friction ratio (stepsPerBar / stepsPerBarHighFriction) when the pusher ends up standing on a high-friction cell.")]
     [SerializeField] private float energyCostPerWeight = 1f;
@@ -36,7 +45,8 @@ public class CharacterController : GridEntity
         }
 
         base.Start(); // Snaps the player to the grid's center on spawn and claims the cell
-        baseMoveDuration = MoveDuration; // Remember the Inspector-configured slide speed before we ever override it
+        baseMoveDuration = MoveDuration; // Remember the Inspector-configured slide speed/shape before we ever override them
+        baseMoveCurve = MoveCurve;
         animator = GetComponentInChildren<Animator>();
         springManager ??= SpringManager.Instance;
     }
@@ -102,6 +112,7 @@ public class CharacterController : GridEntity
             // destination cell instead), so the two are independent reads, not shared.
             bool startingOnCarpet = GridManager.Instance != null && GridManager.Instance.IsHighFriction(CurrentCell);
             MoveDuration = startingOnCarpet ? highFrictionMoveDuration : baseMoveDuration;
+            MoveCurve = startingOnCarpet ? highFrictionMoveCurve : baseMoveCurve;
 
             if (TryStep(dir, out var pushedWeight))
             {

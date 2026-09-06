@@ -160,7 +160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abd146093740c5d43b5909c7913f3109, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveDuration: 0.57
+  moveDuration: 0.15
   pushable: 0
   sortingSprite: {fileID: 5482738451431363123}
   sortingOrderPrecision: 100

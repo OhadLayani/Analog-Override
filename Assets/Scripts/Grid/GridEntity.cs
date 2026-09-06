@@ -26,6 +26,9 @@ namespace AnalogOverride.GridSystem
         [Min(0f)]
         [SerializeField] private float moveDuration = 0.12f;
 
+        [Tooltip("Shapes the visual slide's motion over the step (X = normalized time 0→1, Y = normalized progress 0→1). Straight linear (a 45° line) is what produces a constant-speed 'sliding on ice' feel — the default here eases in/out instead, for a snappier step-like motion. Tune this directly if movement still feels too slow/floaty (flatten the start) or too sharp/mechanical (round it off more).")]
+        [SerializeField] private AnimationCurve moveCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
         [Tooltip("Whether other GridEntities can push this one out of their way instead of being blocked by it.")]
         [SerializeField] protected bool pushable;
 
@@ -68,6 +71,13 @@ namespace AnalogOverride.GridSystem
         {
             get => moveDuration;
             set => moveDuration = value;
+        }
+
+        /// <summary>Same override pattern as MoveDuration above, for the OTHER half of a step's feel — its motion shape rather than its length. Set this BEFORE calling TryStep for it to apply to that step.</summary>
+        protected AnimationCurve MoveCurve
+        {
+            get => moveCurve;
+            set => moveCurve = value;
         }
 
         public bool IsPushable => pushable;
@@ -234,14 +244,15 @@ namespace AnalogOverride.GridSystem
             IsMoving = true;
 
             var t = 0f;
-            var duration = moveDuration; // Snapshot at slide-start: this step's slide must not be
-                                           // retroactively sped up/slowed down by a later Update() frame
-                                           // changing MoveDuration in anticipation of a future step while
-                                           // this one is still animating.
+            // Snapshot both at slide-start: this step's slide must not be retroactively changed by a
+            // later Update() frame reassigning MoveDuration/MoveCurve in anticipation of a future step
+            // while this one is still animating.
+            var duration = moveDuration;
+            var curve = moveCurve;
             while (t < duration)
             {
                 t += Time.deltaTime;
-                transform.position = Vector3.Lerp(fromWorld, toWorld, Mathf.Clamp01(t / duration));
+                transform.position = Vector3.Lerp(fromWorld, toWorld, curve.Evaluate(Mathf.Clamp01(t / duration)));
                 // Updated every frame, not just at the end, so draw order stays correct
                 // WHILE sliding past another entity mid-tween, not only once at rest.
                 UpdateSortingOrder(transform.position.y);
