@@ -22,9 +22,8 @@ public class Key : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Check if the colliding object is the player
-        CharacterController player = collision.GetComponent<CharacterController>();
-
-        if (player != null)
+        
+        if (collision.TryGetComponent<CharacterController>(out var player))
         {
             if (GameManager.Instance != null)
             {
