@@ -20,6 +20,13 @@ public class UiManager : MonoBehaviour
     [Tooltip("Spacing when energy is empty (spring is released/loose)")]
     [SerializeField] private float releasedSpacing = -0.65f;
 
+    [Header("Key UI")]
+    [Tooltip("Must match the Key component's keyId this icon represents.")]
+    [SerializeField] private string keyId = "default";
+
+    [Tooltip("The key icon Image, shown once the matching key is collected. Should start inactive in the scene.")]
+    [SerializeField] private GameObject keyIcon;
+
     private SpringManager springManager;
     
     // Cached to avoid GetComponent allocations during gameplay
@@ -45,6 +52,17 @@ public class UiManager : MonoBehaviour
 
         // Subscribe to the event so we only update spacing when values change
         springManager.BarsChanged += UpdateBarsUI;
+
+        // Subscribe to key pickups so the icon appears the moment it's collected
+        Key.KeyCollected += OnKeyCollected;
+
+        // Cover the respawn case: Key.KeyCollected only fires on an actual pickup, but a
+        // key already collected before this scene loaded (returning to a checkpoint) makes
+        // the Key self-destruct silently without firing it - so check persisted state directly.
+        if (GameManager.Instance != null && GameManager.Instance.HasKey(keyId) && keyIcon != null)
+        {
+            keyIcon.SetActive(true);
+        }
     }
 
     private void OnDisable()
@@ -53,6 +71,16 @@ public class UiManager : MonoBehaviour
         if (springManager != null)
         {
             springManager.BarsChanged -= UpdateBarsUI;
+        }
+
+        Key.KeyCollected -= OnKeyCollected;
+    }
+
+    private void OnKeyCollected(string collectedKeyId)
+    {
+        if (collectedKeyId == keyId && keyIcon != null)
+        {
+            keyIcon.SetActive(true);
         }
     }
 
