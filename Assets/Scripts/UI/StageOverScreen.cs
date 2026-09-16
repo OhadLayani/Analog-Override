@@ -26,6 +26,8 @@ public class StageOverScreen : MonoBehaviour
 
     public void Show()
     {
+        AnalyticsLogger.Instance?.LogStageComplete();
+
         if (stageOverUI != null)
             stageOverUI.SetActive(true);
 
@@ -36,14 +38,7 @@ public class StageOverScreen : MonoBehaviour
     // Wire this to a "Restart" button on the panel.
     public void RestartLevel()
     {
-        if (GameManager.Instance == null) return;
-
-        // Full reset, matching PauseMenu.ResetLevel(): forget checkpoint progress and
-        // collected keys so restarting the stage starts it completely from scratch.
-        GameManager.Instance.ClearCheckpoint();
-        GameManager.Instance.ClearKeys();
-        // GameManager handles unpausing internally now
-        GameManager.Instance.ReloadScene();
+        GameManager.Instance?.ResetLevel();
     }
 
     // Wire this to a "Next Level" button on the panel, if/when you add one.

@@ -138,6 +138,14 @@ public class CharacterController : GridEntity
                         stepCounter = 0;
                     }
                 }
+
+                // Fires exactly once per "close call": Bars can only equal 1 right after the
+                // single ReduceBars call that lands on it — any reduction taken FROM 1 goes
+                // straight to 0 (death) instead, so this can't double-log while lingering at 1.
+                if (springManager != null && springManager.Bars == 1)
+                {
+                    AnalyticsLogger.Instance?.LogLastBar();
+                }
             }
         }
     }
@@ -145,6 +153,7 @@ public class CharacterController : GridEntity
     private void HandleBarsReachedZero()
     {
         Debug.Log("GAME OVER");
+        AnalyticsLogger.Instance?.LogDeath();
         // Reload the scene when the player dies
         if (GameManager.Instance != null)
         {

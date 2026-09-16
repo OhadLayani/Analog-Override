@@ -38,6 +38,8 @@ public class Checkpoint : MonoBehaviour
         
         if (player != null)
         {
+            AnalyticsLogger.Instance?.LogCheckpointVisit();
+
             player.ResetStepCounter();
             // 1. ALWAYS reset the bars when the player touches the checkpoint
             if (SpringManager.Instance != null)

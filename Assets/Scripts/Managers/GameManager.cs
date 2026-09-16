@@ -93,6 +93,19 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Full reset (not a death respawn): forgets checkpoint progress and collected keys,
+    /// then reloads, so the level starts completely from scratch. Shared by PauseMenu and
+    /// StageOverScreen so both "restart" actions stay in sync and get logged exactly once.
+    /// </summary>
+    public void ResetLevel()
+    {
+        AnalyticsLogger.Instance?.LogStageReset();
+        ClearCheckpoint();
+        ClearKeys();
+        ReloadScene();
+    }
+
+    /// <summary>
     /// Centralized method to handle pause state and time scaling.
     /// </summary>
     public void SetPauseState(bool isPaused)
