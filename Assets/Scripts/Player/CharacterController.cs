@@ -104,6 +104,11 @@ public class CharacterController : GridEntity
         // If a directional key is pressed, attempt to step on the grid
         if (dir != Vector2Int.zero)
         {
+            // Tutorial task: mark "move" complete the moment a movement key is pressed,
+            // regardless of whether the step below actually succeeds (e.g. bumps a wall).
+            // No-op outside the Tutorial scene, where TutorialManager.Instance is null.
+            TutorialManager.Instance?.NotifyPlayerMoved();
+
             // "Currently standing on carpet": read BEFORE calling TryStep, i.e. the cell the player
             // occupies right now (the step's origin), not the destination. The step that ENTERS carpet
             // from normal ground therefore plays at normal speed; only a step taken while already
@@ -120,6 +125,9 @@ public class CharacterController : GridEntity
 
                 if (pushedWeight > 0f)
                 {
+                    // Tutorial task: mark "push" complete. No-op outside the Tutorial scene.
+                    TutorialManager.Instance?.NotifyBlockPushed();
+
                     // Friction slows pushing too: scale the weight-based cost by the same
                     // ratio that governs plain-step friction (e.g. 3/2 = 1.5x by default),
                     // so the two costs stay derived from one pair of tunable numbers.

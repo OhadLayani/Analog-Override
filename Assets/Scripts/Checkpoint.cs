@@ -40,6 +40,9 @@ public class Checkpoint : MonoBehaviour
         {
             AnalyticsLogger.Instance?.LogCheckpointVisit();
 
+            // Tutorial task: mark "checkpoint" complete. No-op outside the Tutorial scene.
+            TutorialManager.Instance?.NotifyCheckpointVisited();
+
             player.ResetStepCounter();
             // 1. ALWAYS reset the bars when the player touches the checkpoint
             if (SpringManager.Instance != null)
