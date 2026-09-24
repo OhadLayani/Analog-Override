@@ -3,6 +3,9 @@ using AnalogOverride.GridSystem;
 
 public class CharacterController : GridEntity
 {
+    /// <summary>The last non-zero direction the player pressed — i.e. which way the character is currently facing/animated to face, even while standing still. Defaults to down, matching the animator's own default Direction (0). Other systems (e.g. PlayerAttack) read this instead of re-deriving facing from input themselves.</summary>
+    public Vector2Int FacingDirection { get; private set; } = Vector2Int.down;
+
     private Animator animator;
     private SpringManager springManager;
     private int stepCounter;
@@ -99,6 +102,11 @@ public class CharacterController : GridEntity
         {
             dir = Vector2Int.down;
             animator.SetInteger("Direction", 0);
+        }
+
+        if (dir != Vector2Int.zero)
+        {
+            FacingDirection = dir;
         }
 
         // If a directional key is pressed, attempt to step on the grid
