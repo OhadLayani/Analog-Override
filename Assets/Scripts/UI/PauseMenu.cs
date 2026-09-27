@@ -45,6 +45,10 @@ public class PauseMenu : MonoBehaviour
 
     public void ResetLevel()
     {
+        // Tutorial task: mark "reset" complete. No-op outside the Tutorial scene. Must fire
+        // before GameManager.ResetLevel() reloads the scene below.
+        TutorialManager.Instance?.NotifyLevelReset();
+
         GameManager.Instance?.ResetLevel();
     }
 
