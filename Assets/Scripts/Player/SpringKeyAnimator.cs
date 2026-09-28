@@ -20,6 +20,12 @@ public class SpringKeyAnimator : MonoBehaviour
     [Tooltip("Local position of the key while facing right. X is mirrored automatically for left.")]
     [SerializeField] private Vector2 sideOffset;
 
+    [Tooltip("Extra Y added to Back Offset while the walk animation shows (the walk sprites are drawn higher).")]
+    [SerializeField] private float walkBackYOffset;
+
+    [Tooltip("Extra Y added to Side Offset while the walk animation shows (the walk sprites are drawn higher).")]
+    [SerializeField] private float walkSideYOffset;
+
     [Header("Draw Order")]
     [Tooltip("The player's body SpriteRenderer. The key copies its sorting layer/order every frame.")]
     [SerializeField] private SpriteRenderer bodySprite;
@@ -43,13 +49,22 @@ public class SpringKeyAnimator : MonoBehaviour
     [Min(0)]
     [SerializeField] private int fastBacklogFrames = FramesPerLoop;
 
+    [Header("Charging")]
+    [Tooltip("Full reverse loops played when energy is recharged (checkpoint).")]
+    [Min(0)]
+    [SerializeField] private int chargeLoops = 3;
+
+    [Tooltip("Frames per second for the reverse charge spin.")]
+    [Min(0.1f)]
+    [SerializeField] private float chargeFramesPerSecond = 30f;
+
     [Tooltip("Leave empty to find it on a parent.")]
     [SerializeField] private CharacterController player;
 
     private SpriteRenderer keyRenderer;
     private SpringManager springManager;
 
-    // All frame counters only ever grow; the visible position is shownFrame % FramesPerLoop.
+    // Frame counters grow with energy spent and drop on a charge (can go negative); see Wrap().
     private int loops;
     private int targetFrame;
     private int shownFrame;
@@ -94,7 +109,7 @@ public class SpringKeyAnimator : MonoBehaviour
 
         keyRenderer.enabled = true;
 
-        var frame = shownFrame % FramesPerLoop;
+        var frame = Wrap(shownFrame);
         var facingUp = facing == Vector2Int.up;
         var facingLeft = facing == Vector2Int.left;
 
@@ -103,6 +118,7 @@ public class SpringKeyAnimator : MonoBehaviour
 
         // flipX only mirrors around the pivot, so the side offset is mirrored by hand.
         var offset = facingUp ? backOffset : new Vector2(facingLeft ? -sideOffset.x : sideOffset.x, sideOffset.y);
+        if (player.IsWalking) offset.y += facingUp ? walkBackYOffset : walkSideYOffset;
         transform.localPosition = new Vector3(offset.x, offset.y, transform.localPosition.z);
 
         // GridEntity rewrites the body's order on every move, so follow it each frame.
@@ -113,7 +129,7 @@ public class SpringKeyAnimator : MonoBehaviour
         }
     }
 
-    /// <summary>Moves targetFrame forward from the latest bars/step-progress state.</summary>
+    /// <summary>Updates targetFrame from the latest bars/step-progress state.</summary>
     private void UpdateTarget()
     {
         var bars = springManager.Bars;
@@ -124,9 +140,15 @@ public class SpringKeyAnimator : MonoBehaviour
             // Each bar spent = one full loop (step cost closes the loop; push/attack keep the position).
             loops += lastBars - bars;
         }
-        else if ((bars > lastBars || phase < lastPhase) && lastPhase > 0)
+        else if (bars > lastBars)
         {
-            // Checkpoint refill / step counter reset: finish the current loop so bar losses stay on loop ends.
+            // Charge: rewind to position 1 of the current loop, then chargeLoops more loops backwards.
+            loops = Mathf.FloorToInt(targetFrame / (float)FramesPerLoop) - chargeLoops;
+            targetFrame = loops * FramesPerLoop;
+        }
+        else if (phase < lastPhase && lastPhase > 0)
+        {
+            // Step counter reset without a refill (checkpoint at full energy): finish the loop forward.
             loops++;
         }
 
@@ -136,23 +158,31 @@ public class SpringKeyAnimator : MonoBehaviour
         targetFrame = Mathf.Max(targetFrame, loops * FramesPerLoop + phase);
     }
 
-    /// <summary>Steps shownFrame toward targetFrame one frame at a time at a steady pace.</summary>
+    /// <summary>Steps shownFrame toward targetFrame (either direction) one frame at a time at a steady pace.</summary>
     private void AdvanceShownFrame()
     {
-        if (shownFrame >= targetFrame)
+        if (shownFrame == targetFrame)
         {
             fastMode = false;
             frameTimer = 0f; // next advance shows immediately
             return;
         }
 
-        if (targetFrame - shownFrame > fastBacklogFrames) fastMode = true;
+        var forward = targetFrame > shownFrame;
+        if (forward && targetFrame - shownFrame > fastBacklogFrames) fastMode = true;
 
         frameTimer -= Time.deltaTime; // Time.timeScale = 0 while paused freezes the key too
         if (frameTimer > 0f) return;
 
-        shownFrame++;
-        frameTimer += 1f / (fastMode ? fastFramesPerSecond : framesPerSecond);
+        shownFrame += forward ? 1 : -1;
+        var fps = forward ? (fastMode ? fastFramesPerSecond : framesPerSecond) : chargeFramesPerSecond;
+        frameTimer += 1f / fps;
+    }
+
+    /// <summary>Maps any frame counter (including negative) to a loop position 0..3.</summary>
+    private static int Wrap(int frame)
+    {
+        return ((frame % FramesPerLoop) + FramesPerLoop) % FramesPerLoop;
     }
 
     private int CurrentPhase()

@@ -6,6 +6,9 @@ public class CharacterController : GridEntity
     /// <summary>The last non-zero direction the player pressed — i.e. which way the character is currently facing/animated to face, even while standing still. Defaults to down, matching the animator's own default Direction (0). Other systems (e.g. PlayerAttack) read this instead of re-deriving facing from input themselves.</summary>
     public Vector2Int FacingDirection { get; private set; } = Vector2Int.down;
 
+    /// <summary>True while the walk animation is showing (a movement key is held or a step is sliding).</summary>
+    public bool IsWalking { get; private set; }
+
     /// <summary>0..1 progress of plain steps toward the next bar cost (stepCounter / threshold for the current cell).</summary>
     public float StepProgress
     {
@@ -177,10 +180,12 @@ public class CharacterController : GridEntity
     /// </summary>
     private void UpdateAnimation(bool hasInput)
     {
+        IsWalking = hasInput || IsMoving;
+
         if (animator == null) return;
 
         int value;
-        if (hasInput || IsMoving)
+        if (IsWalking)
         {
             if (FacingDirection == Vector2Int.left) value = 3;
             else if (FacingDirection == Vector2Int.right) value = 2;

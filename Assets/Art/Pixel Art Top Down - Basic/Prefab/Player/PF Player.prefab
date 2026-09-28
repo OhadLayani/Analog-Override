@@ -196,7 +196,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 4119479567787790529, guid: 813cf30a28bb3472198d56e7f05b4c1e, type: 3}
+  m_Sprite: {fileID: -6006309482309507750, guid: 28a0c0c91233c4e7f91b506500bc4966, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -230,12 +230,16 @@ MonoBehaviour:
   - {fileID: 387562089145454961, guid: 04d451ae9b5864faf8dd9f33cbba3246, type: 3}
   backOffset: {x: 0.02, y: 0.357}
   sideOffset: {x: -0.4358, y: 0.345}
+  walkBackYOffset: 0.449
+  walkSideYOffset: 0.454
   bodySprite: {fileID: 5482738451431363123}
   backSortOffset: 1
   sideSortOffset: 1
   framesPerSecond: 10
   fastFramesPerSecond: 24
   fastBacklogFrames: 4
+  chargeLoops: 3
+  chargeFramesPerSecond: 30
   player: {fileID: 5628018141983903119}
 --- !u!1 &5628018141983903104
 GameObject:
