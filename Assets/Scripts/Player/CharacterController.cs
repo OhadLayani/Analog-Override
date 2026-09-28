@@ -6,6 +6,17 @@ public class CharacterController : GridEntity
     /// <summary>The last non-zero direction the player pressed — i.e. which way the character is currently facing/animated to face, even while standing still. Defaults to down, matching the animator's own default Direction (0). Other systems (e.g. PlayerAttack) read this instead of re-deriving facing from input themselves.</summary>
     public Vector2Int FacingDirection { get; private set; } = Vector2Int.down;
 
+    /// <summary>0..1 progress of plain steps toward the next bar cost (stepCounter / threshold for the current cell).</summary>
+    public float StepProgress
+    {
+        get
+        {
+            var onHighFriction = GridManager.Instance != null && GridManager.Instance.IsHighFriction(CurrentCell);
+            var threshold = onHighFriction ? stepsPerBarHighFriction : stepsPerBar;
+            return threshold > 0 ? (float)stepCounter / threshold : 0f;
+        }
+    }
+
     private Animator animator;
     private SpringManager springManager;
     private int stepCounter;
