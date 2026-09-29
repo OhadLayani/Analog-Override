@@ -6,6 +6,20 @@ public class CharacterController : GridEntity
     /// <summary>The last non-zero direction the player pressed — i.e. which way the character is currently facing/animated to face, even while standing still. Defaults to down, matching the animator's own default Direction (0). Other systems (e.g. PlayerAttack) read this instead of re-deriving facing from input themselves.</summary>
     public Vector2Int FacingDirection { get; private set; } = Vector2Int.down;
 
+    /// <summary>True while the walk animation is showing (a movement key is held or a step is sliding).</summary>
+    public bool IsWalking { get; private set; }
+
+    /// <summary>0..1 progress of plain steps toward the next bar cost (stepCounter / threshold for the current cell).</summary>
+    public float StepProgress
+    {
+        get
+        {
+            var onHighFriction = GridManager.Instance != null && GridManager.Instance.IsHighFriction(CurrentCell);
+            var threshold = onHighFriction ? stepsPerBarHighFriction : stepsPerBar;
+            return threshold > 0 ? (float)stepCounter / threshold : 0f;
+        }
+    }
+
     private Animator animator;
     private SpringManager springManager;
     private int stepCounter;
@@ -86,22 +100,18 @@ public class CharacterController : GridEntity
         if (Input.GetKey(KeyCode.A))
         {
             dir = Vector2Int.left;
-            animator.SetInteger("Direction", 3);
         }
         else if (Input.GetKey(KeyCode.D))
         {
             dir = Vector2Int.right;
-            animator.SetInteger("Direction", 2);
         }
         else if (Input.GetKey(KeyCode.W))
         {
             dir = Vector2Int.up;
-            animator.SetInteger("Direction", 1);
         }
         else if (Input.GetKey(KeyCode.S))
         {
             dir = Vector2Int.down;
-            animator.SetInteger("Direction", 0);
         }
 
         if (dir != Vector2Int.zero)
@@ -112,12 +122,10 @@ public class CharacterController : GridEntity
         // If a directional key is pressed, attempt to step on the grid
         if (dir != Vector2Int.zero)
         {
-            // "Currently standing on carpet": read BEFORE calling TryStep, i.e. the cell the player
-            // occupies right now (the step's origin), not the destination. The step that ENTERS carpet
-            // from normal ground therefore plays at normal speed; only a step taken while already
-            // resting on carpet — including the step that leaves it — is slow. Intentionally a
-            // different cell than the post-step check below (which drives energy cost from the
-            // destination cell instead), so the two are independent reads, not shared.
+           
+            TutorialManager.Instance?.NotifyPlayerMoved();
+
+            
             bool startingOnCarpet = GridManager.Instance != null && GridManager.Instance.IsHighFriction(CurrentCell);
             MoveDuration = startingOnCarpet ? highFrictionMoveDuration : baseMoveDuration;
             MoveCurve = startingOnCarpet ? highFrictionMoveCurve : baseMoveCurve;
@@ -128,6 +136,9 @@ public class CharacterController : GridEntity
 
                 if (pushedWeight > 0f)
                 {
+                    // Tutorial task: mark "push" complete. No-op outside the Tutorial scene.
+                    TutorialManager.Instance?.NotifyBlockPushed();
+
                     // Friction slows pushing too: scale the weight-based cost by the same
                     // ratio that governs plain-step friction (e.g. 3/2 = 1.5x by default),
                     // so the two costs stay derived from one pair of tunable numbers.
@@ -156,8 +167,42 @@ public class CharacterController : GridEntity
                 }
             }
         }
+
+        UpdateAnimation(dir != Vector2Int.zero);
     }
-    
+
+    /// <summary>
+    /// Picks the animator's Direction value, keyed off FacingDirection so idle keeps looking
+    /// the way the player last moved/pressed. Walking values (0-3) play while a movement key
+    /// is held — even if TryStep was refused (walking in place against a wall/door) — or while
+    /// the last step's visual slide is still playing (GridEntity.IsMoving), so releasing a key
+    /// mid-step doesn't cut the walk off early. Otherwise idle values (5/10/20/30).
+    /// </summary>
+    private void UpdateAnimation(bool hasInput)
+    {
+        IsWalking = hasInput || IsMoving;
+
+        if (animator == null) return;
+
+        int value;
+        if (IsWalking)
+        {
+            if (FacingDirection == Vector2Int.left) value = 3;
+            else if (FacingDirection == Vector2Int.right) value = 2;
+            else if (FacingDirection == Vector2Int.up) value = 1;
+            else value = 0;
+        }
+        else
+        {
+            if (FacingDirection == Vector2Int.left) value = 30;
+            else if (FacingDirection == Vector2Int.right) value = 20;
+            else if (FacingDirection == Vector2Int.up) value = 10;
+            else value = 5;
+        }
+
+        animator.SetInteger("Direction", value);
+    }
+
     private void HandleBarsReachedZero()
     {
         Debug.Log("GAME OVER");
