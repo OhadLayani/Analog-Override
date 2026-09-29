@@ -9452,7 +9452,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1225166110396886655, guid: ef67ba864d1ecc042b5f4cf48455c0a6, type: 3}
       propertyPath: sideSortOffset
-      value: 1
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 1225166110396886655, guid: ef67ba864d1ecc042b5f4cf48455c0a6, type: 3}
       propertyPath: walkBackYOffset
