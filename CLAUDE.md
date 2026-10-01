@@ -15,6 +15,7 @@ The player is a wind-up robot on a top-down grid. Its energy is a spring, shown 
 
 - **Walking:** costs 1 bar every 3 steps on normal floor, or every 2 steps on high-friction terrain (carpet).
 - **Pushing:** costs `weight × energyCostPerWeight` bars right away and doesn't count toward the step counter. The cost is scaled up when the player ends the push on carpet.
+- **Attacking:** costs 3 bars per attack (`energyCost`), even if that empties the spring and kills the player.
 - **Checkpoints:** touching one refills the bars, resets the step counter and saves the respawn point.
 - **Death:** at 0 bars the scene reloads and the player respawns at the last checkpoint.
 - **Keys and doors:** a Key opens every Door with the same `keyId`. Keys are kept on death and cleared by a full level reset.
@@ -30,17 +31,18 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 - **Pushing:** one object at a time, never a chain. If anything is behind the pushed object, the push fails. Costs weight-based energy. *(GridEntity.TryStep / TryBePushed)*
 - **Height & climbing:** height comes from a stack of tilemap layers. A height change is only allowed onto a climbable cell and within the entity's `ClimbHeight`. Pushing and bumping require being at the same height. *(GridManager, GridEntity)*
 - **High-friction terrain (carpet):** costs more energy per step and gives a slower, dragging slide. *(GridManager.IsHighFriction, CharacterController)*
-- **Spring energy:** steps and pushes drain bars. Reaching exactly 1 bar is logged as a "last bar" moment. *(SpringManager, CharacterController)*
+- **Spring energy:** steps, pushes and attacks drain bars. Reaching exactly 1 bar is logged as a "last bar" moment (steps and pushes only). *(SpringManager, CharacterController, PlayerAttack)*
 - **Death & respawn:** 0 bars reloads the scene, and the player respawns at the last checkpoint. *(CharacterController, GameManager.ReloadScene)*
 - **Checkpoints:** refill bars and reset the step counter; only one checkpoint is active at a time. *(Checkpoint, GameManager)*
 - **Keys & doors:** a door opens only for a key with a matching `keyId`. A door can span several cells. Keys are not used up. *(Key, Door, GameManager)*
-- **Attack:** a mouse click turns on a hitbox in the facing direction, which damages any `IAttackable` it touches. *(PlayerAttack, AttackHitbox)*
+- **Attack:** a mouse click charges energy and stretches both arms (stage 1 → 2 → 3 → 2 → 1 over `attackDuration`). The hitbox follows the drawn arms sprite and damages any `IAttackable` it touches. *(PlayerAttack, ArmsVisual, AttackHitbox)*
+- **Arms visual:** the arms sprite is picked by facing (front/back or profile) and stretch stage, with per-facing offset and scale, and is raised while walking. *(ArmsVisual)*
 - **Stage goal & next level:** reaching the goal shows the stage-over screen and pauses the game. The next level comes from the Build Settings order. *(StageGoal, StageOverScreen, GameManager)*
 - **Level reset:** a full restart that clears the checkpoint and keys, then reloads the scene. *(GameManager.ResetLevel, PauseMenu, StageOverScreen)*
 - **Pause:** Esc toggles pause; time scale goes to 0 and player input is blocked. *(PauseMenu, GameManager)*
 - **Tutorial checklist:** four tasks (move, checkpoint, reset, push) unlock the Start button, and progress survives a reset. *(TutorialManager)*
 - **Spring UI & key visual:** the on-screen spring and the key on the robot's back follow the energy level. *(UiManager, SpringKeyAnimator)*
-- **Draw order:** entities are sorted by world Y so they overlap correctly. *(GridEntity, SpringKeyAnimator)*
+- **Draw order:** entities are sorted by world Y so they overlap correctly. *(GridEntity, SpringKeyAnimator, ArmsVisual)*
 
 ## How we work
 
@@ -112,7 +114,9 @@ When Tsah says the session is over, propose edits to this file based on what hap
   - Exposes `IsWalking` and `StepProgress` (0..1) for visuals.
   - Death: subscribes to `SpringManager.BarsReachedZero`, then logs the death and calls `GameManager.ReloadScene()`.
   - Animator int `Direction`: walking down/up/right/left = 0/1/2/3; idle = 5/10/20/30.
-- **`PlayerAttack`**: on left click, swaps `idleChild` for the `AttackHitbox` child for `attackDuration` seconds. That duration is also the cooldown. Before each swing it places the hitbox at `FacingDirection × hitboxReach`. It applies `attackDamage` through the hitbox's `TargetDetected` event.
+- **`PlayerAttack`**: on left click, charges `energyCost` bars, turns on the `AttackHitbox` child, and steps `ArmsVisual.Stage` through out → hold → back over `attackDuration`. `fullStretchShare` is the share of that time spent at full stretch, and the duration is also the cooldown. Damage is applied through the hitbox's `TargetDetected` event.
+- **`ArmsVisual`** (on `idleArms`, always active): picks the sprite from `FacingDirection` + `Stage`, so turning mid-attack keeps the stage. It sets the per-facing offset, scale and walk Y offset, copies the body's sorting order plus an offset, and fits the `AttackHitbox` collider (a child of `idleArms`) to the drawn sprite each frame.
+  - Owns the arms' Transform position and scale every frame, so tune them through its fields, not the Transform.
 - **`SpringKeyAnimator`**: animates the key on the robot's back in 4-frame loops, driven by spent bars plus `StepProgress`.
   - Spending energy plays frames forward. A recharge spins the key backwards for `chargeLoops` loops. A large backlog of frames switches to a faster frame rate.
   - Hidden while facing down; flipped for left.

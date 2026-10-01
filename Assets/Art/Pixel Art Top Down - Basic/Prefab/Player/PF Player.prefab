@@ -277,7 +277,6 @@ Transform:
   - {fileID: 6435713682445502500}
   - {fileID: 3583024709288946}
   - {fileID: 2075880731241978103}
-  - {fileID: 4657591668292462641}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5628018141983903119
@@ -454,10 +453,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: deb387f3b60e9de4d9c19d36d423225f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
-  idleChild: {fileID: 7460859007745716979}
+  arms: {fileID: 7403235385506271734}
   attackHitbox: {fileID: 9045417636246211915}
-  hitboxReach: 0.5
-  attackDuration: 0.2
+  attackDuration: 0.3
+  fullStretchShare: 0.5
+  energyCost: 3
   attackDamage: 1
 --- !u!1 &7460859007745716979
 GameObject:
@@ -489,7 +489,8 @@ Transform:
   m_LocalPosition: {x: 0.021, y: 0.3, z: 0}
   m_LocalScale: {x: 0.53, y: 0.53, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 4657591668292462641}
   m_Father: {fileID: 5628018141983903106}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1162665154590337515
@@ -565,13 +566,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ArmsVisual
   frontBackSprite: {fileID: 1942839072498038723, guid: 52f7b61d4becf4383b363d57fa7cbae0, type: 3}
   sideSprite: {fileID: -7578626973348730125, guid: c70a432c2c0894e4885b6d87c1a97f76, type: 3}
+  frontBackStretchFrames:
+  - {fileID: 1462213510345241636, guid: 0dba6b953734546c286784a29d6d93d8, type: 3}
+  - {fileID: -4627709130808131212, guid: 4c08120341df14f37b26139d532443dd, type: 3}
+  sideStretchFrames:
+  - {fileID: 1551942205598649076, guid: 3a22e03e6a83748f8a7cbc6df25f1cce, type: 3}
+  - {fileID: -1435434500944217701, guid: c607c2557186e45a3874ddb24121f54d, type: 3}
   frontBackOffset: {x: 0.021, y: 0.3}
   sideOffset: {x: -0.024, y: 0.209}
   walkFrontBackYOffset: 0.11
   walkSideYOffset: 0.103
+  frontBackScale: {x: 0.53, y: 0.53}
+  sideScale: {x: 0.53, y: 0.53}
   bodySprite: {fileID: 5482738451431363123}
   frontBackSortOffset: 1
   sideSortOffset: 1
+  hitbox: {fileID: 7370946150872596919}
   player: {fileID: 0}
 --- !u!1 &8657041465888533445
 GameObject:
@@ -599,12 +609,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8657041465888533445}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.8867925, y: 1.8867925, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5628018141983903106}
+  m_Father: {fileID: 2075880731241978103}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &7370946150872596919
 BoxCollider2D:
