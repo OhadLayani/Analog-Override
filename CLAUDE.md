@@ -4,58 +4,162 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-A 2D grid-based puzzle/movement game built in Unity 6000.3.21f1 (Universal Render Pipeline). There is no CLI build/test workflow — this is a Unity Editor project. Changes are verified by opening the project in the Unity Editor and pressing Play, or by using the `run` skill to launch/screenshot the app.
+A 2D top-down grid puzzle game built in Unity 6000.3.21f1 (Universal Render Pipeline). This is a Unity Editor project: there is no CLI build, and there is no automated test suite (`com.unity.test-framework` is installed, but no test assemblies exist).
 
-There is no automated test suite (`com.unity.test-framework` is a dependency but no test assemblies exist yet).
+- All gameplay code lives under `Assets/Scripts/` (~23 files). The codebase is small enough to read the relevant files in full instead of guessing from partial context.
+- Scenes in Build Settings, in order: `Tutorial` (0), then `SampleScene` (1). `SecondPuzzleScene` exists but is **not** in the build. After the last level, `GameManager.LoadNextScene` loops back to `"Tutorial"`.
 
-## Working with this codebase
+## Game design
 
-- Scripts live entirely under `Assets/Scripts/` — the whole gameplay codebase is currently ~11 files, small enough to read in full rather than guess from partial context.
-- Do not edit generated/IDE files: `*.csproj`, `Analog-Override.slnx`, `Library/`, `Logs/`, `UserSettings/`, `ProjectSettings/` (except when a deliberate project-settings change is requested).
-- MonoBehaviour fields exposed via `[SerializeField]` are wired to prefabs/scenes in the Unity Editor (Inspector references, event hookups like button `OnClick`). Renaming or removing a serialized field, or changing a public method signature invoked from the Inspector (e.g. `PauseMenu.Pause`/`Resume`/`ResetLevel`/`QuitGame` wired to UI buttons), breaks that wiring silently — it won't show up as a compile error, only as a missing reference/null method in the Editor. Flag this risk when making such changes.
-- This codebase leans heavily on descriptive XML-doc comments to explain *why*, not just *what* — match that style when touching these files rather than leaving logic undocumented.
+The player is a wind-up robot on a top-down grid. Its energy is a spring, shown as "bars": each action unwinds it, and charging stations (checkpoints) wind it back up. Puzzles are about moving and pushing efficiently before the spring runs out.
+
+- **Walking:** costs 1 bar every 3 steps on normal floor, or every 2 steps on high-friction terrain (carpet).
+- **Pushing:** costs `weight × energyCostPerWeight` bars right away and doesn't count toward the step counter. The cost is scaled up when the player ends the push on carpet.
+- **Attacking:** costs 3 bars per attack (`energyCost`), even if that empties the spring and kills the player.
+- **Checkpoints:** touching one refills the bars, resets the step counter and saves the respawn point.
+- **Death:** at 0 bars the scene reloads and the player respawns at the last checkpoint.
+- **Keys and doors:** a Key opens every Door with the same `keyId`. Keys are kept on death and cleared by a full level reset.
+
+**Terms:** *bars / spring* (energy), *checkpoint* (charging station), *high-friction* (carpet tiles), *weight* (how much energy a pushable costs), *keyId* (what pairs keys with doors).
+
+## Mechanics
+
+Each line gives the mechanic, a short description and its main scripts. **This list is also the regression checklist** (see "Verification"). When a mechanic is added or changed, propose the update to this list in the end-of-session review.
+
+- **Grid movement:** WASD, one cell per step, no diagonals. The logical move is instant and the visual slide follows. *(GridEntity, CharacterController)*
+- **Walls:** cells painted on the collision tilemap can't be entered. *(GridManager.IsWalkable)*
+- **Pushing:** one object at a time, never a chain. If anything is behind the pushed object, the push fails. Costs weight-based energy. *(GridEntity.TryStep / TryBePushed)*
+- **Height & climbing:** height comes from a stack of tilemap layers. A height change is only allowed onto a climbable cell and within the entity's `ClimbHeight`. Pushing and bumping require being at the same height. *(GridManager, GridEntity)*
+- **High-friction terrain (carpet):** costs more energy per step and gives a slower, dragging slide. *(GridManager.IsHighFriction, CharacterController)*
+- **Spring energy:** steps, pushes and attacks drain bars. Reaching exactly 1 bar is logged as a "last bar" moment (steps and pushes only). *(SpringManager, CharacterController, PlayerAttack)*
+- **Death & respawn:** 0 bars reloads the scene, and the player respawns at the last checkpoint. *(CharacterController, GameManager.ReloadScene)*
+- **Checkpoints:** refill bars and reset the step counter; only one checkpoint is active at a time. *(Checkpoint, GameManager)*
+- **Keys & doors:** a door opens only for a key with a matching `keyId`. A door can span several cells. Keys are not used up. *(Key, Door, GameManager)*
+- **Attack:** a mouse click charges energy and stretches both arms (stage 1 → 2 → 3 → 2 → 1 over `attackDuration`). The hitbox follows the drawn arms sprite and damages any `IAttackable` it touches. *(PlayerAttack, ArmsVisual, AttackHitbox)*
+- **Arms visual:** the arms sprite is picked by facing (front/back or profile) and stretch stage, with per-facing offset and scale, and is raised while walking. *(ArmsVisual)*
+- **Stage goal & next level:** reaching the goal shows the stage-over screen and pauses the game. The next level comes from the Build Settings order. *(StageGoal, StageOverScreen, GameManager)*
+- **Level reset:** a full restart that clears the checkpoint and keys, then reloads the scene. *(GameManager.ResetLevel, PauseMenu, StageOverScreen)*
+- **Pause:** Esc toggles pause; time scale goes to 0 and player input is blocked. *(PauseMenu, GameManager)*
+- **Tutorial checklist:** four tasks (move, checkpoint, reset, push) unlock the Start button, and progress survives a reset. *(TutorialManager)*
+- **Spring UI & key visual:** the on-screen spring and the key on the robot's back follow the energy level. *(UiManager, SpringKeyAnimator)*
+- **Draw order:** entities are sorted by world Y so they overlap correctly. *(GridEntity, SpringKeyAnimator, ArmsVisual)*
+
+## How we work
+
+- **Plan first, then approval.** For any code task: read the relevant code, propose a plan, ask clarifying questions **one at a time**, and write no code until Tsah says OK.
+- **Explain shell commands** in plain words before running them.
+- **Git is Tsah's job.** Never commit, push, create branches or open PRs.
+- **Editor work.** When a change needs work in the Unity Editor (wiring Inspector fields, adding components, tilemaps, prefabs), give numbered step-by-step instructions: which GameObject, which component, which field, what to assign. Never edit `.unity` / `.prefab` / `.asset` YAML directly.
+- **Language.** Reply in whichever language Tsah writes in. Code, comments and identifiers are always in English.
+
+### Verification
+
+- **Code-only change:** Claude checks first: re-reads the changed code, traces its callers, and looks for compile errors. Then Tsah plays it in the Editor.
+- **Change that needs Editor work:** Tsah does the Editor steps and tests first, then Claude reviews.
+- **Regression check (every time Claude checks a code change):**
+  1. Go through the Mechanics list. For each mechanic that touches the changed code (shared base classes like `GridEntity`, events, singletons, callers), trace whether the change can affect it.
+  2. Report each one as "unaffected" or "possibly affected — why".
+  3. End with a short play-test checklist of the mechanics Tsah should re-try in the Editor.
+
+### End-of-session review
+
+When Tsah says the session is over, propose edits to this file based on what happened in the session.
+- Focus on lasting, big-picture items: new or changed mechanics, architecture, conventions, workflow rules.
+- Leave out details that only mattered for this session.
+- Tsah approves, corrects, or says no update is needed. Edit this file only after approval.
+
+## Code conventions
+
+- **Doc comments:** a short one-line `/// <summary>` on new classes and non-obvious members. Leave the existing longer comments as they are.
+- **Namespaces:** match the other files in the same folder. `Grid/` uses `AnalogOverride.GridSystem`; `Entities/` and `Combat/` use their own `AnalogOverride.*` namespaces; `Managers/`, `Player/` and most of `UI/` have no namespace.
+- **Input:** keep using the legacy `Input.GetKey` / `Input.GetMouseButtonDown` API for consistency, even though the Input System package is installed.
+- **Analytics:** don't add or change `AnalyticsLogger` events unless asked.
+- **Optional singletons:** some singletons only exist in some scenes (`TutorialManager`, `StageOverScreen`) or create themselves at startup (`AnalyticsLogger`). Call them as `X.Instance?.Method()`.
+- **Pause guard:** gameplay `Update()`s return early when `GameManager.Instance.IsGamePaused` is true.
+- **Grid position:** always read `CurrentCell`, never derive a cell from `transform.position` (it lags during the slide).
+- **Extend by composition:** add new behavior as a separate component, rather than growing `PushableBlock` or `GridEntity`.
+- **Inspector wiring risk:** renaming or removing a `[SerializeField]` field, or changing a public method wired to a button `OnClick`, still compiles, but the Inspector loses the reference without any error. Inspector-wired methods include `PauseMenu.Pause/Resume/ResetLevel/QuitGame`, `StageOverScreen.RestartLevel/NextLevel` and `SceneNavigationButtons.LoadNextScene`. Flag this whenever such a change is proposed.
+- **Don't edit generated files:** `*.csproj`, `Analog-Override.slnx`, `Library/`, `Logs/`, `UserSettings/`, `ProjectSettings/` (except for a deliberate project-settings change).
 
 ## Architecture
 
-The game is a top-down grid where movement, pushing, and interaction are all mediated through one system rather than raw physics/transform manipulation.
+### Grid (`Assets/Scripts/Grid/`, `AnalogOverride.GridSystem`)
 
-### Grid system (`Assets/Scripts/Grid/`, namespace `AnalogOverride.GridSystem`)
+- **`GridManager`**: scene singleton and the single source of truth for the grid.
+  - World↔cell conversion through Unity's `Grid` component. Snap to `CellToWorld` (the cell center).
+  - Optional tilemaps: collision (walls), `heightLayers` (the topmost populated layer wins; default height 0), climbable, and friction. With none set, the grid is flat and open.
+  - Occupancy: a 2D array indexed by `cell - origin`. Only access it through `TryPlaceOccupant` / `RemoveOccupant` / `TryMoveOccupant` / `GetOccupant` / `IsFree`.
+  - Raises `CellOccupantChanged`.
+- **`GridEntity`** (`IGridOccupant`): base class for anything on the grid. It registers itself in `Start`, frees its cell in `OnDisable`, and moves with `TryStep(dir, out pushedWeight)`. Resolution order:
+  1. Off-grid or wall → refused.
+  2. Occupied cell: a different height → refused; pushable → `TryBePushed`, which only succeeds into a completely free cell (no chains); `IInteractable` → `Interact()` and the mover stays put; anything else → refused.
+  3. Empty cell at a different height → allowed only within `climbHeight` and onto a climbable cell.
+  4. Otherwise accepted: `CurrentCell` and occupancy update immediately, and a coroutine plays the slide.
 
-- **`GridManager`** — scene singleton (`GridManager.Instance`, `[DefaultExecutionOrder(-100)]` so it initializes before anything reads it). Single source of truth for:
-  - World↔cell conversion, delegating to a Unity `Grid` component.
-  - Static walkability, read from an optional collision `Tilemap`.
-  - Dynamic occupancy: a 2D array of `IGridOccupant`, indexed by cell minus `origin` (never index it directly — always go through `TryPlaceOccupant`/`RemoveOccupant`/`TryMoveOccupant`/`GetOccupant`).
-  - Height: a stack of `Tilemap` layers (topmost populated layer wins, default height 0) plus an optional climbable `Tilemap` marking cells that can be entered/exited across a height difference (ladders, cliff edges). With no height layers configured, the grid behaves as fully flat — this is intentionally backward compatible.
-  - Fires `CellOccupantChanged` for systems (minimap, AI, fog-of-war) that want to react without polling.
-- **`GridEntity`** (`IGridOccupant`) — base class for anything that lives on the grid (player, pushable blocks, future enemies/NPCs). Extend this to get registration, movement, pushing, and bump-interaction for free. Key method: `TryStep(direction)` — see the extensive doc comment on it in `GridEntity.cs` for the full resolution order (walls → occupied-and-pushable → occupied-and-interactable → height/climbing → accept). Pushing recurses through chains (A pushes B pushes C) and returns the summed `Weight` of everything displaced, so callers can charge a cost without knowing chains exist. Movement is logically instant (occupancy/`CurrentCell` update synchronously); the visual slide is a separate coroutine (`moveDuration`) — always read `CurrentCell`, never derive position from `transform.position`, which lags during the tween.
-  - Also optionally owns per-entity sprite sort order, keyed off world Y, so entities always draw correctly relative to each other independent of the render pipeline's distance sort.
-- **`IGridOccupant`** — minimal contract (`CurrentCell`, `IsPushable`) for anything occupying a cell.
-- **`IInteractable`** — implement on a non-pushable occupant (door, NPC, chest) to react when bumped; bumping never moves the mover into the occupant's cell.
+  `IsMoving` blocks new steps until the slide finishes. Subclasses can set `MoveDuration` / `MoveCurve` **before** calling `TryStep` to change that one step's slide. The optional `sortingSprite` gets its order in layer from world Y.
+- **`IGridOccupant`**: the minimal contract (`CurrentCell`, `IsPushable`).
+- **`IInteractable`**: a bump hook for occupants that can't be pushed.
 
-### Entities (`Assets/Scripts/Entities/`, namespace `AnalogOverride.Entities`)
+### Entities (`Assets/Scripts/Entities/`, `AnalogOverride.Entities`)
 
-- **`PushableBlock`** — minimal `GridEntity` subclass: `pushable = true`, `climbHeight = 0` by default (a pushed block doesn't climb ledges unless raised on a specific instance/prefab). Deliberately kept logic-free; add behavior (pressure plates, breaking, trails) as a separate component on the same GameObject rather than growing this class.
+- **`PushableBlock`**: a `GridEntity` with no extra logic; `Reset()` defaults it to `pushable = true` and `climbHeight = 0`.
+- **`Door`**: a non-pushable `IInteractable` that opens when bumped, if `GameManager.HasKey(keyId)`. It can occupy extra cells through `extraCells`, which are claimed in `Start` and freed in `OnDisable`. `disableOnOpen` either deactivates the GameObject or just frees all of its cells.
 
-### Player (`Assets/Scripts/Player/CharacterController.cs`)
+### Player (`Assets/Scripts/Player/`)
 
-- Extends `GridEntity`. Reads WASD every `Update()` (only one direction at a time; no diagonals) and calls `TryStep`. Drives an `Animator` "Direction" int. Bails out early if `GameManager.IsGamePaused`.
-- Ties grid movement into the energy/spring system: every `stepsPerBar` plain steps costs 1 `SpringManager` bar; pushing something costs `pushedWeight * energyCostPerWeight` bars instead (and does not advance the plain step counter).
-- On spawn, teleports to `GameManager.RespawnCell` *before* calling `base.Start()` (which snaps to the grid and claims the cell), if a checkpoint has been set.
+- **`CharacterController`** (`GridEntity`):
+  - Movement: reads WASD (one direction at a time), updates `FacingDirection`, then calls `TryStep`. On spawn it teleports to `GameManager.RespawnCell` *before* `base.Start()`.
+  - Energy: a plain step increments `stepCounter`; at `stepsPerBar` (or `stepsPerBarHighFriction` on carpet) it charges 1 bar. A push charges `max(1, round(weight × energyCostPerWeight × frictionMultiplier))`, where the multiplier is `stepsPerBar / stepsPerBarHighFriction` on carpet.
+  - Carpet slide: a step that **starts** on carpet uses `highFrictionMoveDuration` / `highFrictionMoveCurve`.
+  - Exposes `IsWalking` and `StepProgress` (0..1) for visuals.
+  - Death: subscribes to `SpringManager.BarsReachedZero`, then logs the death and calls `GameManager.ReloadScene()`.
+  - Animator int `Direction`: walking down/up/right/left = 0/1/2/3; idle = 5/10/20/30.
+- **`PlayerAttack`**: on left click, charges `energyCost` bars, turns on the `AttackHitbox` child, and steps `ArmsVisual.Stage` through out → hold → back over `attackDuration`. `fullStretchShare` is the share of that time spent at full stretch, and the duration is also the cooldown. Damage is applied through the hitbox's `TargetDetected` event.
+- **`ArmsVisual`** (on `idleArms`, always active): picks the sprite from `FacingDirection` + `Stage`, so turning mid-attack keeps the stage. It sets the per-facing offset, scale and walk Y offset, copies the body's sorting order plus an offset, and fits the `AttackHitbox` collider (a child of `idleArms`) to the drawn sprite each frame.
+  - Owns the arms' Transform position and scale every frame, so tune them through its fields, not the Transform.
+- **`SpringKeyAnimator`**: animates the key on the robot's back in 4-frame loops, driven by spent bars plus `StepProgress`.
+  - Spending energy plays frames forward. A recharge spins the key backwards for `chargeLoops` loops. A large backlog of frames switches to a faster frame rate.
+  - Hidden while facing down; flipped for left.
+  - Copies the body sprite's sorting order each frame, plus an offset.
+
+### Combat (`Assets/Scripts/Combat/`, `AnalogOverride.Combat`)
+
+- **`IAttackable`**: `IsAlive`, `TakeDamage(int)`.
+- **`AttackHitbox`**: only detects hits. Its trigger raises `TargetDetected(IAttackable)`, and the listener decides what to do.
+- **`TestDummy`**: a temporary target that stands in until real enemies exist.
 
 ### Managers (`Assets/Scripts/Managers/`, no namespace)
 
-- **`GameManager`** — cross-scene singleton (`DontDestroyOnLoad`, `[DefaultExecutionOrder(-60)]`, runs after `GridManager`). Owns checkpoint bookkeeping (`RespawnCell`, `HasCheckpoint`, tracks all live `Checkpoint`s and deactivates the others when a new one activates) and centralized pause state (`SetPauseState` drives `Time.timeScale`). `ReloadScene()` always unpauses before reloading, to avoid a frozen reload.
-- **`SpringManager`** — scene singleton (`[DefaultExecutionOrder(-50)]`, runs after `GameManager` but before default scripts). Tracks an energy/"bars" resource (`ReduceBars`, `ResetBars`) with `BarsChanged`/`BarsReachedZero` events. Hitting zero is the death/game-over trigger — `CharacterController` subscribes and reloads the scene.
+- **`GameManager`**: persists across scene loads (`DontDestroyOnLoad`).
+  - Checkpoints: `RespawnCell`, `HasCheckpoint`; it registers checkpoints and deactivates the others when one activates.
+  - Keys: a `HashSet<string>` with `HasKey` / `CollectKey` / `ClearKeys`.
+  - Pause: `SetPauseState` drives `Time.timeScale`.
+  - Scene flow:
+    - `ReloadScene()`: death respawn; keeps the checkpoint and keys.
+    - `ResetLevel()`: full restart; logs it, clears the checkpoint and keys, then reloads.
+    - `LoadNextScene()`: next scene in the build order.
+  - Every scene load unpauses first.
+- **`SpringManager`**: scene singleton for the bars.
+  - `ReduceBars(n)` and `ResetBars()`.
+  - Events: `BarsChanged(int)`, `BarsReachedZero`.
+- **`TutorialManager`**: exists only in the Tutorial scene. Its 4 task flags are **static**, so they survive the reload on reset, and `Start()` re-applies them to the check images. The Start button becomes interactable when all four are done.
+- **`AnalyticsLogger`**: creates itself at startup (`RuntimeInitializeOnLoadMethod`, `DontDestroyOnLoad`), so it is never placed in a scene.
+  - Appends `DEATH` / `CHECKPOINT_VISIT` / `STAGE_RESET` / `STAGE_COMPLETE` / `LAST_BAR` / `QUIT` lines to `Application.persistentDataPath/analytics_log.txt`.
+  - Writes a summary for each run on quit. The run number is stored in `PlayerPrefs`.
 
-### UI (`Assets/Scripts/UI/`, no namespace)
+### UI (`Assets/Scripts/UI/`)
 
-- **`PauseMenu`** — reads/writes pause state through `GameManager`, never touches `Time.timeScale` directly except as a fallback when `GameManager.Instance` is null. `Pause`/`Resume`/`ResetLevel`/`QuitGame` are wired from Inspector button `OnClick` events (see the "don't rename Inspector-wired methods silently" note above).
-- **`UiManager`** — purely reactive to `SpringManager.BarsChanged`; renders the energy bar as a visual "spring" by lerping `HorizontalLayoutGroup.spacing` between compressed (full energy) and released (empty) and force-rebuilding the affected `RectTransform`s. Spawns its bar segments (`barPrefab`) at `Start()` based on `MaxBars`, destroying any placeholder children first.
+- **`PauseMenu`**: Esc toggles pause through `GameManager`. Its button methods are wired in the Inspector. `ResetLevel` notifies the tutorial before it calls `GameManager.ResetLevel()`.
+- **`StageOverScreen`**: scene singleton. `Show()` logs the stage completion, shows the panel and pauses. `RestartLevel` / `NextLevel` are wired to buttons.
+- **`SceneNavigationButtons`** (`AnalogOverride.UI`): a button hook for `LoadNextScene`.
+- **`UiManager`**: spawns `MaxBars` spring segments and blends the layout spacing between compressed (full energy) and released (empty) on `BarsChanged`. It also shows the key icon through `Key.KeyCollected`, or on load if the key is already collected.
 
-### Misc
+### Misc (`Assets/Scripts/`, no namespace)
 
-- **`Checkpoint`** (`Assets/Scripts/Checkpoint.cs`, top-level, uses `AnalogOverride.GridSystem`) — caches its own grid cell at `Start()`, registers/deregisters with `GameManager` on enable/disable. On player trigger-enter: always resets the player's step counter and the spring bars, and additionally saves respawn state + fires an "activate" animator trigger only if not already active. `GameManager.ActivateCheckpoint` then deactivates every other checkpoint.
+- **`Checkpoint`**: trigger. On player contact it logs the visit, notifies the tutorial, resets the step counter and the bars, and activates itself (saving the respawn point and firing the `activate` animation) only if it isn't already active.
+- **`Key`**: trigger. On pickup it calls `GameManager.CollectKey(keyId)` and raises the static `KeyCollected` event before destroying itself. In `Start` it destroys itself without raising the event if the key was already collected.
+- **`StageGoal`**: trigger. The first time the player touches it, it calls `StageOverScreen.Instance.Show()`.
 
-## Singleton/init order
+## Singleton / init order
 
-Execution order matters across these singletons and is enforced via `[DefaultExecutionOrder]`: `GridManager` (-100) → `GameManager` (-60) → `SpringManager` (-50) → everything else. If you add a new manager that other `Start()`-time code depends on via `Instance`, give it an explicit `DefaultExecutionOrder` earlier than its consumers rather than relying on scene object order.
+`[DefaultExecutionOrder]` enforces: `GridManager` (-100) → `GameManager` (-60) → `SpringManager` (-50) → `TutorialManager` (-40) → default scripts. `AnalyticsLogger` creates itself before the first scene loads. A new manager that other `Start()`-time code reads through `Instance` needs an explicit execution order earlier than the code that uses it; don't rely on the order of objects in the scene.

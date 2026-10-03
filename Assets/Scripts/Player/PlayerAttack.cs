@@ -3,37 +3,39 @@ using AnalogOverride.Combat;
 using UnityEngine;
 
 /// <summary>
-/// Drives the attack toggle: on click, swap from the idle child to the attack-hitbox child
-/// for a fixed duration, then swap back. Listens to the hitbox child's TargetDetected event
-/// to actually apply damage — this is the "listener on the parent object" from the design.
-/// No animation yet by design — the active-object swap IS the whole visual for now; a real
-/// animation can replace/augment SetAttacking later without touching the detection/event flow.
+/// Drives the attack: on click, charges energy, turns on the attack-hitbox child and plays
+/// the arms stretch (stage 1 → 2 → 3 → 2 → 1) over Attack Duration, then turns the hitbox off.
+/// ArmsVisual draws the stage and keeps the hitbox fitted to the arms sprite. Listens to the
+/// hitbox child's TargetDetected event to actually apply damage.
 /// </summary>
 [RequireComponent(typeof(CharacterController))]
 public class PlayerAttack : MonoBehaviour
 {
-    [Tooltip("Active while not attacking.")]
-    [SerializeField] private GameObject idleChild;
+    [Tooltip("The arms visual (on idleArms). Shows the stretch stage during an attack.")]
+    [SerializeField] private ArmsVisual arms;
 
     [Tooltip("Activated for Attack Duration seconds on click. Must have an AttackHitbox component with a trigger Collider2D on it.")]
     [SerializeField] private AttackHitbox attackHitbox;
 
-    [Tooltip("Distance from the player's own position to the hitbox's center, along whichever way the player is currently facing (CharacterController.FacingDirection) — repositioned fresh at the start of every swing, so a fixed child-position/offset in the Inspector doesn't matter.")]
-    [SerializeField] private float hitboxReach = 0.5f;
-
-    [Tooltip("Seconds the attack hitbox stays active before automatically reverting to Idle Child. Also doubles as the attack's cooldown — a click is ignored while this is running.")]
+    [Tooltip("Seconds the whole attack takes (stretch out, hold, pull back). Also doubles as the attack's cooldown — a click is ignored while this is running.")]
     [Min(0f)]
     [SerializeField] private float attackDuration = 0.2f;
 
+    [Tooltip("Share of Attack Duration spent at full stretch (stage 3). The rest is split evenly between stretching out and pulling back (stage 2).")]
+    [Range(0f, 1f)]
+    [SerializeField] private float fullStretchShare = 0.5f;
+
+    [Tooltip("Energy bars charged per attack. Can drain the last bars and kill the player.")]
+    [Min(0)]
+    [SerializeField] private int energyCost = 3;
+
     [SerializeField] private int attackDamage = 1;
 
-    private CharacterController characterController;
-    private bool isAttacking;
+    private const int StageIdle = 0;
+    private const int StageMid = 1;
+    private const int StageFull = 2;
 
-    private void Awake()
-    {
-        characterController = GetComponent<CharacterController>();
-    }
+    private bool isAttacking;
 
     private void OnEnable()
     {
@@ -47,6 +49,10 @@ public class PlayerAttack : MonoBehaviour
     {
         if (attackHitbox != null)
             attackHitbox.TargetDetected -= HandleTargetDetected;
+
+        // Disabling stops the coroutine, so don't leave the arms stretched.
+        if (arms != null) arms.Stage = StageIdle;
+        isAttacking = false;
     }
 
     private void Update()
@@ -68,34 +74,35 @@ public class PlayerAttack : MonoBehaviour
     private IEnumerator AttackRoutine()
     {
         SetAttacking(true);
-        yield return new WaitForSeconds(attackDuration);
+
+        // Charged after the hitbox is on: if this kills the player, the scene reloads anyway.
+        SpringManager.Instance?.ReduceBars(energyCost);
+
+        var holdTime = attackDuration * fullStretchShare;
+        var moveTime = (attackDuration - holdTime) * 0.5f;
+
+        SetStage(StageMid);
+        yield return new WaitForSeconds(moveTime);
+        SetStage(StageFull);
+        yield return new WaitForSeconds(holdTime);
+        SetStage(StageMid);
+        yield return new WaitForSeconds(moveTime);
+
         SetAttacking(false);
     }
 
     private void SetAttacking(bool attacking)
     {
         isAttacking = attacking;
-
-        if (idleChild != null)
-            idleChild.SetActive(!attacking);
+        if (!attacking) SetStage(StageIdle);
 
         if (attackHitbox != null)
-        {
-            if (attacking)
-            {
-                // Reposition BEFORE activating: the character doesn't turn by rotating or
-                // flipping its Transform (facing is done via SpriteRenderer.flipX on the
-                // animation clips), so a fixed local offset would stay stuck on one side
-                // regardless of which way the player is actually facing. Deriving the offset
-                // fresh from FacingDirection every swing keeps the hitbox correctly placed
-                // without depending on whatever position it happens to be left at in the Inspector.
-                var facing = characterController != null ? characterController.FacingDirection : Vector2Int.down;
-                var currentLocalPos = attackHitbox.transform.localPosition;
-                attackHitbox.transform.localPosition = new Vector3(facing.x * hitboxReach, facing.y * hitboxReach, currentLocalPos.z);
-            }
-
             attackHitbox.gameObject.SetActive(attacking);
-        }
+    }
+
+    private void SetStage(int stage)
+    {
+        if (arms != null) arms.Stage = stage;
     }
 
     private void HandleTargetDetected(IAttackable target)
