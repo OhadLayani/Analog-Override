@@ -285,6 +285,55 @@ namespace AnalogOverride.GridSystem
             return CommitStep(targetCell);
         }
 
+        /// <summary>
+        /// Throws this entity up to maxCells cells along `direction` in ONE quick slide, as if hit
+        /// by something — unlike TryStep it ignores IsMoving (a hit lands mid-step too) and doesn't
+        /// push or interact with anything. It stops short of the first thing that would block it: a
+        /// wall, another occupant, or a change of height level. Returns how many cells it actually
+        /// moved (0 if it was already hemmed in). `curve` shapes the slide; null uses MoveCurve.
+        /// </summary>
+        public int Knockback(Vector2Int direction, int maxCells, float slideSeconds, AnimationCurve curve = null)
+        {
+            if (Manager == null || direction == Vector2Int.zero || maxCells <= 0) return 0;
+
+            var level = Manager.GetHeight(CurrentCell);
+            var landing = CurrentCell;
+            var moved = 0;
+
+            while (moved < maxCells)
+            {
+                var next = landing + direction;
+                if (!Manager.IsFree(next) || Manager.GetHeight(next) != level) break;
+
+                landing = next;
+                moved++;
+            }
+
+            if (moved == 0) return 0;
+
+            // From wherever the sprite is right now, not from the start of an interrupted step.
+            var fromWorld = transform.position;
+            if (!Manager.TryMoveOccupant(this, CurrentCell, landing)) return 0;
+
+            CurrentCell = landing;
+            StartSlide(fromWorld, Manager.CellToWorld(landing), slideSeconds, curve ?? moveCurve);
+            return moved;
+        }
+
+        /// <summary>
+        /// Collapses an offset between two cells into the single cardinal direction it mostly
+        /// points along (a tie goes horizontal). `fallback` is returned for a zero offset. For when
+        /// an object between two cells needs "which way was that?" — e.g. which way a push went.
+        /// </summary>
+        public static Vector2Int CardinalOf(Vector2Int delta, Vector2Int fallback)
+        {
+            if (delta == Vector2Int.zero) return fallback;
+
+            return Mathf.Abs(delta.x) >= Mathf.Abs(delta.y)
+                ? new Vector2Int((int)Mathf.Sign(delta.x), 0)
+                : new Vector2Int(0, (int)Mathf.Sign(delta.y));
+        }
+
         /// <summary>Shared tail of TryStep/TryBePushed once a destination cell has been fully validated: claims it in GridManager and starts the visual slide.</summary>
         private bool CommitStep(Vector2Int targetCell)
         {
@@ -292,21 +341,27 @@ namespace AnalogOverride.GridSystem
             if (!Manager.TryMoveOccupant(this, fromCell, targetCell)) return false;
 
             CurrentCell = targetCell;
-            StartCoroutine(MoveRoutine(Manager.CellToWorld(fromCell), Manager.CellToWorld(targetCell)));
+            StartSlide(Manager.CellToWorld(fromCell), Manager.CellToWorld(targetCell), moveDuration, moveCurve);
             return true;
         }
 
-        /// <summary>Purely cosmetic: slides the Transform between two world positions. Grid state (CurrentCell/occupancy) is already final by the time this runs — do not put gameplay logic in here, it won't run at a predictable time relative to other entities' moves.</summary>
-        private IEnumerator MoveRoutine(Vector3 fromWorld, Vector3 toWorld)
+        private Coroutine slideRoutine;
+
+        /// <summary>Starts the cosmetic slide, dropping any slide still in flight first — a knockback can land mid-step, and two slides driving one Transform would fight each other.</summary>
+        private void StartSlide(Vector3 fromWorld, Vector3 toWorld, float duration, AnimationCurve curve)
         {
+            if (slideRoutine != null) StopCoroutine(slideRoutine);
+            slideRoutine = StartCoroutine(MoveRoutine(fromWorld, toWorld, duration, curve));
+        }
+
+        /// <summary>Purely cosmetic: slides the Transform between two world positions. Grid state (CurrentCell/occupancy) is already final by the time this runs — do not put gameplay logic in here, it won't run at a predictable time relative to other entities' moves.</summary>
+        private IEnumerator MoveRoutine(Vector3 fromWorld, Vector3 toWorld, float duration, AnimationCurve curve)
+        {
+            // Duration and curve arrive by value, so a later Update() frame reassigning MoveDuration/
+            // MoveCurve in anticipation of a future step can't change a slide that's already in flight.
             IsMoving = true;
 
             var t = 0f;
-            // Snapshot both at slide-start: this step's slide must not be retroactively changed by a
-            // later Update() frame reassigning MoveDuration/MoveCurve in anticipation of a future step
-            // while this one is still animating.
-            var duration = moveDuration;
-            var curve = moveCurve;
             while (t < duration)
             {
                 t += Time.deltaTime;
@@ -320,6 +375,7 @@ namespace AnalogOverride.GridSystem
             transform.position = toWorld;
             UpdateSortingOrder(transform.position.y);
             IsMoving = false;
+            slideRoutine = null;
         }
     }
 }

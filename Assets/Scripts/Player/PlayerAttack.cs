@@ -35,7 +35,13 @@ public class PlayerAttack : MonoBehaviour
     private const int StageMid = 1;
     private const int StageFull = 2;
 
+    private CharacterController characterController;
     private bool isAttacking;
+
+    private void Awake()
+    {
+        characterController = GetComponent<CharacterController>();
+    }
 
     private void OnEnable()
     {
@@ -64,6 +70,9 @@ public class PlayerAttack : MonoBehaviour
         }
 
         if (isAttacking) return;
+
+        // A stunned player can't swing (see CharacterController.ReceiveHit).
+        if (characterController != null && characterController.IsStunned) return;
 
         if (Input.GetMouseButtonDown(0))
         {

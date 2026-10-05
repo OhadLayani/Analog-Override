@@ -64,14 +64,9 @@ namespace AnalogOverride.Entities
         /// </summary>
         private static Vector2Int PushDirection(Vector2Int origin, GridEntity source)
         {
-            if (source == null) return Vector2Int.down;
-
-            var delta = origin - source.CurrentCell;
-            if (delta == Vector2Int.zero) return Vector2Int.down;
-
-            return Mathf.Abs(delta.x) >= Mathf.Abs(delta.y)
-                ? new Vector2Int((int)Mathf.Sign(delta.x), 0)
-                : new Vector2Int(0, (int)Mathf.Sign(delta.y));
+            return source == null
+                ? Vector2Int.down
+                : GridEntity.CardinalOf(origin - source.CurrentCell, Vector2Int.down);
         }
 
         /// <summary>
