@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3583024709288946}
   - component: {fileID: 5482738451431363123}
   - component: {fileID: 4957774769039855066}
+  - component: {fileID: 6052217184558519697}
   m_Layer: 20
   m_Name: Player Sprite
   m_TagString: Untagged
@@ -114,6 +115,28 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6052217184558519697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1019539101366075451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b9a01912f16246b7aa043cccf11a4e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StretchVisual
+  frontFrames:
+  - {fileID: 6646965492164838186, guid: ad10d558d7257433ea42c11d4bdcd406, type: 3}
+  - {fileID: 4283874214547952417, guid: d7a9c1a9fd5334ef2b99d43935fda572, type: 3}
+  backFrames:
+  - {fileID: 50019756940067113, guid: 440ee659582f643769211d2864398dbf, type: 3}
+  - {fileID: 143037158426546907, guid: 4e0a1f8f41e0045d99bac5e1eb39a6f2, type: 3}
+  sideFrames:
+  - {fileID: -9188742898115497167, guid: 7d58213c508c048b1b994d9a016591b2, type: 3}
+  - {fileID: 7981210743476038901, guid: f9729e7c00948485c8b9d3bf41f98403, type: 3}
+  player: {fileID: 0}
 --- !u!1 &4320328064445824537
 GameObject:
   m_ObjectHideFlags: 0
@@ -232,6 +255,12 @@ MonoBehaviour:
   sideOffset: {x: -0.4358, y: 0.345}
   walkBackYOffset: 0.092
   walkSideYOffset: 0.109
+  bodyStretchBackYOffsets:
+  - 0.116
+  - 0.388
+  bodyStretchSideYOffsets:
+  - 0.112
+  - 0.439
   bodySprite: {fileID: 5482738451431363123}
   backSortOffset: 1
   sideSortOffset: -1
@@ -318,7 +347,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   pushable: 0
   weight: 1
-  climbHeight: 1
   sortingSprite: {fileID: 5482738451431363123}
   sortingOrderPrecision: 100
   sortingOrderBase: 10000
@@ -368,6 +396,9 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   energyCostPerWeight: 1
+  stretchKey: 32
+  stretchEnergyCost: 1
+  stretchFrameDuration: 0.08
 --- !u!61 &5628018141983903116
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -576,6 +607,12 @@ MonoBehaviour:
   sideOffset: {x: -0.024, y: 0.209}
   walkFrontBackYOffset: 0.11
   walkSideYOffset: 0.103
+  bodyStretchFrontBackYOffsets:
+  - 0.11
+  - 0.465
+  bodyStretchSideYOffsets:
+  - 0.11
+  - 0.407
   frontBackScale: {x: 0.53, y: 0.53}
   sideScale: {x: 0.53, y: 0.53}
   bodySprite: {fileID: 5482738451431363123}

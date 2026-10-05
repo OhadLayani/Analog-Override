@@ -9,8 +9,11 @@ public class CharacterController : GridEntity
     /// <summary>True while the walk animation is showing (a movement key is held or a step is sliding).</summary>
     public bool IsWalking { get; private set; }
 
-    /// <summary>True while the player is stretched: planted in place, unable to step, with the direction keys reaching for things on the level above instead of walking (see ToggleStretch / HandleStretchInput).</summary>
-    public bool IsStretching { get; private set; }
+    /// <summary>True from the start of a stretch until fully contracted again: planted in place, no walking or turning (attack still works).</summary>
+    public bool IsStretching => stretchStage != StretchIdle || stretchTarget != StretchIdle;
+
+    /// <summary>Body stretch stage for visuals: 0 = normal (mode 1), 1 = half (mode 2), 2 = full (mode 3).</summary>
+    public int StretchStage => stretchStage;
 
     /// <summary>0..1 progress of plain steps toward the next bar cost (stepCounter / threshold for the current cell).</summary>
     public float StepProgress
@@ -26,6 +29,15 @@ public class CharacterController : GridEntity
     private Animator animator;
     private SpringManager springManager;
     private int stepCounter;
+
+    // Body stretch state: stretchStage is what's shown, stretchTarget is where it's heading
+    // (Full while stretching/holding, Idle while contracting).
+    private const int StretchIdle = 0;
+    private const int StretchHalf = 1;
+    private const int StretchFull = 2;
+    private int stretchStage;
+    private int stretchTarget;
+    private float stretchTimer;
 
     // The entity's own configured move duration/curve (GridEntity's Inspector-set values),
     // cached once so they can be restored after a high-friction step.
@@ -52,16 +64,21 @@ public class CharacterController : GridEntity
     [SerializeField] private float energyCostPerWeight = 1f;
 
     [Header("Stretch")]
-    [Tooltip("Press to start stretching, press again to stop. While stretched the player can't move; the direction keys reach toward the adjacent cell on the level above instead.")]
+    [Tooltip("Press while standing still to stretch (1 → 2 → 3); hold to stay stretched; release to contract (3 → 2 → 1). No walking or turning while stretched; attacking still works.")]
     [SerializeField] private KeyCode stretchKey = KeyCode.Space;
 
-    [Tooltip("Energy bars charged each time a stretch STARTS — not per reach, and not for staying stretched. Pushing something while stretched still costs its weight on top, exactly like a normal push.")]
+    [Tooltip("Energy bars charged each time a stretch STARTS — not for staying stretched, and contracting is free.")]
     [Min(0)]
     [SerializeField] private int stretchEnergyCost = 1;
 
-    [Tooltip("How many levels above the player's own a stretch can reach. 1 = a player on level 0 can act on level 1.")]
-    [Min(1)]
-    [SerializeField] private int stretchReach = 1;
+    [Tooltip("Seconds the half-stretch frame (mode 2) shows, both when stretching and when contracting.")]
+    [Min(0f)]
+    [SerializeField] private float stretchFrameDuration = 0.08f;
+
+    // Disabled: how many levels up a stretch could reach with WASD. Unused until reaching returns (planned: stretch + attack).
+    // [Tooltip("How many levels above the player's own a stretch can reach. 1 = a player on level 0 can act on level 1.")]
+    // [Min(1)]
+    // [SerializeField] private int stretchReach = 1;
 
     private void Awake()
     {
@@ -109,36 +126,23 @@ public class CharacterController : GridEntity
             return;
         }
 
-        if (Input.GetKeyDown(stretchKey))
+        // GetKey (not GetKeyUp), so a release that happened while paused is still noticed on resume.
+        TickStretch(Input.GetKey(stretchKey));
+
+        Vector2Int dir = ReadHeldDirection();
+
+        // A stretch only starts while standing still: fully contracted, not sliding, no movement key held.
+        if (Input.GetKeyDown(stretchKey) && !IsStretching && !IsMoving && dir == Vector2Int.zero)
         {
-            ToggleStretch();
+            ChargeBars(stretchEnergyCost);
+            BeginStretch();
         }
 
+        // Planted while stretched: no walking, no turning — only PlayerAttack still acts.
         if (IsStretching)
         {
-            HandleStretchInput();
             UpdateAnimation(false);
             return;
-        }
-
-        Vector2Int dir = Vector2Int.zero;
-
-        // Determine discrete grid direction based on input
-        if (Input.GetKey(KeyCode.A))
-        {
-            dir = Vector2Int.left;
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            dir = Vector2Int.right;
-        }
-        else if (Input.GetKey(KeyCode.W))
-        {
-            dir = Vector2Int.up;
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            dir = Vector2Int.down;
         }
 
         if (dir != Vector2Int.zero)
@@ -186,8 +190,8 @@ public class CharacterController : GridEntity
     }
 
     /// <summary>
-    /// Weight-based energy cost of a push, shared by walking into a block and shoving one while
-    /// stretched. Friction slows pushing too: the cost is scaled by the same ratio that governs
+    /// Weight-based energy cost of a push (walking into a block). Friction slows pushing too: the
+    /// cost is scaled by the same ratio that governs
     /// plain-step friction (e.g. 3/2 = 1.5x by default), so the two stay derived from one pair
     /// of tunable numbers.
     /// </summary>
@@ -215,49 +219,98 @@ public class CharacterController : GridEntity
         }
     }
 
-    /// <summary>
-    /// Starts or ends a stretch. Starting costs energy up front and is refused mid-slide (the pose
-    /// would play over a character still travelling between cells); ending is always allowed.
-    /// </summary>
-    private void ToggleStretch()
+    /// <summary>Starts the stretch action (1 → 2 → 3): shows the half frame now, full after stretchFrameDuration.</summary>
+    private void BeginStretch()
     {
-        if (IsStretching)
+        stretchStage = StretchHalf;
+        stretchTarget = StretchFull;
+        stretchTimer = 0f;
+    }
+
+    /// <summary>
+    /// Advances the stretch one stage per stretchFrameDuration. A release only starts the contraction
+    /// (3 → 2 → 1) once already at full, checked before advancing, so full always shows for at least
+    /// one frame and one frame never both rises and contracts.
+    /// </summary>
+    private void TickStretch(bool held)
+    {
+        if (stretchStage == StretchFull && stretchTarget == StretchFull)
         {
-            IsStretching = false;
+            if (!held)
+            {
+                stretchStage = StretchHalf;
+                stretchTarget = StretchIdle;
+                stretchTimer = 0f;
+            }
             return;
         }
 
-        if (IsMoving) return;
+        if (stretchStage == stretchTarget) return;
 
-        ChargeBars(stretchEnergyCost);
-        IsStretching = true;
+        stretchTimer += Time.deltaTime;
+        if (stretchTimer < stretchFrameDuration) return;
+
+        // Half is always one step from either target, so one step per frame never overshoots.
+        stretchTimer = 0f;
+        stretchStage += stretchTarget > stretchStage ? 1 : -1;
     }
 
-    /// <summary>
-    /// While stretched the direction keys don't walk, they reach: one press is one reach toward the
-    /// adjacent cell (GetKeyDown, unlike walking's held-key repeat, so holding a key can't re-shove
-    /// or re-trigger something every frame). Pressing a direction also turns the player to face it,
-    /// which is what selects the matching directional stretch pose in UpdateAnimation.
-    /// </summary>
-    private void HandleStretchInput()
+    /// <summary>The held WASD direction (one at a time, A/D before W/S), or zero if none is held.</summary>
+    private static Vector2Int ReadHeldDirection()
     {
-        Vector2Int dir = Vector2Int.zero;
-
-        if (Input.GetKeyDown(KeyCode.A)) dir = Vector2Int.left;
-        else if (Input.GetKeyDown(KeyCode.D)) dir = Vector2Int.right;
-        else if (Input.GetKeyDown(KeyCode.W)) dir = Vector2Int.up;
-        else if (Input.GetKeyDown(KeyCode.S)) dir = Vector2Int.down;
-
-        if (dir == Vector2Int.zero) return;
-
-        FacingDirection = dir;
-
-        if (TryReach(dir, stretchReach, out var pushedWeight) && pushedWeight > 0f)
-        {
-            var onHighFriction = GridManager.Instance != null && GridManager.Instance.IsHighFriction(CurrentCell);
-            ChargePushEnergy(pushedWeight, onHighFriction);
-        }
+        if (Input.GetKey(KeyCode.A)) return Vector2Int.left;
+        if (Input.GetKey(KeyCode.D)) return Vector2Int.right;
+        if (Input.GetKey(KeyCode.W)) return Vector2Int.up;
+        if (Input.GetKey(KeyCode.S)) return Vector2Int.down;
+        return Vector2Int.zero;
     }
+
+    // Disabled: old press-to-toggle stretch (Space on/off). Replaced by hold-to-stretch (BeginStretch / TickStretch).
+    // /// <summary>
+    // /// Starts or ends a stretch. Starting costs energy up front and is refused mid-slide (the pose
+    // /// would play over a character still travelling between cells); ending is always allowed.
+    // /// </summary>
+    // private void ToggleStretch()
+    // {
+    //     if (IsStretching)
+    //     {
+    //         IsStretching = false;
+    //         return;
+    //     }
+    //
+    //     if (IsMoving) return;
+    //
+    //     ChargeBars(stretchEnergyCost);
+    //     IsStretching = true;
+    // }
+
+    // Disabled: WASD reach while stretched (turn + GridEntity.TryReach on the cell one level up).
+    // Tall objects will be reached via stretch + attack instead.
+    // /// <summary>
+    // /// While stretched the direction keys don't walk, they reach: one press is one reach toward the
+    // /// adjacent cell (GetKeyDown, unlike walking's held-key repeat, so holding a key can't re-shove
+    // /// or re-trigger something every frame). Pressing a direction also turns the player to face it,
+    // /// which is what selects the matching directional stretch pose in UpdateAnimation.
+    // /// </summary>
+    // private void HandleStretchInput()
+    // {
+    //     Vector2Int dir = Vector2Int.zero;
+    //
+    //     if (Input.GetKeyDown(KeyCode.A)) dir = Vector2Int.left;
+    //     else if (Input.GetKeyDown(KeyCode.D)) dir = Vector2Int.right;
+    //     else if (Input.GetKeyDown(KeyCode.W)) dir = Vector2Int.up;
+    //     else if (Input.GetKeyDown(KeyCode.S)) dir = Vector2Int.down;
+    //
+    //     if (dir == Vector2Int.zero) return;
+    //
+    //     FacingDirection = dir;
+    //
+    //     if (TryReach(dir, stretchReach, out var pushedWeight) && pushedWeight > 0f)
+    //     {
+    //         var onHighFriction = GridManager.Instance != null && GridManager.Instance.IsHighFriction(CurrentCell);
+    //         ChargePushEnergy(pushedWeight, onHighFriction);
+    //     }
+    // }
 
     /// <summary>
     /// Picks the animator's Direction value, keyed off FacingDirection so idle keeps looking
@@ -265,9 +318,7 @@ public class CharacterController : GridEntity
     /// is held — even if TryStep was refused (walking in place against a wall/door) — or while
     /// the last step's visual slide is still playing (GridEntity.IsMoving), so releasing a key
     /// mid-step doesn't cut the walk off early. Otherwise idle values (5/10/20/30).
-    /// While stretching, a separate range (40-43, in the same down/up/right/left order as the
-    /// walking values 0-3) takes over, so the Animator needs a stretch state per facing with a
-    /// transition keyed on those Direction values, just like the walk and idle ones.
+    /// While stretching the idle value is kept; StretchVisual draws the stretch sprites over it.
     /// </summary>
     private void UpdateAnimation(bool hasInput)
     {
@@ -276,14 +327,16 @@ public class CharacterController : GridEntity
         if (animator == null) return;
 
         int value;
-        if (IsStretching)
-        {
-            if (FacingDirection == Vector2Int.left) value = 43;
-            else if (FacingDirection == Vector2Int.right) value = 42;
-            else if (FacingDirection == Vector2Int.up) value = 41;
-            else value = 40;
-        }
-        else if (IsWalking)
+        // Disabled: Animator Direction 40-43 for stretch poses. Stretch sprites are now drawn by StretchVisual.
+        // if (IsStretching)
+        // {
+        //     if (FacingDirection == Vector2Int.left) value = 43;
+        //     else if (FacingDirection == Vector2Int.right) value = 42;
+        //     else if (FacingDirection == Vector2Int.up) value = 41;
+        //     else value = 40;
+        // }
+        // else
+        if (IsWalking)
         {
             if (FacingDirection == Vector2Int.left) value = 3;
             else if (FacingDirection == Vector2Int.right) value = 2;

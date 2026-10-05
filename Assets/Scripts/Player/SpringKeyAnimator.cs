@@ -26,6 +26,12 @@ public class SpringKeyAnimator : MonoBehaviour
     [Tooltip("Extra Y added to Side Offset while the walk animation shows (the walk sprites are drawn higher).")]
     [SerializeField] private float walkSideYOffset;
 
+    [Tooltip("Extra Y added to Back Offset while the body is stretched (Space): element 0 = half stretch, element 1 = full stretch.")]
+    [SerializeField] private float[] bodyStretchBackYOffsets = new float[2];
+
+    [Tooltip("Extra Y added to Side Offset while the body is stretched (Space): element 0 = half stretch, element 1 = full stretch.")]
+    [SerializeField] private float[] bodyStretchSideYOffsets = new float[2];
+
     [Header("Draw Order")]
     [Tooltip("The player's body SpriteRenderer. The key copies its sorting layer/order every frame.")]
     [SerializeField] private SpriteRenderer bodySprite;
@@ -119,6 +125,7 @@ public class SpringKeyAnimator : MonoBehaviour
         // flipX only mirrors around the pivot, so the side offset is mirrored by hand.
         var offset = facingUp ? backOffset : new Vector2(facingLeft ? -sideOffset.x : sideOffset.x, sideOffset.y);
         if (player.IsWalking) offset.y += facingUp ? walkBackYOffset : walkSideYOffset;
+        offset.y += BodyStretchLift(facingUp ? bodyStretchBackYOffsets : bodyStretchSideYOffsets, player.StretchStage);
         transform.localPosition = new Vector3(offset.x, offset.y, transform.localPosition.z);
 
         // GridEntity rewrites the body's order on every move, so follow it each frame.
@@ -127,6 +134,12 @@ public class SpringKeyAnimator : MonoBehaviour
             keyRenderer.sortingLayerID = bodySprite.sortingLayerID;
             keyRenderer.sortingOrder = bodySprite.sortingOrder + (facingUp ? backSortOffset : sideSortOffset);
         }
+    }
+
+    /// <summary>Extra Y for the body stretch stage (1 = half → element 0, 2 = full → element 1); 0 when not stretched or unset.</summary>
+    private static float BodyStretchLift(float[] offsets, int stage)
+    {
+        return stage > 0 && offsets != null && stage <= offsets.Length ? offsets[stage - 1] : 0f;
     }
 
     /// <summary>Updates targetFrame from the latest bars/step-progress state.</summary>

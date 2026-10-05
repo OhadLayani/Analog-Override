@@ -30,6 +30,12 @@ public class ArmsVisual : MonoBehaviour
     [Tooltip("Extra Y added to Side Offset while the walk animation shows (the walk sprites are drawn higher).")]
     [SerializeField] private float walkSideYOffset;
 
+    [Tooltip("Extra Y added to Front Back Offset while the BODY is stretched (Space): element 0 = half stretch, element 1 = full stretch.")]
+    [SerializeField] private float[] bodyStretchFrontBackYOffsets = new float[2];
+
+    [Tooltip("Extra Y added to Side Offset while the BODY is stretched (Space): element 0 = half stretch, element 1 = full stretch.")]
+    [SerializeField] private float[] bodyStretchSideYOffsets = new float[2];
+
     [Tooltip("Local scale of the arms while facing up or down. Overrides the Transform's scale.")]
     [SerializeField] private Vector2 frontBackScale = Vector2.one;
 
@@ -76,6 +82,7 @@ public class ArmsVisual : MonoBehaviour
         // Mirror the side offset by hand for left; the sprite itself needs no flip.
         var offset = profile ? new Vector2(facing.x < 0 ? -sideOffset.x : sideOffset.x, sideOffset.y) : frontBackOffset;
         if (player.IsWalking) offset.y += profile ? walkSideYOffset : walkFrontBackYOffset;
+        offset.y += BodyStretchLift(profile ? bodyStretchSideYOffsets : bodyStretchFrontBackYOffsets, player.StretchStage);
         transform.localPosition = new Vector3(offset.x, offset.y, transform.localPosition.z);
 
         var scale = profile ? sideScale : frontBackScale;
@@ -89,6 +96,12 @@ public class ArmsVisual : MonoBehaviour
         }
 
         FitHitbox();
+    }
+
+    /// <summary>Extra Y for the body stretch stage (1 = half → element 0, 2 = full → element 1); 0 when not stretched or unset.</summary>
+    private static float BodyStretchLift(float[] offsets, int stage)
+    {
+        return stage > 0 && offsets != null && stage <= offsets.Length ? offsets[stage - 1] : 0f;
     }
 
     /// <summary>Returns the sprite for the current stage, falling back to the idle sprite if a stretch frame is missing.</summary>
