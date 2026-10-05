@@ -12,6 +12,12 @@ public class CharacterController : GridEntity
     /// <summary>True while the player is stretched: planted in place, unable to step, with the direction keys reaching for things on the level above instead of walking (see ToggleStretch / HandleStretchInput).</summary>
     public bool IsStretching { get; private set; }
 
+    /// <summary>True while stunned after a hit (see ReceiveHit): no walking, stretching or attacking, and shown idle. See IsInvulnerable for how long further hits are ignored.</summary>
+    public bool IsStunned => stunTimer > 0f;
+
+    /// <summary>True from the moment of a hit until the stun AND the post-hit immunity have both run out (the player flashes throughout). Hits are ignored while this is true.</summary>
+    public bool IsInvulnerable => immunityTimer > 0f || IsStunned;
+
     /// <summary>0..1 progress of plain steps toward the next bar cost (stepCounter / threshold for the current cell).</summary>
     public float StepProgress
     {
@@ -63,9 +69,37 @@ public class CharacterController : GridEntity
     [Min(1)]
     [SerializeField] private int stretchReach = 1;
 
+    [Header("Taking hits")]
+    [Tooltip("Seconds the knockback slide takes — far quicker than a walking step, so it reads as being thrown rather than walking backwards.")]
+    [Min(0f)]
+    [SerializeField] private float knockbackSlideSeconds = 0.25f;
+
+    [Tooltip("Motion shape of the knockback slide. Default is a fast start that eases into the landing.")]
+    [SerializeField]
+    private AnimationCurve knockbackCurve = new AnimationCurve(
+        new Keyframe(0f, 0f, 0f, 2f),
+        new Keyframe(1f, 1f, 0f, 0f));
+
+    [Tooltip("Seconds after the stun ends during which the player can't be hit again, so a hazard that keeps coming back can't chain stuns together. The player flashes for the whole stun plus this time.")]
+    [Min(0f)]
+    [SerializeField] private float postHitImmunitySeconds = 1.5f;
+
+    [Tooltip("How many times per second the player flashes after a hit.")]
+    [Min(0.1f)]
+    [SerializeField] private float hitFlashesPerSecond = 6f;
+
+    private float stunTimer;
+    private float immunityTimer;
+    private SpriteFlasher flasher;
+
     private void Awake()
     {
         springManager = SpringManager.Instance;
+
+        if (!TryGetComponent(out flasher))
+        {
+            flasher = gameObject.AddComponent<SpriteFlasher>();
+        }
     }
 
     protected override void Start()
@@ -106,6 +140,18 @@ public class CharacterController : GridEntity
         // GUARD CLAUSE: Read the centralized state from GameManager
         if (GameManager.Instance != null && GameManager.Instance.IsGamePaused)
         {
+            return;
+        }
+
+        if (immunityTimer > 0f)
+        {
+            immunityTimer -= Time.deltaTime;
+        }
+
+        if (IsStunned)
+        {
+            stunTimer -= Time.deltaTime;
+            UpdateAnimation(false);
             return;
         }
 
@@ -260,6 +306,28 @@ public class CharacterController : GridEntity
     }
 
     /// <summary>
+    /// Takes a hit from something harmful (see Roomba): thrown up to knockbackCells cells along
+    /// knockbackDirection, charged energyLoss bars, and stunned for stunSeconds. Being hit ends a
+    /// stretch. The player then flashes until the stun plus postHitImmunitySeconds are over, and
+    /// can't be hit at all in that time. Returns false and does nothing while stunned or still
+    /// immune — that's what stops a hazard that keeps coming back (or a second one) from chaining
+    /// stuns together.
+    /// </summary>
+    public bool ReceiveHit(Vector2Int knockbackDirection, int knockbackCells, int energyLoss, float stunSeconds)
+    {
+        if (IsInvulnerable) return false;
+
+        IsStretching = false;
+        stunTimer = stunSeconds;
+        immunityTimer = stunSeconds + postHitImmunitySeconds;
+        flasher.Flash(immunityTimer, hitFlashesPerSecond);
+
+        ChargeBars(energyLoss);
+        Knockback(knockbackDirection, knockbackCells, knockbackSlideSeconds, knockbackCurve);
+        return true;
+    }
+
+    /// <summary>
     /// Picks the animator's Direction value, keyed off FacingDirection so idle keeps looking
     /// the way the player last moved/pressed. Walking values (0-3) play while a movement key
     /// is held — even if TryStep was refused (walking in place against a wall/door) — or while
@@ -271,7 +339,8 @@ public class CharacterController : GridEntity
     /// </summary>
     private void UpdateAnimation(bool hasInput)
     {
-        IsWalking = !IsStretching && (hasInput || IsMoving);
+        // Stunned reads as idle even while the knockback slide is still moving the character.
+        IsWalking = !IsStretching && !IsStunned && (hasInput || IsMoving);
 
         if (animator == null) return;
 
