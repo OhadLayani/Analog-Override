@@ -9,6 +9,9 @@ public class CharacterController : GridEntity
     /// <summary>True while the walk animation is showing (a movement key is held or a step is sliding).</summary>
     public bool IsWalking { get; private set; }
 
+    /// <summary>True while the player is stretched: planted in place, unable to step, with the direction keys reaching for things on the level above instead of walking (see ToggleStretch / HandleStretchInput).</summary>
+    public bool IsStretching { get; private set; }
+
     /// <summary>0..1 progress of plain steps toward the next bar cost (stepCounter / threshold for the current cell).</summary>
     public float StepProgress
     {
@@ -47,6 +50,18 @@ public class CharacterController : GridEntity
 
     [Tooltip("Energy bars charged per unit of Weight pushed, on top of (not counted towards) the normal per-step cost above. E.g. pushing a Weight-3 crate at 1 bar/weight costs 3 bars immediately, and doesn't advance stepCounter. Scaled up further by the friction ratio (stepsPerBar / stepsPerBarHighFriction) when the pusher ends up standing on a high-friction cell.")]
     [SerializeField] private float energyCostPerWeight = 1f;
+
+    [Header("Stretch")]
+    [Tooltip("Press to start stretching, press again to stop. While stretched the player can't move; the direction keys reach toward the adjacent cell on the level above instead.")]
+    [SerializeField] private KeyCode stretchKey = KeyCode.Space;
+
+    [Tooltip("Energy bars charged each time a stretch STARTS — not per reach, and not for staying stretched. Pushing something while stretched still costs its weight on top, exactly like a normal push.")]
+    [Min(0)]
+    [SerializeField] private int stretchEnergyCost = 1;
+
+    [Tooltip("How many levels above the player's own a stretch can reach. 1 = a player on level 0 can act on level 1.")]
+    [Min(1)]
+    [SerializeField] private int stretchReach = 1;
 
     private void Awake()
     {
@@ -91,6 +106,18 @@ public class CharacterController : GridEntity
         // GUARD CLAUSE: Read the centralized state from GameManager
         if (GameManager.Instance != null && GameManager.Instance.IsGamePaused)
         {
+            return;
+        }
+
+        if (Input.GetKeyDown(stretchKey))
+        {
+            ToggleStretch();
+        }
+
+        if (IsStretching)
+        {
+            HandleStretchInput();
+            UpdateAnimation(false);
             return;
         }
 
@@ -139,12 +166,7 @@ public class CharacterController : GridEntity
                     // Tutorial task: mark "push" complete. No-op outside the Tutorial scene.
                     TutorialManager.Instance?.NotifyBlockPushed();
 
-                    // Friction slows pushing too: scale the weight-based cost by the same
-                    // ratio that governs plain-step friction (e.g. 3/2 = 1.5x by default),
-                    // so the two costs stay derived from one pair of tunable numbers.
-                    var frictionMultiplier = onHighFriction ? (float)stepsPerBar / stepsPerBarHighFriction : 1f;
-                    var cost = Mathf.Max(1, Mathf.RoundToInt(pushedWeight * energyCostPerWeight * frictionMultiplier));
-                    springManager?.ReduceBars(cost);
+                    ChargePushEnergy(pushedWeight, onHighFriction);
                 }
                 else
                 {
@@ -153,17 +175,9 @@ public class CharacterController : GridEntity
                     var threshold = onHighFriction ? stepsPerBarHighFriction : stepsPerBar;
                     if (stepCounter >= threshold)
                     {
-                        springManager?.ReduceBars(1);
+                        ChargeBars(1);
                         stepCounter = 0;
                     }
-                }
-
-                // Fires exactly once per "close call": Bars can only equal 1 right after the
-                // single ReduceBars call that lands on it — any reduction taken FROM 1 goes
-                // straight to 0 (death) instead, so this can't double-log while lingering at 1.
-                if (springManager != null && springManager.Bars == 1)
-                {
-                    AnalyticsLogger.Instance?.LogLastBar();
                 }
             }
         }
@@ -172,20 +186,104 @@ public class CharacterController : GridEntity
     }
 
     /// <summary>
+    /// Weight-based energy cost of a push, shared by walking into a block and shoving one while
+    /// stretched. Friction slows pushing too: the cost is scaled by the same ratio that governs
+    /// plain-step friction (e.g. 3/2 = 1.5x by default), so the two stay derived from one pair
+    /// of tunable numbers.
+    /// </summary>
+    private void ChargePushEnergy(float pushedWeight, bool onHighFriction)
+    {
+        var frictionMultiplier = onHighFriction ? (float)stepsPerBar / stepsPerBarHighFriction : 1f;
+        ChargeBars(Mathf.Max(1, Mathf.RoundToInt(pushedWeight * energyCostPerWeight * frictionMultiplier)));
+    }
+
+    /// <summary>
+    /// Every energy deduction goes through here, so the "close call" analytics check lives in one
+    /// place. It has to run right after a deduction and only then: Bars can equal 1 only immediately
+    /// after the single deduction that lands on it (any deduction FROM 1 goes straight to 0 / death).
+    /// Checking after every step instead would re-log the same close call on each step spent at 1 bar.
+    /// </summary>
+    private void ChargeBars(int amount)
+    {
+        if (springManager == null || amount <= 0) return;
+
+        springManager.ReduceBars(amount);
+
+        if (springManager.Bars == 1)
+        {
+            AnalyticsLogger.Instance?.LogLastBar();
+        }
+    }
+
+    /// <summary>
+    /// Starts or ends a stretch. Starting costs energy up front and is refused mid-slide (the pose
+    /// would play over a character still travelling between cells); ending is always allowed.
+    /// </summary>
+    private void ToggleStretch()
+    {
+        if (IsStretching)
+        {
+            IsStretching = false;
+            return;
+        }
+
+        if (IsMoving) return;
+
+        ChargeBars(stretchEnergyCost);
+        IsStretching = true;
+    }
+
+    /// <summary>
+    /// While stretched the direction keys don't walk, they reach: one press is one reach toward the
+    /// adjacent cell (GetKeyDown, unlike walking's held-key repeat, so holding a key can't re-shove
+    /// or re-trigger something every frame). Pressing a direction also turns the player to face it,
+    /// which is what selects the matching directional stretch pose in UpdateAnimation.
+    /// </summary>
+    private void HandleStretchInput()
+    {
+        Vector2Int dir = Vector2Int.zero;
+
+        if (Input.GetKeyDown(KeyCode.A)) dir = Vector2Int.left;
+        else if (Input.GetKeyDown(KeyCode.D)) dir = Vector2Int.right;
+        else if (Input.GetKeyDown(KeyCode.W)) dir = Vector2Int.up;
+        else if (Input.GetKeyDown(KeyCode.S)) dir = Vector2Int.down;
+
+        if (dir == Vector2Int.zero) return;
+
+        FacingDirection = dir;
+
+        if (TryReach(dir, stretchReach, out var pushedWeight) && pushedWeight > 0f)
+        {
+            var onHighFriction = GridManager.Instance != null && GridManager.Instance.IsHighFriction(CurrentCell);
+            ChargePushEnergy(pushedWeight, onHighFriction);
+        }
+    }
+
+    /// <summary>
     /// Picks the animator's Direction value, keyed off FacingDirection so idle keeps looking
     /// the way the player last moved/pressed. Walking values (0-3) play while a movement key
     /// is held — even if TryStep was refused (walking in place against a wall/door) — or while
     /// the last step's visual slide is still playing (GridEntity.IsMoving), so releasing a key
     /// mid-step doesn't cut the walk off early. Otherwise idle values (5/10/20/30).
+    /// While stretching, a separate range (40-43, in the same down/up/right/left order as the
+    /// walking values 0-3) takes over, so the Animator needs a stretch state per facing with a
+    /// transition keyed on those Direction values, just like the walk and idle ones.
     /// </summary>
     private void UpdateAnimation(bool hasInput)
     {
-        IsWalking = hasInput || IsMoving;
+        IsWalking = !IsStretching && (hasInput || IsMoving);
 
         if (animator == null) return;
 
         int value;
-        if (IsWalking)
+        if (IsStretching)
+        {
+            if (FacingDirection == Vector2Int.left) value = 43;
+            else if (FacingDirection == Vector2Int.right) value = 42;
+            else if (FacingDirection == Vector2Int.up) value = 41;
+            else value = 40;
+        }
+        else if (IsWalking)
         {
             if (FacingDirection == Vector2Int.left) value = 3;
             else if (FacingDirection == Vector2Int.right) value = 2;

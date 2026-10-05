@@ -1,7 +1,8 @@
+using AnalogOverride.GridSystem;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
-public class Key : MonoBehaviour
+public class Key : MonoBehaviour, IInteractable
 {
     [Tooltip("Which Door(s) this key unlocks - a Door only opens for a key whose keyId matches its own.")]
     [SerializeField] private string keyId = "default";
@@ -18,6 +19,8 @@ public class Key : MonoBehaviour
     /// </summary>
     public static event System.Action<string> KeyCollected;
 
+    private bool collected;
+
     private void Start()
     {
         // If this key was already collected before this scene load (e.g. respawning
@@ -31,20 +34,38 @@ public class Key : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Check if the colliding object is the player
-        
-        if (collision.TryGetComponent<CharacterController>(out var player))
+        if (collision.TryGetComponent<CharacterController>(out _))
         {
-            if (GameManager.Instance != null)
-            {
-                GameManager.Instance.CollectKey(keyId);
-            }
-
-            KeyCollected?.Invoke(keyId);
-
-            if (anim != null)
-                anim.SetTrigger("pickup");
-
-            Destroy(gameObject);
+            Collect();
         }
+    }
+
+    /// <summary>
+    /// Picks the key up by reaching for it instead of walking over it — the route for a key
+    /// sitting on a raised level the player can't step onto (see GridEntity.TryReach).
+    /// </summary>
+    public void Interact(GridEntity source)
+    {
+        Collect();
+    }
+
+    private void Collect()
+    {
+        // Destroy() only takes effect at the end of the frame, so without this a walk-over and a
+        // reach landing in the same frame (or a second collider on this key) could collect twice.
+        if (collected) return;
+        collected = true;
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.CollectKey(keyId);
+        }
+
+        KeyCollected?.Invoke(keyId);
+
+        if (anim != null)
+            anim.SetTrigger("pickup");
+
+        Destroy(gameObject);
     }
 }
