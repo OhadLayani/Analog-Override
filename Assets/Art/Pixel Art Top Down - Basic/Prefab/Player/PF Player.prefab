@@ -164,7 +164,7 @@ Transform:
   m_GameObject: {fileID: 4320328064445824537}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.016, y: -0.453, z: 0}
+  m_LocalPosition: {x: 0.016, y: 0.3463, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -257,10 +257,10 @@ MonoBehaviour:
   walkSideYOffset: 0.155
   bodyStretchBackYOffsets:
   - 0.116
-  - 0.388
+  - 0.9543
   bodyStretchSideYOffsets:
   - 0.11
-  - 0.439
+  - 0.9518
   bodySprite: {fileID: 5482738451431363123}
   backSortOffset: 1
   sideSortOffset: -1
@@ -300,8 +300,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5412278, y: 0.5412278, z: 0.5412278}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6435713682445502500}
   - {fileID: 3583024709288946}
@@ -460,7 +460,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.09}
+  m_Offset: {x: 0.009097576, y: -1.4602239}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -470,7 +470,7 @@ BoxCollider2D:
     drawMode: 1
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.5865278, y: 0.36506104}
+  m_Size: {x: 1.0049481, y: 0.3178295}
   m_EdgeRadius: 0
 --- !u!50 &4689586921714556905
 Rigidbody2D:
@@ -544,7 +544,7 @@ Transform:
   m_GameObject: {fileID: 7460859007745716979}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.007, y: -0.688, z: 0}
+  m_LocalPosition: {x: 0.012, y: -0.689, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -636,10 +636,10 @@ MonoBehaviour:
   walkSideYOffset: 0.1586
   bodyStretchFrontBackYOffsets:
   - 0.11
-  - 0.465
+  - 0.955
   bodyStretchSideYOffsets:
   - 0.11
-  - 0.407
+  - 0.951
   frontBackScale: {x: 1, y: 1}
   sideScale: {x: 1, y: 1}
   bodySprite: {fileID: 5482738451431363123}
