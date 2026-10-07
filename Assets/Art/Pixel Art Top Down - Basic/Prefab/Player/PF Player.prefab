@@ -28,8 +28,8 @@ Transform:
   m_GameObject: {fileID: 1019539101366075451}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.014, y: 0.671, z: 0.5}
-  m_LocalScale: {x: 0.97218746, y: 1.25, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5628018141983903106}
@@ -87,8 +87,8 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 1
-  m_Size: {x: 0.6655616, y: 1.4}
+  m_DrawMode: 0
+  m_Size: {x: 0.71, y: 1.91}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -164,8 +164,8 @@ Transform:
   m_GameObject: {fileID: 4320328064445824537}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalPosition: {x: 0.016, y: -0.453, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 5628018141983903106}
@@ -251,15 +251,15 @@ MonoBehaviour:
   - {fileID: 6425063525469577524, guid: 50069cca4a08744c9b0bc929494a5f2a, type: 3}
   - {fileID: -8143523905938973804, guid: 3ce27f8fa3ae542c5be25a11b763abc3, type: 3}
   - {fileID: 387562089145454961, guid: 04d451ae9b5864faf8dd9f33cbba3246, type: 3}
-  backOffset: {x: 0.02, y: 0.357}
-  sideOffset: {x: -0.4358, y: 0.345}
-  walkBackYOffset: 0.092
-  walkSideYOffset: 0.109
+  backOffset: {x: 0.016, y: -0.6082}
+  sideOffset: {x: -0.8593, y: -0.6095}
+  walkBackYOffset: 0.155
+  walkSideYOffset: 0.155
   bodyStretchBackYOffsets:
   - 0.116
   - 0.388
   bodyStretchSideYOffsets:
-  - 0.112
+  - 0.11
   - 0.439
   bodySprite: {fileID: 5482738451431363123}
   backSortOffset: 1
@@ -399,6 +399,33 @@ MonoBehaviour:
   stretchKey: 32
   stretchEnergyCost: 1
   stretchFrameDuration: 0.08
+  knockbackSlideSeconds: 0.25
+  knockbackCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  postHitImmunitySeconds: 1.5
+  hitFlashesPerSecond: 6
 --- !u!61 &5628018141983903116
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -517,8 +544,8 @@ Transform:
   m_GameObject: {fileID: 7460859007745716979}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.021, y: 0.3, z: 0}
-  m_LocalScale: {x: 0.53, y: 0.53, z: 1}
+  m_LocalPosition: {x: 0.007, y: -0.688, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4657591668292462641}
@@ -603,18 +630,18 @@ MonoBehaviour:
   sideStretchFrames:
   - {fileID: 1551942205598649076, guid: 3a22e03e6a83748f8a7cbc6df25f1cce, type: 3}
   - {fileID: -1435434500944217701, guid: c607c2557186e45a3874ddb24121f54d, type: 3}
-  frontBackOffset: {x: 0.021, y: 0.3}
-  sideOffset: {x: -0.024, y: 0.209}
+  frontBackOffset: {x: 0.012, y: -0.689}
+  sideOffset: {x: -0.0627, y: -0.893}
   walkFrontBackYOffset: 0.11
-  walkSideYOffset: 0.103
+  walkSideYOffset: 0.1586
   bodyStretchFrontBackYOffsets:
   - 0.11
   - 0.465
   bodyStretchSideYOffsets:
   - 0.11
   - 0.407
-  frontBackScale: {x: 0.53, y: 0.53}
-  sideScale: {x: 0.53, y: 0.53}
+  frontBackScale: {x: 1, y: 1}
+  sideScale: {x: 1, y: 1}
   bodySprite: {fileID: 5482738451431363123}
   frontBackSortOffset: 1
   sideSortOffset: 1
