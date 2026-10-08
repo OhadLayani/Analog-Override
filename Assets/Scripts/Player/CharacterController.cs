@@ -362,52 +362,6 @@ public class CharacterController : GridEntity
         return Vector2Int.zero;
     }
 
-    // Disabled: old press-to-toggle stretch (Space on/off). Replaced by hold-to-stretch (BeginStretch / TickStretch).
-    // /// <summary>
-    // /// Starts or ends a stretch. Starting costs energy up front and is refused mid-slide (the pose
-    // /// would play over a character still travelling between cells); ending is always allowed.
-    // /// </summary>
-    // private void ToggleStretch()
-    // {
-    //     if (IsStretching)
-    //     {
-    //         IsStretching = false;
-    //         return;
-    //     }
-    //
-    //     if (IsMoving) return;
-    //
-    //     ChargeBars(stretchEnergyCost);
-    //     IsStretching = true;
-    // }
-
-    // Disabled: WASD reach while stretched (turn + GridEntity.TryReach on the cell one level up).
-    // Tall objects will be reached via stretch + attack instead.
-    // /// <summary>
-    // /// While stretched the direction keys don't walk, they reach: one press is one reach toward the
-    // /// adjacent cell (GetKeyDown, unlike walking's held-key repeat, so holding a key can't re-shove
-    // /// or re-trigger something every frame). Pressing a direction also turns the player to face it,
-    // /// which is what selects the matching directional stretch pose in UpdateAnimation.
-    // /// </summary>
-    // private void HandleStretchInput()
-    // {
-    //     Vector2Int dir = Vector2Int.zero;
-    //
-    //     if (Input.GetKeyDown(KeyCode.A)) dir = Vector2Int.left;
-    //     else if (Input.GetKeyDown(KeyCode.D)) dir = Vector2Int.right;
-    //     else if (Input.GetKeyDown(KeyCode.W)) dir = Vector2Int.up;
-    //     else if (Input.GetKeyDown(KeyCode.S)) dir = Vector2Int.down;
-    //
-    //     if (dir == Vector2Int.zero) return;
-    //
-    //     FacingDirection = dir;
-    //
-    //     if (TryReach(dir, stretchReach, out var pushedWeight) && pushedWeight > 0f)
-    //     {
-    //         var onHighFriction = GridManager.Instance != null && GridManager.Instance.IsHighFriction(CurrentCell);
-    //         ChargePushEnergy(pushedWeight, onHighFriction);
-    //     }
-    // }
 
     /// <summary>
     /// Takes a hit from something harmful (see Roomba): thrown up to knockbackCells cells along
