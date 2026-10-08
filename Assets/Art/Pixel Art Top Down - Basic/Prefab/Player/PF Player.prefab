@@ -422,7 +422,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  postHitImmunitySeconds: 1.5
+  postHitImmunitySeconds: 0.5
   hitFlashesPerSecond: 6
 --- !u!61 &5628018141983903116
 BoxCollider2D:

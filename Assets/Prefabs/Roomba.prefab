@@ -114,4 +114,4 @@ MonoBehaviour:
   startDirection: {x: 1, y: 0}
   knockbackCells: 2
   energyDamage: 2
-  stunSeconds: 2
+  stunSeconds: 1
