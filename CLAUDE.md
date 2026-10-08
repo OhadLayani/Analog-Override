@@ -13,7 +13,7 @@ A 2D top-down grid puzzle game built in Unity 6000.3.21f1 (Universal Render Pipe
 
 The player is a wind-up robot on a top-down grid. Its energy is a spring, shown as "bars": each action unwinds it, and charging stations (checkpoints) wind it back up. Puzzles are about moving and pushing efficiently before the spring runs out.
 
-- **Walking:** costs 1 bar every 3 steps on normal floor, or every 2 steps on high-friction terrain (carpet).
+- **Walking:** costs 1 bar every 3 steps on normal floor, or every 2 steps on high-friction terrain (carpet). Tapping a direction the robot isn't facing only turns it in place, for free; holding the key walks.
 - **Pushing:** costs `weight × energyCostPerWeight` bars right away and doesn't count toward the step counter. The cost is scaled up when the player ends the push on carpet.
 - **Attacking:** costs 3 bars per attack (`energyCost`), even if that empties the spring and kills the player.
 - **Tall objects:** a target one level above the player (on a raised tile, or standing on furniture like the desk lamp) can only be hit at full stretch. Two or more levels up can never be hit.
@@ -28,7 +28,7 @@ The player is a wind-up robot on a top-down grid. Its energy is a spring, shown 
 
 Each line gives the mechanic, a short description and its main scripts. **This list is also the regression checklist** (see "Verification"). When a mechanic is added or changed, propose the update to this list in the end-of-session review.
 
-- **Grid movement:** WASD, one cell per step, no diagonals. The logical move is instant and the visual slide follows. *(GridEntity, CharacterController)*
+- **Grid movement:** WASD, one cell per step, no diagonals. The logical move is instant and the visual slide follows. From standing still, a tap in a new direction only turns the robot (no energy); it walks once the key is held past `turnHoldSeconds`. Pressing the faced direction, or turning mid-walk, steps at once. No turning while stretched or stunned. *(GridEntity, CharacterController)*
 - **Walls:** cells painted on the collision tilemap can't be entered. *(GridManager.IsWalkable)*
 - **Pushing:** one object at a time, never a chain. If anything is behind the pushed object, the push fails. Costs weight-based energy. *(GridEntity.TryStep / TryBePushed)*
 - **Height levels:** the level comes from a stack of tilemap layers. Nothing can step or be pushed between levels. *(GridManager, GridEntity)*
@@ -72,6 +72,7 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 When Tsah says the session is over, propose edits to this file based on what happened in the session.
 - Focus on lasting, big-picture items: new or changed mechanics, architecture, conventions, workflow rules.
 - Leave out details that only mattered for this session.
+- Present the proposal to Tsah as a very concise bullet list, one short line per edit. Only this summary is short; the text written into this file keeps its usual detail.
 - Tsah approves, corrects, or says no update is needed. Edit this file only after approval.
 
 ## Code conventions
@@ -123,13 +124,13 @@ When Tsah says the session is over, propose edits to this file based on what hap
 ### Player (`Assets/Scripts/Player/`)
 
 - **`CharacterController`** (`GridEntity`):
-  - Movement: reads WASD through `ReadHeldDirection()` (one direction at a time), updates `FacingDirection`, then calls `TryStep`. On spawn it teleports to `GameManager.RespawnCell` *before* `base.Start()`.
+  - Movement: reads WASD through `ReadHeldDirection()` (one direction at a time), updates `FacingDirection`, then calls `TryStep`. On spawn it teleports to `GameManager.RespawnCell` *before* `base.Start()`. Turn in place: `UpdateTurnInPlace` sets `FacingDirection` and starts `turnHoldTimer` when a new direction is pressed from still; `ResetTurnInput` clears it during stretch and stun.
   - Energy: a plain step increments `stepCounter`; at `stepsPerBar` (or `stepsPerBarHighFriction` on carpet) it charges 1 bar. A push charges `max(1, round(weight × energyCostPerWeight × frictionMultiplier))`, where the multiplier is `stepsPerBar / stepsPerBarHighFriction` on carpet. All its costs go through `ChargeBars`, which also logs `LAST_BAR`.
   - Stretch: `stretchStage` / `stretchTarget` / `stretchTimer`, driven by `BeginStretch()` and `TickStretch(held)`. Space is read with `GetKey`, so releasing it during pause is still noticed on resume. Exposes `IsStretching` (blocks walking and turning) and `StretchStage` (0/1/2) for visuals. Ohad's `ToggleStretch`, `HandleStretchInput` (WASD reach), `stretchReach` and Animator `Direction` 40–43 are commented out.
   - Carpet slide: a step that **starts** on carpet uses `highFrictionMoveDuration` / `highFrictionMoveCurve`.
   - Exposes `IsWalking` and `StepProgress` (0..1) for visuals.
   - Death: subscribes to `SpringManager.BarsReachedZero`, then logs the death and calls `GameManager.ReloadScene()`.
-  - Animator int `Direction`: walking down/up/right/left = 0/1/2/3; idle = 5/10/20/30.
+  - Animator int `Direction`: walking down/up/right/left = 0/1/2/3; idle = 5/10/20/30. The idle states also need **Any State** transitions (Direction = 5/10/20/30, no exit time, duration 0, Can Transition To Self off), so turning in place can switch from one idle to another without passing through a walk state.
 - **`PlayerAttack`**: on left click, charges `energyCost` bars, turns on the `AttackHitbox` child, and steps `ArmsVisual.Stage` through out → hold → back over `attackDuration`. `fullStretchShare` is the share of that time spent at full stretch, and the duration is also the cooldown. Damage is applied through the hitbox's `TargetDetected` event.
   - It hits two ways: the **cell check** (`StrikeReachedCells`; only targets that belong to the checked cell) and the **arms hitbox** (filtered by `IsInReach`: facing up or down, only the player's own row).
   - `CellOf` gives a target's cell (its own `GridEntity`, the one it rides on, or the cell under its pivot); both filters and `CanReachHeight` use it.

@@ -45,6 +45,10 @@ public class CharacterController : GridEntity
     private int stretchTarget;
     private float stretchTimer;
 
+    // Turn in place: time left before a held key walks after a turn, and last frame's held direction.
+    private float turnHoldTimer;
+    private Vector2Int heldDirLastFrame;
+
     // The entity's own configured move duration/curve (GridEntity's Inspector-set values),
     // cached once so they can be restored after a high-friction step.
     private float baseMoveDuration;
@@ -65,6 +69,10 @@ public class CharacterController : GridEntity
         new Keyframe(0.3f, 0.55f, 0.3f, 0.3f),
         new Keyframe(0.7f, 0.65f, 0.3f, 0.3f),
         new Keyframe(1f, 1f, 3f, 0f));
+
+    [Tooltip("Pressing a direction the robot isn't facing, while standing still, only turns it. Seconds the key must stay held after that turn before it starts walking. Turning in place is free.")]
+    [Min(0f)]
+    [SerializeField] private float turnHoldSeconds = 0.12f;
 
     [Tooltip("Energy bars charged per unit of Weight pushed, on top of (not counted towards) the normal per-step cost above. E.g. pushing a Weight-3 crate at 1 bar/weight costs 3 bars immediately, and doesn't advance stepCounter. Scaled up further by the friction ratio (stepsPerBar / stepsPerBarHighFriction) when the pusher ends up standing on a high-friction cell.")]
     [SerializeField] private float energyCostPerWeight = 1f;
@@ -170,6 +178,7 @@ public class CharacterController : GridEntity
         if (IsStunned)
         {
             stunTimer -= Time.deltaTime;
+            ResetTurnInput();
             UpdateAnimation(false);
             return;
         }
@@ -189,19 +198,18 @@ public class CharacterController : GridEntity
         // Planted while stretched: no walking, no turning — only PlayerAttack still acts.
         if (IsStretching)
         {
+            ResetTurnInput();
             UpdateAnimation(false);
             return;
         }
 
-        if (dir != Vector2Int.zero)
+        UpdateTurnInPlace(dir);
+        bool walking = dir != Vector2Int.zero && turnHoldTimer <= 0f;
+
+        // If a directional key is held (and not just turning in place), attempt to step on the grid
+        if (walking)
         {
             FacingDirection = dir;
-        }
-
-        // If a directional key is pressed, attempt to step on the grid
-        if (dir != Vector2Int.zero)
-        {
-           
             TutorialManager.Instance?.NotifyPlayerMoved();
 
             
@@ -234,7 +242,40 @@ public class CharacterController : GridEntity
             }
         }
 
-        UpdateAnimation(dir != Vector2Int.zero);
+        UpdateAnimation(walking);
+    }
+
+    /// <summary>
+    /// Pressing a new direction from standing still (no key held last frame, not sliding) only turns
+    /// the robot and starts turnHoldTimer; the key must stay held until it runs out to walk. Pressing
+    /// the faced direction, or changing direction mid-walk, leaves the timer at 0 so it walks at once.
+    /// </summary>
+    private void UpdateTurnInPlace(Vector2Int dir)
+    {
+        bool startingFromStill = heldDirLastFrame == Vector2Int.zero || turnHoldTimer > 0f;
+
+        if (dir == Vector2Int.zero)
+        {
+            turnHoldTimer = 0f;
+        }
+        else if (dir != FacingDirection && !IsMoving && startingFromStill)
+        {
+            FacingDirection = dir;
+            turnHoldTimer = turnHoldSeconds;
+        }
+        else if (turnHoldTimer > 0f)
+        {
+            turnHoldTimer -= Time.deltaTime;
+        }
+
+        heldDirLastFrame = dir;
+    }
+
+    /// <summary>Forgets held-key state, so a key held through a stretch or stun counts as a fresh press afterwards.</summary>
+    private void ResetTurnInput()
+    {
+        turnHoldTimer = 0f;
+        heldDirLastFrame = Vector2Int.zero;
     }
 
     /// <summary>
