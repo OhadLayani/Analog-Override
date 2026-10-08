@@ -218,13 +218,7 @@ public class PlayerAttack : MonoBehaviour
         if (manager == null || characterController == null) return true;
         if (target is not Component component) return true;
 
-        var targetLevel = manager.GetHeight(CellOf(manager, component));
-        if (component.TryGetComponent<HeightOffset>(out var offset))
-        {
-            targetLevel += offset.Levels;
-        }
-
-        var levelsUp = targetLevel - manager.GetHeight(characterController.CurrentCell);
+        var levelsUp = HeightOffset.LevelOf(manager, component) - manager.GetHeight(characterController.CurrentCell);
         if (levelsUp <= 0) return true;
 
         return levelsUp == 1 && characterController.StretchStage == StretchFull;

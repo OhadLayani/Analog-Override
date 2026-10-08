@@ -18,7 +18,8 @@ namespace AnalogOverride.Entities
     ///
     /// Its collider is a small circle on the lamp's head, moved to each frame's Head Offset so it swings
     /// with the drawing; it's also the only thing the attack can hit. On every frame it checks what it
-    /// now overlaps and reports each thing once per spin via SweptInto (never its own table or the player), and tells anything that implements ISweepable
+    /// now overlaps and reports each thing once per spin via SweptInto (never its own table or the player, and only things on the lamp's own level, see
+    /// HeightOffset.LevelOf), and tells anything that implements ISweepable
     /// (e.g. a PushOffObject on a shelf). It never calls TakeDamage on what it sweeps (that would collect a Key).
     ///
     /// The collider should be a trigger: nothing on the grid moves by physics, and the player's attack
@@ -139,10 +140,16 @@ namespace AnalogOverride.Entities
         {
             headCollider.Overlap(ContactFilter2D.noFilter, overlaps);
 
+            // The levels simulate height in a flat 2D scene, so the head only reaches things on the
+            // lamp's own level, not the floor under the shelf. Worked out per sweep: the table can be pushed.
+            var manager = GridManager.Instance;
+            var lampLevel = manager != null ? HeightOffset.LevelOf(manager, this) : 0;
+
             foreach (var hit in overlaps)
             {
                 if (hit.transform.IsChildOf(ignoreRoot)) continue;
                 if (hit.GetComponentInParent<CharacterController>() != null) continue;
+                if (manager != null && HeightOffset.LevelOf(manager, hit) != lampLevel) continue;
                 if (!sweptThisSpin.Add(hit)) continue;
 
                 // Placeholder until something reacts to SweptInto (e.g. the key falling off the table).
