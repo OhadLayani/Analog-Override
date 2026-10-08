@@ -1,5 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
 using AnalogOverride.Combat;
+using AnalogOverride.GridSystem;
 using UnityEngine;
 
 /// <summary>
@@ -37,6 +39,10 @@ public class PlayerAttack : MonoBehaviour
 
     private CharacterController characterController;
     private bool isAttacking;
+
+    // Everything already struck this swing, so the hitbox and the grid-cell check below can't both
+    // land on the same target (or the hitbox on it twice).
+    private readonly HashSet<IAttackable> struckThisSwing = new HashSet<IAttackable>();
 
     private void Awake()
     {
@@ -82,7 +88,9 @@ public class PlayerAttack : MonoBehaviour
 
     private IEnumerator AttackRoutine()
     {
+        struckThisSwing.Clear();
         SetAttacking(true);
+        StrikeReachedCells();
 
         // Charged after the hitbox is on: if this kills the player, the scene reloads anyway.
         SpringManager.Instance?.ReduceBars(energyCost);
@@ -116,6 +124,76 @@ public class PlayerAttack : MonoBehaviour
 
     private void HandleTargetDetected(IAttackable target)
     {
-        target.TakeDamage(attackDamage);
+        if (IsInReach(target))
+        {
+            Strike(target);
+        }
+    }
+
+    /// <summary>
+    /// Facing up or down the arms only reach out to the SIDES, but the hitbox is drawn low on the body
+    /// and also overlaps the cell below. So for those facings only targets in the player's own row
+    /// count, however far along it the hitbox reaches. Facing left or right everything the hitbox
+    /// touches counts. Anything that isn't a component to take a position from is let through.
+    /// </summary>
+    private bool IsInReach(IAttackable target)
+    {
+        var manager = GridManager.Instance;
+        if (manager == null || characterController == null) return true;
+        if (characterController.FacingDirection.x != 0) return true;
+        if (target is not Component component) return true;
+
+        return manager.WorldToCell(component.transform.position).y == characterController.CurrentCell.y;
+    }
+
+    /// <summary>
+    /// Hits whatever sits in the grid cells the arms reach, regardless of where the arms are drawn.
+    /// The hitbox follows the arms ART, which hangs low on the body, so on its own it can miss a
+    /// target in the player's own row — it reached things below the player but not to the left or
+    /// right. The grid is the source of truth for what's adjacent, so this checks those cells
+    /// directly; the hitbox still catches anything the arms touch beyond them.
+    ///
+    /// Which cells matches what's drawn: facing left/right the arms stretch out in profile, so just
+    /// the cell in front; facing up/down they stretch out to BOTH sides only, so the cells to the
+    /// left and right (see IsInReach, which keeps the hitbox to the same rule).
+    /// </summary>
+    private void StrikeReachedCells()
+    {
+        var manager = GridManager.Instance;
+        if (manager == null || characterController == null) return;
+
+        var facing = characterController.FacingDirection;
+        var origin = characterController.CurrentCell;
+
+        if (facing.x != 0)
+        {
+            StrikeCell(manager, origin + facing);
+        }
+        else
+        {
+            StrikeCell(manager, origin + Vector2Int.left);
+            StrikeCell(manager, origin + Vector2Int.right);
+        }
+    }
+
+    private void StrikeCell(GridManager manager, Vector2Int cell)
+    {
+        // A little smaller than the cell so a target in a neighbouring cell isn't clipped.
+        var hits = Physics2D.OverlapBoxAll(manager.CellToWorld(cell), manager.CellSize * 0.8f, 0f);
+        foreach (var hit in hits)
+        {
+            if (hit.TryGetComponent<IAttackable>(out var target) && target.IsAlive)
+            {
+                Strike(target);
+            }
+        }
+    }
+
+    private void Strike(IAttackable target)
+    {
+        if (struckThisSwing.Add(target))
+        {
+            target.TakeDamage(attackDamage);
+        }
     }
 }

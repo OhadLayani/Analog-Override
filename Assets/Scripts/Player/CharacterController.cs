@@ -99,7 +99,7 @@ public class CharacterController : GridEntity
 
     [Tooltip("Seconds after the stun ends during which the player can't be hit again, so a hazard that keeps coming back can't chain stuns together. The player flashes for the whole stun plus this time.")]
     [Min(0f)]
-    [SerializeField] private float postHitImmunitySeconds = 1.5f;
+    [SerializeField] private float postHitImmunitySeconds = 0.5f;
 
     [Tooltip("How many times per second the player flashes after a hit.")]
     [Min(0.1f)]
