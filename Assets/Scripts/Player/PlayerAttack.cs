@@ -37,6 +37,9 @@ public class PlayerAttack : MonoBehaviour
     private const int StageMid = 1;
     private const int StageFull = 2;
 
+    // CharacterController.StretchStage while the body is at full stretch.
+    private const int StretchFull = 2;
+
     private CharacterController characterController;
     private bool isAttacking;
 
@@ -135,6 +138,7 @@ public class PlayerAttack : MonoBehaviour
     /// and also overlaps the cell below. So for those facings only targets in the player's own row
     /// count, however far along it the hitbox reaches. Facing left or right everything the hitbox
     /// touches counts. Anything that isn't a component to take a position from is let through.
+    /// A target riding on a grid object (a lamp on a table) is in that object's row, wherever it's drawn.
     /// </summary>
     private bool IsInReach(IAttackable target)
     {
@@ -143,7 +147,7 @@ public class PlayerAttack : MonoBehaviour
         if (characterController.FacingDirection.x != 0) return true;
         if (target is not Component component) return true;
 
-        return manager.WorldToCell(component.transform.position).y == characterController.CurrentCell.y;
+        return CellOf(manager, component).y == characterController.CurrentCell.y;
     }
 
     /// <summary>
@@ -182,7 +186,10 @@ public class PlayerAttack : MonoBehaviour
         var hits = Physics2D.OverlapBoxAll(manager.CellToWorld(cell), manager.CellSize * 0.8f, 0f);
         foreach (var hit in hits)
         {
-            if (hit.TryGetComponent<IAttackable>(out var target) && target.IsAlive)
+            // Only targets that belong to this cell: a tall lamp's head can be drawn over the cell
+            // above its table, but it's only hit there by the arms actually touching it.
+            if (hit.TryGetComponent<IAttackable>(out var target) && target.IsAlive
+                && CellOf(manager, hit) == cell)
             {
                 Strike(target);
             }
@@ -191,9 +198,44 @@ public class PlayerAttack : MonoBehaviour
 
     private void Strike(IAttackable target)
     {
+        // Refused targets stay out of struckThisSwing, so a later frame of the same swing can still land.
+        if (!CanReachHeight(target)) return;
+
         if (struckThisSwing.Add(target))
         {
             target.TakeDamage(attackDamage);
         }
+    }
+
+    /// <summary>
+    /// Targets on a higher level than the player need the body stretched: one level up only at full
+    /// stretch, two or more never. Same-level and lower targets are always reachable. A target's level
+    /// is its cell's height plus its HeightOffset, if it has one (e.g. a lamp standing on a table).
+    /// </summary>
+    private bool CanReachHeight(IAttackable target)
+    {
+        var manager = GridManager.Instance;
+        if (manager == null || characterController == null) return true;
+        if (target is not Component component) return true;
+
+        var targetLevel = manager.GetHeight(CellOf(manager, component));
+        if (component.TryGetComponent<HeightOffset>(out var offset))
+        {
+            targetLevel += offset.Levels;
+        }
+
+        var levelsUp = targetLevel - manager.GetHeight(characterController.CurrentCell);
+        if (levelsUp <= 0) return true;
+
+        return levelsUp == 1 && characterController.StretchStage == StretchFull;
+    }
+
+    /// <summary>The cell a target belongs to: its own GridEntity's cell, or that of the one it rides on (a lamp on a pushable table); otherwise the cell under its pivot.</summary>
+    private static Vector2Int CellOf(GridManager manager, Component component)
+    {
+        var gridEntity = component.GetComponentInParent<GridEntity>();
+        return gridEntity != null
+            ? gridEntity.CurrentCell
+            : manager.WorldToCell(component.transform.position);
     }
 }
