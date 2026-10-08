@@ -8,6 +8,9 @@ public class Key : MonoBehaviour, IInteractable, IAttackable
     [Tooltip("Which Door(s) this key unlocks - a Door only opens for a key whose keyId matches its own.")]
     [SerializeField] private string keyId = "default";
 
+    /// <summary>The id that pairs this key with its Door(s).</summary>
+    public string KeyId => keyId;
+
     [Header("Visuals")]
     [SerializeField] private Animator anim;
 

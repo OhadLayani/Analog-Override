@@ -40,14 +40,15 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 - **Attack:** a mouse click charges energy and stretches both arms (stage 1 → 2 → 3 → 2 → 1 over `attackDuration`). The hitbox follows the drawn arms sprite and damages any `IAttackable` it touches. A target's cell is its own grid cell, or the cell of the grid object it rides on. Targets one level up need full stretch. *(PlayerAttack, ArmsVisual, AttackHitbox, HeightOffset)*
 - **Arms visual:** the arms sprite is picked by facing (front/back or profile) and attack stretch stage, with per-facing offset and scale, and is raised while walking and while the body is stretched. *(ArmsVisual)*
 - **Body stretch:** hold-to-stretch (see Game design). The body sprite switches to the stretch frames, and the arms and key rise with it. No walking or turning until fully contracted. *(CharacterController, StretchVisual, ArmsVisual, SpringKeyAnimator)*
-- **Push-off objects:** an object on a shelf that, when reached, spawns a fallen version on a lower level. **Nothing can trigger it yet** (waiting for stretch + attack). *(PushOffObject)*
-- **Desk lamp:** a lamp riding on a pushable table, one level tall. When the arms touch its head circle at full stretch, it spins once (4 frames, counter-clockwise) and its head circle swings with the frames, reporting what it sweeps into through `SweptInto`. Nothing reacts to the sweep yet (planned: knocking the key off the table). *(DeskLamp, HeightOffset, PlayerAttack)*
+- **Push-off objects:** a stand-in on a shelf or table. A spinning desk lamp knocks it away: it flies to its `sweptAwayReplacement` (e.g. a real Key placed on the floor, switched off), switches that on and itself off. A stand-in whose replacement key is already collected switches itself off on load, so after a death it doesn't return; a knocked-down key that wasn't picked up is back on the table after a death. The reach route (`Interact` → `fallenVariant`) still has no trigger. *(PushOffObject, ISweepable, DeskLamp, Key)*
+- **Desk lamp:** a lamp riding on a pushable table, one level tall. When the arms touch its head circle at full stretch, it spins once (4 frames, counter-clockwise) and its head circle swings with the frames, reporting what it sweeps into through `SweptInto` and calling `SweptBy` on anything `ISweepable` on its own level (e.g. a stand-in key on a neighbouring table). *(DeskLamp, HeightOffset, PlayerAttack, ISweepable)*
+- **Furniture:** solid pieces of any size and shape. Every cell whose centre the footprint collider covers acts like a wall for walking, pushing, knockback, the Roomba and landing spots. Draw order comes from the footprint's lowest row. *(Furniture, GridManager.BlockCell, SortAbove)*
 - **Stage goal & next level:** reaching the goal shows the stage-over screen and pauses the game. The next level comes from the Build Settings order. *(StageGoal, StageOverScreen, GameManager)*
 - **Level reset:** a full restart that clears the checkpoint and keys, then reloads the scene. *(GameManager.ResetLevel, PauseMenu, StageOverScreen)*
 - **Pause:** Esc toggles pause; time scale goes to 0 and player input is blocked. *(PauseMenu, GameManager)*
 - **Tutorial checklist:** four tasks (move, checkpoint, reset, push) unlock the Start button, and progress survives a reset. *(TutorialManager)*
 - **Spring UI & key visual:** the on-screen spring and the key on the robot's back follow the energy level; the key is raised while the body is stretched. *(UiManager, SpringKeyAnimator)*
-- **Draw order:** entities are sorted by world Y so they overlap correctly. *(GridEntity, SpringKeyAnimator, ArmsVisual)*
+- **Draw order:** entities are sorted by world Y so they overlap correctly. *(GridEntity, Furniture, SortAbove, SpringKeyAnimator, ArmsVisual)*
 
 ## How we work
 
@@ -56,6 +57,18 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 - **Git is Tsah's job.** Never commit, push, create branches or open PRs.
 - **Editor work.** When a change needs work in the Unity Editor (wiring Inspector fields, adding components, tilemaps, prefabs), give numbered step-by-step instructions: which GameObject, which component, which field, what to assign. Never edit `.unity` / `.prefab` / `.asset` YAML directly.
 - **Language.** Reply in whichever language Tsah writes in. Code, comments and identifiers are always in English.
+- **Furniture.** Whenever Tsah asks to add a piece of furniture, guide Tsah through the recipe below (numbered steps, adapted to that piece). Pushable furniture is the exception: it stays a one-cell `PushableBlock`.
+
+### Editor steps: the recipe for any furniture
+
+1. **Create the object:** a GameObject with a **SpriteRenderer** (the furniture art). Place it wherever it looks right; it doesn't need to line up with the grid.
+2. **Add `Furniture`:** set **Sorting Sprite** to its own SpriteRenderer, and leave the two number fields at their defaults.
+3. **Add a `BoxCollider2D`:**
+   - Turn on **Is Trigger**.
+   - Click **Edit Collider** and drag the box over the furniture's **floor footprint**. For a closet that's its base, not its tall back.
+   - The red squares show what's solid: a cell turns red once the box covers its **centre**. Adjust until exactly the right cells are red.
+   - For an L-shape, add more BoxCollider2Ds to the same GameObject, or use one PolygonCollider2D.
+4. **Things on top** (a vase, a stand-in key): make them **child objects**. Give each one `SortAbove` with **Target** = the furniture's SpriteRenderer.
 
 ### Verification
 
@@ -77,7 +90,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 
 ## Code conventions
 
-- **MonoBehaviour only:** every script inherits from `MonoBehaviour` or a subclass of it. No plain C# logic classes and no test assemblies. The existing interfaces (`IGridOccupant`, `IInteractable`, `IAttackable`) are the only exception.
+- **MonoBehaviour only:** every script inherits from `MonoBehaviour` or a subclass of it. No plain C# logic classes and no test assemblies. The existing interfaces (`IGridOccupant`, `IInteractable`, `IAttackable`, `ISweepable`) are the only exception.
 - **Doc comments:** a short one-line `/// <summary>` on new classes and non-obvious members. Leave the existing longer comments as they are.
 - **Namespaces:** match the other files in the same folder. `Grid/` uses `AnalogOverride.GridSystem`; `Entities/` and `Combat/` use their own `AnalogOverride.*` namespaces; `Managers/`, `Player/` and most of `UI/` have no namespace.
 - **Input:** keep using the legacy `Input.GetKey` / `Input.GetMouseButtonDown` API for consistency, even though the Input System package is installed.
@@ -86,7 +99,9 @@ When Tsah says the session is over, propose edits to this file based on what hap
 - **Pause guard:** gameplay `Update()`s return early when `GameManager.Instance.IsGamePaused` is true.
 - **Grid position:** always read `CurrentCell`, never derive a cell from `transform.position` (it lags during the slide).
 - **Extend by composition:** add new behavior as a separate component, rather than growing `PushableBlock` or `GridEntity`.
-- **Objects on furniture:** make them a child of the `GridEntity` they stand on, not a `GridEntity` themselves (a cell holds only one occupant). Read their cell from the parent's `CurrentCell`, and give them a `HeightOffset` if they're taller.
+- **Furniture:** fixed pieces use `Furniture` (see the recipe under "How we work"); pushable pieces are a one-cell `PushableBlock`.
+- **Objects on furniture:** make them a child of the piece they stand on, never a `GridEntity` themselves (a cell holds only one occupant), and give them `SortAbove`. On a pushable table their cell is the parent's `CurrentCell`; on fixed `Furniture` it's the cell under their pivot, so keep the pivot over the piece. Give them a `HeightOffset` (usually 1) so they count as being on top.
+- **Stand-in keys:** a stand-in's identity comes from its replacement Key, so give that Key the same Key Id as the UI (`UiManager.keyId`) and the Door. Never put a `Key` component on the stand-in itself.
 - **`TakeDamage` isn't a generic "hit":** `Key.TakeDamage` collects the key. For anything other than the player's attack (like the lamp's sweep), raise an event or use a dedicated hook instead.
 - **Inspector wiring risk:** renaming or removing a `[SerializeField]` field, or changing a public method wired to a button `OnClick`, still compiles, but the Inspector loses the reference without any error. Inspector-wired methods include `PauseMenu.Pause/Resume/ResetLevel/QuitGame`, `StageOverScreen.RestartLevel/NextLevel` and `SceneNavigationButtons.LoadNextScene`. Flag this whenever such a change is proposed.
 - **Don't edit generated files:** `*.csproj`, `Analog-Override.slnx`, `Library/`, `Logs/`, `UserSettings/`, `ProjectSettings/` (except for a deliberate project-settings change).
@@ -101,6 +116,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
   - `CellSize` gives a cell's world size (for physics overlaps).
   - Occupancy: a 2D array indexed by `cell - origin`. Only access it through `TryPlaceOccupant` / `RemoveOccupant` / `TryMoveOccupant` / `GetOccupant` / `IsFree`.
   - Raises `CellOccupantChanged`.
+  - Blocked cells: `BlockCell` / `UnblockCell` (counted, so overlapping pieces don't free each other's cells), used by `Furniture`. `IsWalkable` treats a blocked cell like a wall.
 - **`GridEntity`** (`IGridOccupant`): base class for anything on the grid. It registers itself in `Start`, frees its cell in `OnDisable`, and moves with `TryStep(dir, out pushedWeight)`. Resolution order:
   1. Off-grid or wall → refused.
   2. A different height → refused, whether the cell is occupied or not.
@@ -112,13 +128,16 @@ When Tsah says the session is over, propose edits to this file based on what hap
   `IsMoving` blocks new steps until the slide finishes. Subclasses can set `MoveDuration` / `MoveCurve` **before** calling `TryStep` to change that one step's slide. The optional `sortingSprite` gets its order in layer from world Y.
 - **`IGridOccupant`**: the minimal contract (`CurrentCell`, `IsPushable`).
 - **`IInteractable`**: a bump hook for occupants that can't be pushed.
-- **`HeightOffset`**: makes an object count as N levels above its cell's height. Used by the attack's height rule.
+- **`HeightOffset`**: makes an object count as N levels above its cell's height. `LevelOf` gives an object's level (its own or parent `GridEntity`'s cell, else the cell under its pivot, plus the offset). Used by the attack's height rule and the lamp's sweep.
 
 ### Entities (`Assets/Scripts/Entities/`, `AnalogOverride.Entities`)
 
 - **`PushableBlock`**: a `GridEntity` with no extra logic; `Reset()` defaults it to `pushable = true`.
 - **`PushOffObject`**: not a `GridEntity` (it doesn't occupy its cell); reacts through `IInteractable`. When reached, it spawns `fallenVariant` at `landingSpot`, or else at the nearest lower cell in the push direction, then destroys itself.
+  - Also `ISweepable`: `SweptBy` (only with a `sweptAwayReplacement` assigned) flies it to the replacement over `flySeconds`, then switches the replacement on and itself off. `Start` switches it off if the replacement is a Key that's already collected.
 - **`DeskLamp`**: `IAttackable`, not a `GridEntity`; a child of the table it stands on. On a hit it plays its spin frames once, moving a trigger `CircleCollider2D` to each frame's `headOffsets` entry (shown as Scene-view circles when selected). Every frame it checks what the circle overlaps and raises `SweptInto` once per object per spin, skipping its own table and the player. Its draw order follows the table's sprite plus an offset.
+- **`ISweepable`**: `SweptBy(DeskLamp)`, implemented by anything that reacts to a spinning lamp's head.
+- **`Furniture`**: not a `GridEntity`. In `Start` it blocks every cell whose centre lies inside one of its own enabled colliders (not its children's), and frees them in `OnDisable`. It sets its `sortingSprite` order from the lowest footprint row, one step behind so the player wins a tie. `OnDrawGizmosSelected` shows the blocked cells as red squares.
 - **`Door`**: a non-pushable `IInteractable` that opens when bumped, if `GameManager.HasKey(keyId)`. It can occupy extra cells through `extraCells`, which are claimed in `Start` and freed in `OnDisable`. `disableOnOpen` either deactivates the GameObject or just frees all of its cells.
 
 ### Player (`Assets/Scripts/Player/`)
@@ -179,7 +198,8 @@ When Tsah says the session is over, propose edits to this file based on what hap
 ### Misc (`Assets/Scripts/`, no namespace)
 
 - **`Checkpoint`**: trigger. On player contact it logs the visit, notifies the tutorial, resets the step counter and the bars, and activates itself (saving the respawn point and firing the `activate` animation) only if it isn't already active.
-- **`Key`**: trigger, and also an `IInteractable`, so it can be collected by a reach (guarded against collecting twice). On pickup it calls `GameManager.CollectKey(keyId)` and raises the static `KeyCollected` event before destroying itself. In `Start` it destroys itself without raising the event if the key was already collected.
+- **`Key`**: trigger, and also an `IInteractable`, so it can be collected by a reach (guarded against collecting twice). On pickup it calls `GameManager.CollectKey(keyId)` and raises the static `KeyCollected` event before destroying itself. In `Start` it destroys itself without raising the event if the key was already collected. Also `IAttackable` (an attack collects it). `KeyId` exposes its id.
+- **`SortAbove`**: copies a target sprite's order in layer plus `offset` every `LateUpdate`, for things standing on furniture.
 - **`StageGoal`**: trigger. The first time the player touches it, it calls `StageOverScreen.Instance.Show()`.
 
 ## Singleton / init order
