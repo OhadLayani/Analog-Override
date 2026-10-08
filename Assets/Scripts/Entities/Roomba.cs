@@ -74,7 +74,7 @@ namespace AnalogOverride.Entities
 
         [Tooltip("Seconds the player is stunned.")]
         [Min(0f)]
-        [SerializeField] private float stunSeconds = 2f;
+        [SerializeField] private float stunSeconds = 1f;
 
         [Header("Responding to the docking station")]
         [Tooltip("Seconds per cell while rushing to the station — lower is faster. Compare with Move Duration, its normal speed.")]

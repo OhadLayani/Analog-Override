@@ -1,8 +1,9 @@
+using AnalogOverride.Combat;
 using AnalogOverride.GridSystem;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
-public class Key : MonoBehaviour, IInteractable
+public class Key : MonoBehaviour, IInteractable, IAttackable
 {
     [Tooltip("Which Door(s) this key unlocks - a Door only opens for a key whose keyId matches its own.")]
     [SerializeField] private string keyId = "default";
@@ -45,6 +46,18 @@ public class Key : MonoBehaviour, IInteractable
     /// sitting on a raised level the player can't step onto (see GridEntity.TryReach).
     /// </summary>
     public void Interact(GridEntity source)
+    {
+        Collect();
+    }
+
+    /// <summary>False once collected, so the attack hitbox doesn't report a key that's already been picked up (it lingers until the end of the frame).</summary>
+    public bool IsAlive => !collected;
+
+    /// <summary>
+    /// Picks the key up by striking it (see PlayerAttack / AttackHitbox) — a third route besides
+    /// walking over it and reaching for it. The damage amount is irrelevant; any hit collects it.
+    /// </summary>
+    public void TakeDamage(int amount)
     {
         Collect();
     }
