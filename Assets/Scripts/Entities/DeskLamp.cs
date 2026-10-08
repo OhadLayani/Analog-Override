@@ -18,8 +18,8 @@ namespace AnalogOverride.Entities
     ///
     /// Its collider is a small circle on the lamp's head, moved to each frame's Head Offset so it swings
     /// with the drawing; it's also the only thing the attack can hit. On every frame it checks what it
-    /// now overlaps and reports each thing once per spin via SweptInto (never its own table or the player). It reports only: it never calls TakeDamage on what it
-    /// sweeps (that would collect a Key).
+    /// now overlaps and reports each thing once per spin via SweptInto (never its own table or the player), and tells anything that implements ISweepable
+    /// (e.g. a PushOffObject on a shelf). It never calls TakeDamage on what it sweeps (that would collect a Key).
     ///
     /// The collider should be a trigger: nothing on the grid moves by physics, and the player's attack
     /// finds triggers anyway. The sweep is a query, so no Rigidbody2D is needed.
@@ -148,6 +148,9 @@ namespace AnalogOverride.Entities
                 // Placeholder until something reacts to SweptInto (e.g. the key falling off the table).
                 Debug.Log($"{name} swept into {hit.name}", this);
                 SweptInto?.Invoke(hit);
+
+                // Only things that opt in react; the lamp itself still never damages what it sweeps.
+                hit.GetComponentInParent<ISweepable>()?.SweptBy(this);
             }
         }
 
