@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace AnalogOverride.GridSystem
@@ -8,7 +9,9 @@ namespace AnalogOverride.GridSystem
     /// enemies, NPCs, etc. Owns its own cell registration with GridManager and knows
     /// how to attempt a single-cell step — including pushing a pushable occupant out
     /// of the way (single-object only, never cascades into a chain — see TryBePushed)
-    /// and bump-interacting with an occupant that implements IInteractable.
+    /// and bump-interacting with an occupant that implements IInteractable. Entities can't
+    /// step between height levels (GridManager.GetHeight) but can stretch to act on a cell
+    /// one level up without moving — see TryReach.
     ///
     /// To add a new kind of grid object: extend this class. You get registration,
     /// movement, pushing and bump-interaction for free — you only need to add your
@@ -35,10 +38,6 @@ namespace AnalogOverride.GridSystem
         [Tooltip("How 'heavy' this entity is if something pushes it. GridEntity itself does nothing with this number — it's only ever reported back to the pusher via TryStep's pushedWeight, so gameplay code (e.g. an energy/stamina system) can decide what a unit of weight costs. Irrelevant unless Pushable is true.")]
         [Min(0f)]
         [SerializeField] private float weight = 1f;
-
-        [Tooltip("Max height difference (in levels, see GridManager's height layers) this entity can climb in a single step. Only consulted when stepping into an EMPTY cell at a different height — pushing/interacting with an occupant always requires being at the same height regardless of this value.")]
-        [Min(0)]
-        [SerializeField] protected int climbHeight = 1;
 
         [Header("Draw Order")]
         [Tooltip("The sprite whose Order in Layer this entity should keep in sync with its own world Y position, so entities on the grid always draw correctly in front of/behind each other and don't depend on the render pipeline's own distance-based sort (which is easy to accidentally break with a stray Order in Layer override elsewhere, or thrown off by a visual rig with an offset child sprite). Leave empty to opt out and let the renderer's own sorting handle this entity instead.")]
@@ -84,9 +83,6 @@ namespace AnalogOverride.GridSystem
 
         /// <summary>How much this entity should "count for" when something pushes it. See the tooltip above — this class assigns it no meaning of its own.</summary>
         public float Weight => weight;
-
-        /// <summary>Max height difference this entity can climb in one step. See the tooltip above.</summary>
-        public int ClimbHeight => climbHeight;
 
         /// <summary>True while the visual slide from the last accepted step is still playing. TryStep refuses new moves while this is true — one step must finish visually before the next is accepted.</summary>
         public bool IsMoving { get; private set; }
@@ -140,21 +136,18 @@ namespace AnalogOverride.GridSystem
         /// Attempts to move one cell in the given direction (expects a unit vector like
         /// Vector2Int.up — diagonals aren't meaningful on this grid). Resolution order:
         ///   1. Off-grid or a wall (per GridManager.IsWalkable) -> refused.
-        ///   2. Cell occupied by something:
-        ///      a. At a different height than this entity's current cell -> refused.
-        ///         Pushing and bump-interacting both require being at the SAME height as
-        ///         the occupant — climbing (see below) never applies to occupied cells.
-        ///      b. Occupied by a pushable GridEntity -> try to push it (see TryBePushed).
+        ///   2. Cell on a different height level than this entity's current cell -> refused,
+        ///      occupied or not. Levels are separate layers: you can't step or push across
+        ///      them. The only way to touch another level is to reach for it (see TryReach).
+        ///   3. Cell occupied by something:
+        ///      a. A pushable GridEntity -> try to push it (see TryBePushed).
         ///         Pushing is single-object only and never cascades: if THAT object's own
         ///         destination cell is occupied by anything at all — pushable or not — the
         ///         push (and this whole step) is refused, full stop. Pushing A that has B
         ///         sitting right behind it does nothing; it does NOT shove both.
-        ///      c. Occupied by a non-pushable IInteractable -> Interact() fires, but this
-        ///         entity does NOT move (a "bump" — see IInteractable for the contract).
-        ///      d. Occupied by anything else non-pushable -> refused, nothing happens.
-        ///   3. Cell is empty but at a different height -> only allowed within this entity's
-        ///      ClimbHeight AND onto a cell GridManager.IsClimbable says has something to
-        ///      climb (a ladder, cliff edge, ...). Otherwise refused.
+        ///      b. A non-pushable IInteractable -> Interact() fires, but this entity does
+        ///         NOT move (a "bump" — see IInteractable for the contract).
+        ///      c. Anything else non-pushable -> refused, nothing happens.
         ///   4. Otherwise -> accepted: grid state (CurrentCell, GridManager occupancy) updates
         ///      immediately and synchronously; only the visual slide is animated over time.
         ///
@@ -171,15 +164,11 @@ namespace AnalogOverride.GridSystem
             var targetCell = CurrentCell + direction;
             if (!Manager.IsWalkable(targetCell)) return false;
 
-            var heightDiff = Manager.GetHeight(targetCell) - Manager.GetHeight(CurrentCell);
-            var occupant = Manager.GetOccupant(targetCell);
+            if (Manager.GetHeight(targetCell) != Manager.GetHeight(CurrentCell)) return false;
 
+            var occupant = Manager.GetOccupant(targetCell);
             if (occupant != null)
             {
-                // Same-height requirement for pushing/interacting — climbing only ever
-                // applies when the destination cell is empty (see the else-branch below).
-                if (heightDiff != 0) return false;
-
                 if (occupant is GridEntity other && other.IsPushable)
                 {
                     if (!other.TryBePushed(direction)) return false;
@@ -194,13 +183,85 @@ namespace AnalogOverride.GridSystem
                     return false;
                 }
             }
-            else if (heightDiff != 0)
-            {
-                if (Mathf.Abs(heightDiff) > climbHeight) return false;
-                if (!Manager.IsClimbable(targetCell)) return false;
-            }
 
             return CommitStep(targetCell);
+        }
+
+        /// <summary>
+        /// Stretches toward the adjacent cell in `direction` WITHOUT moving, acting on whatever is
+        /// there — but only if that cell is on a higher level than this entity's own, 1 to
+        /// maxLevelsUp levels up (GridManager.GetHeight). It's the one way to touch another level,
+        /// since TryStep refuses to step or push across levels. Cells on this entity's own level
+        /// are deliberately ignored: acting on those can mean moving (a push drags the pusher into
+        /// the vacated cell), and a stretch is exactly the state where you don't move.
+        /// What happens depends on what's at the cell:
+        ///   1. A pushable GridEntity -> slid one cell further along `direction`, under the usual
+        ///      single-object rules (see TryBePushed) and staying on its own level.
+        ///      `pushedWeight` is its Weight, same as TryStep reports.
+        ///   2. Any other GridEntity that's an IInteractable (a Door, say) -> Interact().
+        ///   3. Nothing registered on the grid there -> the first IInteractable whose collider
+        ///      overlaps the cell. Things like a Key aren't grid occupants — that's what keeps them
+        ///      non-blocking at ground level — so they're found by a physics overlap instead.
+        /// Returns true if something reacted.
+        /// </summary>
+        public bool TryReach(Vector2Int direction, int maxLevelsUp, out float pushedWeight)
+        {
+            pushedWeight = 0f;
+
+            if (Manager == null || IsMoving || direction == Vector2Int.zero) return false;
+
+            var targetCell = CurrentCell + direction;
+            if (!Manager.InBounds(targetCell)) return false;
+
+            var levelsUp = Manager.GetHeight(targetCell) - Manager.GetHeight(CurrentCell);
+            if (levelsUp < 1 || levelsUp > maxLevelsUp) return false;
+
+            if (Manager.GetOccupant(targetCell) is GridEntity other)
+            {
+                if (other.IsPushable)
+                {
+                    if (!other.TryBePushed(direction)) return false;
+                    pushedWeight = other.Weight;
+                    return true;
+                }
+
+                if (other is IInteractable interactable)
+                {
+                    interactable.Interact(this);
+                    return true;
+                }
+
+                return false;
+            }
+
+            return InteractWithOverlapping(targetCell);
+        }
+
+        // Reused across calls: reaching is rare, but there's no reason to allocate a fresh list each time.
+        private static readonly List<Collider2D> OverlapBuffer = new List<Collider2D>();
+
+        /// <summary>Interacts with the first IInteractable whose collider overlaps most of `cell` — the fallback for non-grid objects like Key (see TryReach).</summary>
+        private bool InteractWithOverlapping(Vector2Int cell)
+        {
+            // Keys and the like are trigger colliders; asking for triggers explicitly means this
+            // doesn't silently break if someone flips the project-wide "Queries Hit Triggers" setting.
+            var filter = new ContactFilter2D { useTriggers = true };
+
+            // 80% of the cell, so a collider sitting in a neighbouring cell doesn't count as being in this one.
+            var count = Physics2D.OverlapBox(Manager.CellToWorld(cell), Manager.CellSize * 0.8f, 0f, filter, OverlapBuffer);
+            for (var i = 0; i < count; i++)
+            {
+                var hit = OverlapBuffer[i];
+                if (hit.transform.IsChildOf(transform)) continue; // never reach for ourselves (own collider, attack hitbox, ...)
+
+                if (hit.TryGetComponent<IInteractable>(out var interactable))
+                {
+                    interactable.Interact(this);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -217,14 +278,60 @@ namespace AnalogOverride.GridSystem
             var targetCell = CurrentCell + direction;
             if (!Manager.IsFree(targetCell)) return false;
 
-            var heightDiff = Manager.GetHeight(targetCell) - Manager.GetHeight(CurrentCell);
-            if (heightDiff != 0)
-            {
-                if (Mathf.Abs(heightDiff) > climbHeight) return false;
-                if (!Manager.IsClimbable(targetCell)) return false;
-            }
+            // A pushed object stays on its level. Sending something over an edge is a deliberate,
+            // per-object thing (see PushOffObject), not something a plain slide can do by accident.
+            if (Manager.GetHeight(targetCell) != Manager.GetHeight(CurrentCell)) return false;
 
             return CommitStep(targetCell);
+        }
+
+        /// <summary>
+        /// Throws this entity up to maxCells cells along `direction` in ONE quick slide, as if hit
+        /// by something — unlike TryStep it ignores IsMoving (a hit lands mid-step too) and doesn't
+        /// push or interact with anything. It stops short of the first thing that would block it: a
+        /// wall, another occupant, or a change of height level. Returns how many cells it actually
+        /// moved (0 if it was already hemmed in). `curve` shapes the slide; null uses MoveCurve.
+        /// </summary>
+        public int Knockback(Vector2Int direction, int maxCells, float slideSeconds, AnimationCurve curve = null)
+        {
+            if (Manager == null || direction == Vector2Int.zero || maxCells <= 0) return 0;
+
+            var level = Manager.GetHeight(CurrentCell);
+            var landing = CurrentCell;
+            var moved = 0;
+
+            while (moved < maxCells)
+            {
+                var next = landing + direction;
+                if (!Manager.IsFree(next) || Manager.GetHeight(next) != level) break;
+
+                landing = next;
+                moved++;
+            }
+
+            if (moved == 0) return 0;
+
+            // From wherever the sprite is right now, not from the start of an interrupted step.
+            var fromWorld = transform.position;
+            if (!Manager.TryMoveOccupant(this, CurrentCell, landing)) return 0;
+
+            CurrentCell = landing;
+            StartSlide(fromWorld, Manager.CellToWorld(landing), slideSeconds, curve ?? moveCurve);
+            return moved;
+        }
+
+        /// <summary>
+        /// Collapses an offset between two cells into the single cardinal direction it mostly
+        /// points along (a tie goes horizontal). `fallback` is returned for a zero offset. For when
+        /// an object between two cells needs "which way was that?" — e.g. which way a push went.
+        /// </summary>
+        public static Vector2Int CardinalOf(Vector2Int delta, Vector2Int fallback)
+        {
+            if (delta == Vector2Int.zero) return fallback;
+
+            return Mathf.Abs(delta.x) >= Mathf.Abs(delta.y)
+                ? new Vector2Int((int)Mathf.Sign(delta.x), 0)
+                : new Vector2Int(0, (int)Mathf.Sign(delta.y));
         }
 
         /// <summary>Shared tail of TryStep/TryBePushed once a destination cell has been fully validated: claims it in GridManager and starts the visual slide.</summary>
@@ -234,21 +341,27 @@ namespace AnalogOverride.GridSystem
             if (!Manager.TryMoveOccupant(this, fromCell, targetCell)) return false;
 
             CurrentCell = targetCell;
-            StartCoroutine(MoveRoutine(Manager.CellToWorld(fromCell), Manager.CellToWorld(targetCell)));
+            StartSlide(Manager.CellToWorld(fromCell), Manager.CellToWorld(targetCell), moveDuration, moveCurve);
             return true;
         }
 
-        /// <summary>Purely cosmetic: slides the Transform between two world positions. Grid state (CurrentCell/occupancy) is already final by the time this runs — do not put gameplay logic in here, it won't run at a predictable time relative to other entities' moves.</summary>
-        private IEnumerator MoveRoutine(Vector3 fromWorld, Vector3 toWorld)
+        private Coroutine slideRoutine;
+
+        /// <summary>Starts the cosmetic slide, dropping any slide still in flight first — a knockback can land mid-step, and two slides driving one Transform would fight each other.</summary>
+        private void StartSlide(Vector3 fromWorld, Vector3 toWorld, float duration, AnimationCurve curve)
         {
+            if (slideRoutine != null) StopCoroutine(slideRoutine);
+            slideRoutine = StartCoroutine(MoveRoutine(fromWorld, toWorld, duration, curve));
+        }
+
+        /// <summary>Purely cosmetic: slides the Transform between two world positions. Grid state (CurrentCell/occupancy) is already final by the time this runs — do not put gameplay logic in here, it won't run at a predictable time relative to other entities' moves.</summary>
+        private IEnumerator MoveRoutine(Vector3 fromWorld, Vector3 toWorld, float duration, AnimationCurve curve)
+        {
+            // Duration and curve arrive by value, so a later Update() frame reassigning MoveDuration/
+            // MoveCurve in anticipation of a future step can't change a slide that's already in flight.
             IsMoving = true;
 
             var t = 0f;
-            // Snapshot both at slide-start: this step's slide must not be retroactively changed by a
-            // later Update() frame reassigning MoveDuration/MoveCurve in anticipation of a future step
-            // while this one is still animating.
-            var duration = moveDuration;
-            var curve = moveCurve;
             while (t < duration)
             {
                 t += Time.deltaTime;
@@ -262,6 +375,7 @@ namespace AnalogOverride.GridSystem
             transform.position = toWorld;
             UpdateSortingOrder(transform.position.y);
             IsMoving = false;
+            slideRoutine = null;
         }
     }
 }

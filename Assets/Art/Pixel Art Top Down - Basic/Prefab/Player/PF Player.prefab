@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3583024709288946}
   - component: {fileID: 5482738451431363123}
   - component: {fileID: 4957774769039855066}
+  - component: {fileID: 6052217184558519697}
   m_Layer: 20
   m_Name: Player Sprite
   m_TagString: Untagged
@@ -27,11 +28,11 @@ Transform:
   m_GameObject: {fileID: 1019539101366075451}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.014, y: 0.671, z: 0.5}
-  m_LocalScale: {x: 0.97218746, y: 1.25, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.49999997}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5628018141983903106}
+  m_Father: {fileID: 4673313211460213890}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5482738451431363123
 SpriteRenderer:
@@ -86,8 +87,8 @@ SpriteRenderer:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 1
-  m_Size: {x: 0.6655616, y: 1.4}
+  m_DrawMode: 0
+  m_Size: {x: 0.71, y: 1.91}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -114,6 +115,28 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6052217184558519697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1019539101366075451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b9a01912f16246b7aa043cccf11a4e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StretchVisual
+  frontFrames:
+  - {fileID: 6646965492164838186, guid: ad10d558d7257433ea42c11d4bdcd406, type: 3}
+  - {fileID: 4283874214547952417, guid: d7a9c1a9fd5334ef2b99d43935fda572, type: 3}
+  backFrames:
+  - {fileID: 50019756940067113, guid: 440ee659582f643769211d2864398dbf, type: 3}
+  - {fileID: 143037158426546907, guid: 4e0a1f8f41e0045d99bac5e1eb39a6f2, type: 3}
+  sideFrames:
+  - {fileID: -9188742898115497167, guid: 7d58213c508c048b1b994d9a016591b2, type: 3}
+  - {fileID: 7981210743476038901, guid: f9729e7c00948485c8b9d3bf41f98403, type: 3}
+  player: {fileID: 0}
 --- !u!1 &4320328064445824537
 GameObject:
   m_ObjectHideFlags: 0
@@ -140,12 +163,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4320328064445824537}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.015999917, y: 0.3462997, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 5628018141983903106}
+  m_Father: {fileID: 4673313211460213890}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2643880971334131585
 SpriteRenderer:
@@ -228,10 +251,16 @@ MonoBehaviour:
   - {fileID: 6425063525469577524, guid: 50069cca4a08744c9b0bc929494a5f2a, type: 3}
   - {fileID: -8143523905938973804, guid: 3ce27f8fa3ae542c5be25a11b763abc3, type: 3}
   - {fileID: 387562089145454961, guid: 04d451ae9b5864faf8dd9f33cbba3246, type: 3}
-  backOffset: {x: 0.02, y: 0.357}
-  sideOffset: {x: -0.4358, y: 0.345}
-  walkBackYOffset: 0.092
-  walkSideYOffset: 0.109
+  backOffset: {x: 0.016, y: -0.6082}
+  sideOffset: {x: -0.8593, y: -0.6095}
+  walkBackYOffset: 0.155
+  walkSideYOffset: 0.155
+  bodyStretchBackYOffsets:
+  - 0.116
+  - 0.9543
+  bodyStretchSideYOffsets:
+  - 0.11
+  - 0.9518
   bodySprite: {fileID: 5482738451431363123}
   backSortOffset: 1
   sideSortOffset: -1
@@ -271,12 +300,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5412278, y: 0.5412278, z: 0.5412278}
+  m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 6435713682445502500}
-  - {fileID: 3583024709288946}
-  - {fileID: 2075880731241978103}
+  - {fileID: 4673313211460213890}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5628018141983903119
@@ -318,7 +345,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   pushable: 0
   weight: 1
-  climbHeight: 1
   sortingSprite: {fileID: 5482738451431363123}
   sortingOrderPrecision: 100
   sortingOrderBase: 10000
@@ -368,6 +394,36 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   energyCostPerWeight: 1
+  stretchKey: 32
+  stretchEnergyCost: 1
+  stretchFrameDuration: 0.08
+  knockbackSlideSeconds: 0.25
+  knockbackCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  postHitImmunitySeconds: 1.5
+  hitFlashesPerSecond: 6
 --- !u!61 &5628018141983903116
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -402,7 +458,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.09}
+  m_Offset: {x: 0, y: 0.26}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -412,7 +468,7 @@ BoxCollider2D:
     drawMode: 1
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.5865278, y: 0.36506104}
+  m_Size: {x: 1, y: 0.55}
   m_EdgeRadius: 0
 --- !u!50 &4689586921714556905
 Rigidbody2D:
@@ -459,6 +515,40 @@ MonoBehaviour:
   fullStretchShare: 0.5
   energyCost: 3
   attackDamage: 1
+--- !u!1 &6213557463625907858
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4673313211460213890}
+  m_Layer: 20
+  m_Name: visuals
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4673313211460213890
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6213557463625907858}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.62, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6435713682445502500}
+  - {fileID: 3583024709288946}
+  - {fileID: 2075880731241978103}
+  m_Father: {fileID: 5628018141983903106}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7460859007745716979
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,13 +575,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7460859007745716979}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.021, y: 0.3, z: 0}
-  m_LocalScale: {x: 0.53, y: 0.53, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.0120000485, y: -0.68900037, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4657591668292462641}
-  m_Father: {fileID: 5628018141983903106}
+  m_Father: {fileID: 4673313211460213890}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1162665154590337515
 SpriteRenderer:
@@ -572,12 +662,18 @@ MonoBehaviour:
   sideStretchFrames:
   - {fileID: 1551942205598649076, guid: 3a22e03e6a83748f8a7cbc6df25f1cce, type: 3}
   - {fileID: -1435434500944217701, guid: c607c2557186e45a3874ddb24121f54d, type: 3}
-  frontBackOffset: {x: 0.021, y: 0.3}
-  sideOffset: {x: -0.024, y: 0.209}
+  frontBackOffset: {x: 0.012, y: -0.689}
+  sideOffset: {x: -0.0627, y: -0.893}
   walkFrontBackYOffset: 0.11
-  walkSideYOffset: 0.103
-  frontBackScale: {x: 0.53, y: 0.53}
-  sideScale: {x: 0.53, y: 0.53}
+  walkSideYOffset: 0.1586
+  bodyStretchFrontBackYOffsets:
+  - 0.11
+  - 0.955
+  bodyStretchSideYOffsets:
+  - 0.11
+  - 0.951
+  frontBackScale: {x: 1, y: 1}
+  sideScale: {x: 1, y: 1}
   bodySprite: {fileID: 5482738451431363123}
   frontBackSortOffset: 1
   sideSortOffset: 1

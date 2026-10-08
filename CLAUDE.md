@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-A 2D top-down grid puzzle game built in Unity 6000.3.21f1 (Universal Render Pipeline). This is a Unity Editor project: there is no CLI build, and there is no automated test suite (`com.unity.test-framework` is installed, but no test assemblies exist).
+A 2D top-down grid puzzle game built in Unity 6000.3.21f1 (Universal Render Pipeline). This is a Unity Editor project: there is no CLI build, and there is no automated test suite, and none should be added (`com.unity.test-framework` is installed, but no test assemblies exist).
 
-- All gameplay code lives under `Assets/Scripts/` (~23 files). The codebase is small enough to read the relevant files in full instead of guessing from partial context.
+- All gameplay code lives under `Assets/Scripts/` (~25 files). The codebase is small enough to read the relevant files in full instead of guessing from partial context.
 - Scenes in Build Settings, in order: `Tutorial` (0), then `SampleScene` (1). `SecondPuzzleScene` exists but is **not** in the build. After the last level, `GameManager.LoadNextScene` loops back to `"Tutorial"`.
 
 ## Game design
@@ -19,8 +19,9 @@ The player is a wind-up robot on a top-down grid. Its energy is a spring, shown 
 - **Checkpoints:** touching one refills the bars, resets the step counter and saves the respawn point.
 - **Death:** at 0 bars the scene reloads and the player respawns at the last checkpoint.
 - **Keys and doors:** a Key opens every Door with the same `keyId`. Keys are kept on death and cleared by a full level reset.
+- **Stretching:** hold Space while standing still. The robot grows taller (mode 1 → 2 → 3) and stays at full height while Space is held; releasing contracts it (3 → 2 → 1). Costs 1 bar to start. While stretched there's no walking or turning; only the attack works. *Planned:* a stretched attack will interact with tall (level 1) objects.
 
-**Terms:** *bars / spring* (energy), *checkpoint* (charging station), *high-friction* (carpet tiles), *weight* (how much energy a pushable costs), *keyId* (what pairs keys with doors).
+**Terms:** *bars / spring* (energy), *checkpoint* (charging station), *high-friction* (carpet tiles), *weight* (how much energy a pushable costs), *keyId* (what pairs keys with doors), *stretch* (the body growing taller; separate from the attack's *arm stretch*).
 
 ## Mechanics
 
@@ -29,19 +30,21 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 - **Grid movement:** WASD, one cell per step, no diagonals. The logical move is instant and the visual slide follows. *(GridEntity, CharacterController)*
 - **Walls:** cells painted on the collision tilemap can't be entered. *(GridManager.IsWalkable)*
 - **Pushing:** one object at a time, never a chain. If anything is behind the pushed object, the push fails. Costs weight-based energy. *(GridEntity.TryStep / TryBePushed)*
-- **Height & climbing:** height comes from a stack of tilemap layers. A height change is only allowed onto a climbable cell and within the entity's `ClimbHeight`. Pushing and bumping require being at the same height. *(GridManager, GridEntity)*
+- **Height levels:** the level comes from a stack of tilemap layers. Nothing can step or be pushed between levels. *(GridManager, GridEntity)*
 - **High-friction terrain (carpet):** costs more energy per step and gives a slower, dragging slide. *(GridManager.IsHighFriction, CharacterController)*
-- **Spring energy:** steps, pushes and attacks drain bars. Reaching exactly 1 bar is logged as a "last bar" moment (steps and pushes only). *(SpringManager, CharacterController, PlayerAttack)*
+- **Spring energy:** steps, pushes, stretches and attacks drain bars. Reaching exactly 1 bar is logged as a "last bar" moment (steps, pushes and stretches, all through `CharacterController.ChargeBars`; not attacks). *(SpringManager, CharacterController, PlayerAttack)*
 - **Death & respawn:** 0 bars reloads the scene, and the player respawns at the last checkpoint. *(CharacterController, GameManager.ReloadScene)*
 - **Checkpoints:** refill bars and reset the step counter; only one checkpoint is active at a time. *(Checkpoint, GameManager)*
 - **Keys & doors:** a door opens only for a key with a matching `keyId`. A door can span several cells. Keys are not used up. *(Key, Door, GameManager)*
 - **Attack:** a mouse click charges energy and stretches both arms (stage 1 → 2 → 3 → 2 → 1 over `attackDuration`). The hitbox follows the drawn arms sprite and damages any `IAttackable` it touches. *(PlayerAttack, ArmsVisual, AttackHitbox)*
-- **Arms visual:** the arms sprite is picked by facing (front/back or profile) and stretch stage, with per-facing offset and scale, and is raised while walking. *(ArmsVisual)*
+- **Arms visual:** the arms sprite is picked by facing (front/back or profile) and attack stretch stage, with per-facing offset and scale, and is raised while walking and while the body is stretched. *(ArmsVisual)*
+- **Body stretch:** hold-to-stretch (see Game design). The body sprite switches to the stretch frames, and the arms and key rise with it. No walking or turning until fully contracted. *(CharacterController, StretchVisual, ArmsVisual, SpringKeyAnimator)*
+- **Push-off objects:** an object on a shelf that, when reached, spawns a fallen version on a lower level. **Nothing can trigger it yet** (waiting for stretch + attack). *(PushOffObject)*
 - **Stage goal & next level:** reaching the goal shows the stage-over screen and pauses the game. The next level comes from the Build Settings order. *(StageGoal, StageOverScreen, GameManager)*
 - **Level reset:** a full restart that clears the checkpoint and keys, then reloads the scene. *(GameManager.ResetLevel, PauseMenu, StageOverScreen)*
 - **Pause:** Esc toggles pause; time scale goes to 0 and player input is blocked. *(PauseMenu, GameManager)*
 - **Tutorial checklist:** four tasks (move, checkpoint, reset, push) unlock the Start button, and progress survives a reset. *(TutorialManager)*
-- **Spring UI & key visual:** the on-screen spring and the key on the robot's back follow the energy level. *(UiManager, SpringKeyAnimator)*
+- **Spring UI & key visual:** the on-screen spring and the key on the robot's back follow the energy level; the key is raised while the body is stretched. *(UiManager, SpringKeyAnimator)*
 - **Draw order:** entities are sorted by world Y so they overlap correctly. *(GridEntity, SpringKeyAnimator, ArmsVisual)*
 
 ## How we work
@@ -55,6 +58,7 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 ### Verification
 
 - **Code-only change:** Claude checks first: re-reads the changed code, traces its callers, and looks for compile errors. Then Tsah plays it in the Editor.
+- **Compile check without Unity:** Claude can compile `Assets/Scripts` with Unity's bundled compiler (`dotnet <Unity.app>/Contents/Resources/Scripting/DotNetSdkRoslyn/csc.dll`, referencing `NetStandard/ref/2.1.0/netstandard.dll`, `Managed/UnityEngine/*.dll` and `Library/ScriptAssemblies/*.dll` except `Assembly-CSharp*`), with the output going to the scratchpad.
 - **Change that needs Editor work:** Tsah does the Editor steps and tests first, then Claude reviews.
 - **Regression check (every time Claude checks a code change):**
   1. Go through the Mechanics list. For each mechanic that touches the changed code (shared base classes like `GridEntity`, events, singletons, callers), trace whether the change can affect it.
@@ -70,6 +74,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 
 ## Code conventions
 
+- **MonoBehaviour only:** every script inherits from `MonoBehaviour` or a subclass of it. No plain C# logic classes and no test assemblies. The existing interfaces (`IGridOccupant`, `IInteractable`, `IAttackable`) are the only exception.
 - **Doc comments:** a short one-line `/// <summary>` on new classes and non-obvious members. Leave the existing longer comments as they are.
 - **Namespaces:** match the other files in the same folder. `Grid/` uses `AnalogOverride.GridSystem`; `Entities/` and `Combat/` use their own `AnalogOverride.*` namespaces; `Managers/`, `Player/` and most of `UI/` have no namespace.
 - **Input:** keep using the legacy `Input.GetKey` / `Input.GetMouseButtonDown` API for consistency, even though the Input System package is installed.
@@ -87,14 +92,17 @@ When Tsah says the session is over, propose edits to this file based on what hap
 
 - **`GridManager`**: scene singleton and the single source of truth for the grid.
   - World↔cell conversion through Unity's `Grid` component. Snap to `CellToWorld` (the cell center).
-  - Optional tilemaps: collision (walls), `heightLayers` (the topmost populated layer wins; default height 0), climbable, and friction. With none set, the grid is flat and open.
+  - Optional tilemaps: collision (walls), `heightLayers` (the topmost populated layer wins; default height 0), and friction. With none set, the grid is flat and open.
+  - `CellSize` gives a cell's world size (for physics overlaps).
   - Occupancy: a 2D array indexed by `cell - origin`. Only access it through `TryPlaceOccupant` / `RemoveOccupant` / `TryMoveOccupant` / `GetOccupant` / `IsFree`.
   - Raises `CellOccupantChanged`.
 - **`GridEntity`** (`IGridOccupant`): base class for anything on the grid. It registers itself in `Start`, frees its cell in `OnDisable`, and moves with `TryStep(dir, out pushedWeight)`. Resolution order:
   1. Off-grid or wall → refused.
-  2. Occupied cell: a different height → refused; pushable → `TryBePushed`, which only succeeds into a completely free cell (no chains); `IInteractable` → `Interact()` and the mover stays put; anything else → refused.
-  3. Empty cell at a different height → allowed only within `climbHeight` and onto a climbable cell.
+  2. A different height → refused, whether the cell is occupied or not.
+  3. Occupied cell: pushable → `TryBePushed`, which only succeeds into a completely free cell on the same level (no chains); `IInteractable` → `Interact()` and the mover stays put; anything else → refused.
   4. Otherwise accepted: `CurrentCell` and occupancy update immediately, and a coroutine plays the slide.
+
+  `TryReach(dir, maxLevelsUp, out pushedWeight)` acts on the adjacent cell 1..N levels up without moving: pushes a pushable along its level, interacts with an `IInteractable` occupant, or falls back to a physics overlap for non-grid objects like `Key`. It currently has **no caller**; it's kept for stretch + attack.
 
   `IsMoving` blocks new steps until the slide finishes. Subclasses can set `MoveDuration` / `MoveCurve` **before** calling `TryStep` to change that one step's slide. The optional `sortingSprite` gets its order in layer from world Y.
 - **`IGridOccupant`**: the minimal contract (`CurrentCell`, `IsPushable`).
@@ -102,14 +110,16 @@ When Tsah says the session is over, propose edits to this file based on what hap
 
 ### Entities (`Assets/Scripts/Entities/`, `AnalogOverride.Entities`)
 
-- **`PushableBlock`**: a `GridEntity` with no extra logic; `Reset()` defaults it to `pushable = true` and `climbHeight = 0`.
+- **`PushableBlock`**: a `GridEntity` with no extra logic; `Reset()` defaults it to `pushable = true`.
+- **`PushOffObject`**: not a `GridEntity` (it doesn't occupy its cell); reacts through `IInteractable`. When reached, it spawns `fallenVariant` at `landingSpot`, or else at the nearest lower cell in the push direction, then destroys itself.
 - **`Door`**: a non-pushable `IInteractable` that opens when bumped, if `GameManager.HasKey(keyId)`. It can occupy extra cells through `extraCells`, which are claimed in `Start` and freed in `OnDisable`. `disableOnOpen` either deactivates the GameObject or just frees all of its cells.
 
 ### Player (`Assets/Scripts/Player/`)
 
 - **`CharacterController`** (`GridEntity`):
-  - Movement: reads WASD (one direction at a time), updates `FacingDirection`, then calls `TryStep`. On spawn it teleports to `GameManager.RespawnCell` *before* `base.Start()`.
-  - Energy: a plain step increments `stepCounter`; at `stepsPerBar` (or `stepsPerBarHighFriction` on carpet) it charges 1 bar. A push charges `max(1, round(weight × energyCostPerWeight × frictionMultiplier))`, where the multiplier is `stepsPerBar / stepsPerBarHighFriction` on carpet.
+  - Movement: reads WASD through `ReadHeldDirection()` (one direction at a time), updates `FacingDirection`, then calls `TryStep`. On spawn it teleports to `GameManager.RespawnCell` *before* `base.Start()`.
+  - Energy: a plain step increments `stepCounter`; at `stepsPerBar` (or `stepsPerBarHighFriction` on carpet) it charges 1 bar. A push charges `max(1, round(weight × energyCostPerWeight × frictionMultiplier))`, where the multiplier is `stepsPerBar / stepsPerBarHighFriction` on carpet. All its costs go through `ChargeBars`, which also logs `LAST_BAR`.
+  - Stretch: `stretchStage` / `stretchTarget` / `stretchTimer`, driven by `BeginStretch()` and `TickStretch(held)`. Space is read with `GetKey`, so releasing it during pause is still noticed on resume. Exposes `IsStretching` (blocks walking and turning) and `StretchStage` (0/1/2) for visuals. Ohad's `ToggleStretch`, `HandleStretchInput` (WASD reach), `stretchReach` and Animator `Direction` 40–43 are commented out.
   - Carpet slide: a step that **starts** on carpet uses `highFrictionMoveDuration` / `highFrictionMoveCurve`.
   - Exposes `IsWalking` and `StepProgress` (0..1) for visuals.
   - Death: subscribes to `SpringManager.BarsReachedZero`, then logs the death and calls `GameManager.ReloadScene()`.
@@ -117,9 +127,12 @@ When Tsah says the session is over, propose edits to this file based on what hap
 - **`PlayerAttack`**: on left click, charges `energyCost` bars, turns on the `AttackHitbox` child, and steps `ArmsVisual.Stage` through out → hold → back over `attackDuration`. `fullStretchShare` is the share of that time spent at full stretch, and the duration is also the cooldown. Damage is applied through the hitbox's `TargetDetected` event.
 - **`ArmsVisual`** (on `idleArms`, always active): picks the sprite from `FacingDirection` + `Stage`, so turning mid-attack keeps the stage. It sets the per-facing offset, scale and walk Y offset, copies the body's sorting order plus an offset, and fits the `AttackHitbox` collider (a child of `idleArms`) to the drawn sprite each frame.
   - Owns the arms' Transform position and scale every frame, so tune them through its fields, not the Transform.
+  - `bodyStretchFrontBackYOffsets` / `bodyStretchSideYOffsets` (element 0 = half, 1 = full) are added on top of the walk offset while the body is stretched.
+- **`StretchVisual`** (on `Player Sprite`): while `StretchStage > 0`, overrides the body sprite and `flipX` in `LateUpdate` from the front/back/side frame arrays. This works because the Animator (Write Defaults on) runs before `LateUpdate`; at stage 0 the Animator owns the body again. The stretch sprites keep a **Center pivot on purpose**, so the legs extend downward.
 - **`SpringKeyAnimator`**: animates the key on the robot's back in 4-frame loops, driven by spent bars plus `StepProgress`.
   - Spending energy plays frames forward. A recharge spins the key backwards for `chargeLoops` loops. A large backlog of frames switches to a faster frame rate.
   - Hidden while facing down; flipped for left.
+  - Raised by `bodyStretchBackYOffsets` / `bodyStretchSideYOffsets` while the body is stretched.
   - Copies the body sprite's sorting order each frame, plus an offset.
 
 ### Combat (`Assets/Scripts/Combat/`, `AnalogOverride.Combat`)
@@ -157,7 +170,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 ### Misc (`Assets/Scripts/`, no namespace)
 
 - **`Checkpoint`**: trigger. On player contact it logs the visit, notifies the tutorial, resets the step counter and the bars, and activates itself (saving the respawn point and firing the `activate` animation) only if it isn't already active.
-- **`Key`**: trigger. On pickup it calls `GameManager.CollectKey(keyId)` and raises the static `KeyCollected` event before destroying itself. In `Start` it destroys itself without raising the event if the key was already collected.
+- **`Key`**: trigger, and also an `IInteractable`, so it can be collected by a reach (guarded against collecting twice). On pickup it calls `GameManager.CollectKey(keyId)` and raises the static `KeyCollected` event before destroying itself. In `Start` it destroys itself without raising the event if the key was already collected.
 - **`StageGoal`**: trigger. The first time the player touches it, it calls `StageOverScreen.Instance.Show()`.
 
 ## Singleton / init order

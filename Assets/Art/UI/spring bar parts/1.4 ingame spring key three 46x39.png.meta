@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f9729e7c00948485c8b9d3bf41f98403
+guid: db17395f3ebe14f76a8a85722da753a6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7981210743476038901
-    second: 1.4 ingame click side stretch two 38x165_0
+      213: -1118739506909572970
+    second: 1.4 ingame spring key three 46x39_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 1.4 ingame click side stretch two 38x165_0
+      name: 1.4 ingame spring key three 46x39_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 38
-        height: 165
+        width: 46
+        height: 39
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5fcab6a82e4f2ce60800000000000000
-      internalID: 7981210743476038901
+      spriteID: 690957688507970f0800000000000000
+      internalID: -1118739506909572970
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 36a796f617527409e95f9e33101dbe1f
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      1.4 ingame click side stretch two 38x165_0: 7981210743476038901
+      1.4 ingame spring key three 46x39_0: -1118739506909572970
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
