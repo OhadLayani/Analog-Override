@@ -79,6 +79,9 @@ public class SpringKeyAnimator : MonoBehaviour
     private float frameTimer;
     private bool fastMode;
 
+    /// <summary>The loop position (0..3) currently shown; mirrored by UiSpringKeyAnimator.</summary>
+    public int CurrentFrame => Wrap(shownFrame);
+
     private void Awake()
     {
         keyRenderer = GetComponent<SpriteRenderer>();
@@ -115,7 +118,7 @@ public class SpringKeyAnimator : MonoBehaviour
 
         keyRenderer.enabled = true;
 
-        var frame = Wrap(shownFrame);
+        var frame = CurrentFrame;
         var facingUp = facing == Vector2Int.up;
         var facingLeft = facing == Vector2Int.left;
 

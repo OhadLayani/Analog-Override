@@ -223,6 +223,7 @@ GameObject:
   - component: {fileID: 4429997260346838182}
   - component: {fileID: 6746956624421271399}
   - component: {fileID: 8652132412428547918}
+  - component: {fileID: 8562000529821261068}
   m_Layer: 5
   m_Name: spring-key
   m_TagString: Untagged
@@ -277,7 +278,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1223103542877678068, guid: 9f69db1f01c444bd19badd4b51b87480, type: 3}
+  m_Sprite: {fileID: -5882117579192560111, guid: bc7a4f0082e0f40b6931c5df3b318fb5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -287,6 +288,24 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8562000529821261068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521033803802962516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10660ff90a3ce421d9faa5c58c4e9d82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UiSpringKeyAnimator
+  frames:
+  - {fileID: -5882117579192560111, guid: bc7a4f0082e0f40b6931c5df3b318fb5, type: 3}
+  - {fileID: -2144695221587158471, guid: f1de254d22ae74a04825ff495d758b86, type: 3}
+  - {fileID: -1118739506909572970, guid: db17395f3ebe14f76a8a85722da753a6, type: 3}
+  - {fileID: -2580115824720947899, guid: 1b0620d52475e42c8bf91e0b90286286, type: 3}
+  source: {fileID: 0}
 --- !u!1 &797215975296289590
 GameObject:
   m_ObjectHideFlags: 0
