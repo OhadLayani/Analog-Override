@@ -1,5 +1,7 @@
+using System.Collections;
 using AnalogOverride.GridSystem;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace AnalogOverride.Entities
 {
@@ -20,10 +22,27 @@ namespace AnalogOverride.Entities
     /// can reach (GridEntity.TryReach). It deliberately isn't a GridEntity: it never moves and
     /// nothing can push it along, so there's nothing for the grid to track — it only needs a
     /// collider so a reach can find it.
+    ///
+    /// It can also be knocked away by a spinning DeskLamp (ISweepable) — but only if a Swept Away
+    /// Replacement is assigned. That one is a different, scripted outcome: no landing search, this
+    /// object just switches off and a copy you've already placed in the scene switches on.
     /// </summary>
     [RequireComponent(typeof(Collider2D))]
-    public class PushOffObject : MonoBehaviour, IInteractable
+    public class PushOffObject : MonoBehaviour, IInteractable, ISweepable
     {
+        [Header("Knocked away by a lamp")]
+        [Tooltip("Optional. An object already placed in the scene, switched OFF, at the spot this should end up when a spinning lamp knocks it away — e.g. key number 2. When the lamp sweeps this, this object is switched off and that one is switched on. Leave empty and a lamp passing through does nothing to this object.")]
+        [SerializeField] private GameObject sweptAwayReplacement;
+
+        [Tooltip("Invoked the moment a lamp knocks this away, before it flies off — for a sound or an extra animation. Not set up by default.")]
+        [SerializeField] private UnityEvent onSweptAway;
+
+        [Header("Flight (both ways)")]
+        [Tooltip("Seconds the sprite takes to shoot from where it sits to where it ends up — the landing tile when pushed off, the replacement's spot when knocked by a lamp — before the swap happens there. A fast slide that fakes a throw. 0 = no flight, swap straight away.")]
+        [Min(0f)]
+        [SerializeField] private float flySeconds = 0.2f;
+
+        [Header("Pushed off by the player")]
         [Tooltip("What appears where this lands — e.g. the normal walk-over Key prefab for a key knocked off a shelf. Spawned fresh at runtime, so a level reset brings back the original shelf object and drops this like anything else not placed in the scene.")]
         [SerializeField] private GameObject fallenVariant;
 
@@ -53,8 +72,47 @@ namespace AnalogOverride.Entities
                 : FindLandingCell(manager, origin, PushDirection(origin, source));
 
             fallen = true;
-            Instantiate(fallenVariant, manager.CellToWorld(landingCell), Quaternion.identity);
-            Destroy(gameObject);
+            StartCoroutine(FlyThen(manager.CellToWorld(landingCell), () =>
+            {
+                Instantiate(fallenVariant, manager.CellToWorld(landingCell), Quaternion.identity);
+                Destroy(gameObject);
+            }));
+        }
+
+        public void SweptBy(DeskLamp lamp)
+        {
+            // The same guard as a push, so a lamp hit and a stretch push can't both resolve.
+            if (fallen || sweptAwayReplacement == null) return;
+
+            fallen = true;
+            onSweptAway?.Invoke();
+
+            // Switched off, not destroyed, so a level reset (scene reload) brings it back like everything else.
+            StartCoroutine(FlyThen(sweptAwayReplacement.transform.position, () =>
+            {
+                sweptAwayReplacement.SetActive(true);
+                gameObject.SetActive(false);
+            }));
+        }
+
+        /// <summary>
+        /// Shoots this object's sprite to `destination` — quick at the start, easing into the landing —
+        /// then runs `swap`. Purely visual: nothing on the grid moves, the outcome is already decided.
+        /// </summary>
+        private IEnumerator FlyThen(Vector3 destination, System.Action swap)
+        {
+            var start = transform.position;
+            destination.z = start.z;
+
+            for (var t = 0f; t < flySeconds; t += Time.deltaTime)
+            {
+                var eased = 1f - Mathf.Pow(1f - t / flySeconds, 2f);
+                transform.position = Vector3.Lerp(start, destination, eased);
+                yield return null;
+            }
+
+            transform.position = destination;
+            swap();
         }
 
         /// <summary>
