@@ -46,7 +46,7 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 - **Stage goal & next level:** reaching the goal shows the stage-over screen and pauses the game. The next level comes from the Build Settings order. *(StageGoal, StageOverScreen, GameManager)*
 - **Level reset:** a full restart that clears the checkpoint and keys, then reloads the scene. *(GameManager.ResetLevel, PauseMenu, StageOverScreen)*
 - **Pause:** Esc toggles pause; time scale goes to 0 and player input is blocked. *(PauseMenu, GameManager)*
-- **Tutorial checklist:** four tasks (move, checkpoint, reset, push) unlock the Start button, and progress survives a reset. *(TutorialManager)*
+- **Tutorial checklist:** six tasks (move, checkpoint, reset, push, hold the stretch key 1.5s, attack) unlock the Start button, and progress survives a reset. *(TutorialManager)*
 - **Spring UI & key visual:** the on-screen spring and the key on the robot's back follow the energy level; the key is raised while the body is stretched. *(UiManager, SpringKeyAnimator)*
 - **Draw order:** entities are sorted by world Y so they overlap correctly. *(GridEntity, Furniture, SortAbove, SpringKeyAnimator, ArmsVisual)*
 
@@ -145,7 +145,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 - **`CharacterController`** (`GridEntity`):
   - Movement: reads WASD through `ReadHeldDirection()` (one direction at a time), updates `FacingDirection`, then calls `TryStep`. On spawn it teleports to `GameManager.RespawnCell` *before* `base.Start()`. Turn in place: `UpdateTurnInPlace` sets `FacingDirection` and starts `turnHoldTimer` when a new direction is pressed from still; `ResetTurnInput` clears it during stretch and stun.
   - Energy: a plain step increments `stepCounter`; at `stepsPerBar` (or `stepsPerBarHighFriction` on carpet) it charges 1 bar. A push charges `max(1, round(weight × energyCostPerWeight × frictionMultiplier))`, where the multiplier is `stepsPerBar / stepsPerBarHighFriction` on carpet. All its costs go through `ChargeBars`, which also logs `LAST_BAR`.
-  - Stretch: `stretchStage` / `stretchTarget` / `stretchTimer`, driven by `BeginStretch()` and `TickStretch(held)`. Space is read with `GetKey`, so releasing it during pause is still noticed on resume. Exposes `IsStretching` (blocks walking and turning) and `StretchStage` (0/1/2) for visuals. Ohad's `ToggleStretch`, `HandleStretchInput` (WASD reach), `stretchReach` and Animator `Direction` 40–43 are commented out.
+  - Stretch: `stretchStage` / `stretchTarget` / `stretchTimer`, driven by `BeginStretch()` and `TickStretch(held)`. Space is read with `GetKey`, so releasing it during pause is still noticed on resume. Exposes `IsStretching` (blocks walking and turning), `StretchStage` (0/1/2) for visuals, and `IsHoldingStretch` (`IsStretching && Input.GetKey(stretchKey)`, false during the release/contraction tail) for anything that needs to know the key is actively held right now, e.g. the tutorial's hold-timer. Ohad's `ToggleStretch`, `HandleStretchInput` (WASD reach), `stretchReach` and Animator `Direction` 40–43 are commented out.
   - Carpet slide: a step that **starts** on carpet uses `highFrictionMoveDuration` / `highFrictionMoveCurve`.
   - Exposes `IsWalking` and `StepProgress` (0..1) for visuals.
   - Death: subscribes to `SpringManager.BarsReachedZero`, then logs the death and calls `GameManager.ReloadScene()`.
@@ -183,7 +183,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 - **`SpringManager`**: scene singleton for the bars.
   - `ReduceBars(n)` and `ResetBars()`.
   - Events: `BarsChanged(int)`, `BarsReachedZero`.
-- **`TutorialManager`**: exists only in the Tutorial scene. Its 4 task flags are **static**, so they survive the reload on reset, and `Start()` re-applies them to the check images. The Start button becomes interactable when all four are done.
+- **`TutorialManager`**: exists only in the Tutorial scene. Its 6 task flags are **static**, so they survive the reload on reset, and `Start()` re-applies them to the check images. The Start button becomes interactable when all six are done. Its own `Update()` polls the player's `CharacterController.IsHoldingStretch` to time a continuous 1.5s hold for the stretch task (resets to 0 the instant the hold breaks); the other five tasks are notified directly by the scripts that perform them.
 - **`AnalyticsLogger`**: creates itself at startup (`RuntimeInitializeOnLoadMethod`, `DontDestroyOnLoad`), so it is never placed in a scene.
   - Appends `DEATH` / `CHECKPOINT_VISIT` / `STAGE_RESET` / `STAGE_COMPLETE` / `LAST_BAR` / `QUIT` lines to `Application.persistentDataPath/analytics_log.txt`.
   - Writes a summary for each run on quit. The run number is stored in `PlayerPrefs`.
