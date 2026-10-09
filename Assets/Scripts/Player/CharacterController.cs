@@ -290,22 +290,12 @@ public class CharacterController : GridEntity
         ChargeBars(Mathf.Max(1, Mathf.RoundToInt(pushedWeight * energyCostPerWeight * frictionMultiplier)));
     }
 
-    /// <summary>
-    /// Every energy deduction goes through here, so the "close call" analytics check lives in one
-    /// place. It has to run right after a deduction and only then: Bars can equal 1 only immediately
-    /// after the single deduction that lands on it (any deduction FROM 1 goes straight to 0 / death).
-    /// Checking after every step instead would re-log the same close call on each step spent at 1 bar.
-    /// </summary>
+    /// <summary>Every energy deduction by the player goes through here. (The "last bar" analytics check lives in SpringManager.ReduceBars, so deductions from other places, like the attack, are covered too.)</summary>
     private void ChargeBars(int amount)
     {
         if (springManager == null || amount <= 0) return;
 
         springManager.ReduceBars(amount);
-
-        if (springManager.Bars == 1)
-        {
-            AnalyticsLogger.Instance?.LogLastBar();
-        }
     }
 
     /// <summary>Starts the stretch action (1 → 2 → 3): shows the half frame now, full after stretchFrameDuration.</summary>

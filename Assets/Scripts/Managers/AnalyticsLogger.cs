@@ -13,10 +13,16 @@ using UnityEngine;
 /// the summary — the per-run tallies are just a few in-memory ints kept in sync with each
 /// Log call, written out once at the end of the run.
 ///
-/// The log lives in Application.persistentDataPath (the standard, writable-in-a-build
-/// location for this) and is created automatically on first write if it doesn't already
-/// exist. Existing lines are never touched, so data accumulates across every play session
-/// instead of resetting each time the game launches.
+/// The log lives in an "Analog Override" folder created next to the game (in a build, the folder
+/// the game's executable is in; in the Editor, the project folder), and both the folder and the
+/// file are created automatically on first write. Existing lines are never touched, so data
+/// accumulates across every play session instead of resetting each time the game launches. If
+/// that location isn't writable (e.g. a build installed under Program Files) logging is skipped
+/// with a warning rather than breaking the game.
+///
+/// A "run" is a game launch that actually logged something: the run number is only taken at the
+/// first event, and a launch with no events writes no summary, so opening and closing the game
+/// (or pressing Play in the Editor to look around) doesn't use up run numbers or add empty blocks.
 ///
 /// Self-bootstrapping: no GameObject needs to be added to any scene — see Bootstrap below.
 /// It creates and persists itself the moment the game starts, so it can't be forgotten
@@ -40,8 +46,15 @@ public class AnalyticsLogger : MonoBehaviour
         go.AddComponent<AnalyticsLogger>();
     }
 
-    private string FilePath => Path.Combine(Application.persistentDataPath, "analytics_log.txt");
+    private const string LogFolderName = "Analog Override";
 
+    // Application.dataPath is the "<game>_Data" folder in a build and "<project>/Assets" in the Editor,
+    // so its parent is the folder holding the game's executable, or the project folder.
+    private string FolderPath => Path.Combine(Directory.GetParent(Application.dataPath).FullName, LogFolderName);
+
+    private string FilePath => Path.Combine(FolderPath, "analytics_log.txt");
+
+    // 0 until the first event of this launch (see StartRunIfNeeded).
     private int runNumber;
     private bool summaryWritten;
 
@@ -62,6 +75,12 @@ public class AnalyticsLogger : MonoBehaviour
             return;
         }
         Instance = this;
+    }
+
+    /// <summary>Takes this launch's run number the first time something is logged, so launches with no events don't use one up.</summary>
+    private void StartRunIfNeeded()
+    {
+        if (runNumber != 0) return;
 
         runNumber = PlayerPrefs.GetInt(RunNumberPrefKey, 0) + 1;
         PlayerPrefs.SetInt(RunNumberPrefKey, runNumber);
@@ -121,6 +140,7 @@ public class AnalyticsLogger : MonoBehaviour
 
     private void Log(string eventName)
     {
+        StartRunIfNeeded();
         WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} | Run {runNumber} | {eventName}");
     }
 
@@ -128,6 +148,9 @@ public class AnalyticsLogger : MonoBehaviour
     {
         if (summaryWritten) return;
         summaryWritten = true;
+
+        // Nothing was logged this launch, so there's no run to summarize.
+        if (runNumber == 0) return;
 
         var summary =
             $"=== Run {runNumber} summary ({DateTime.Now:yyyy-MM-dd HH:mm:ss}) ===" + Environment.NewLine +
@@ -145,9 +168,10 @@ public class AnalyticsLogger : MonoBehaviour
     {
         try
         {
+            Directory.CreateDirectory(FolderPath); // does nothing if it's already there
             File.AppendAllText(FilePath, text + Environment.NewLine);
         }
-        catch (IOException e)
+        catch (Exception e) // not just IOException: a read-only install location throws UnauthorizedAccessException
         {
             Debug.LogWarning($"AnalyticsLogger failed to write to {FilePath}: {e.Message}");
         }
