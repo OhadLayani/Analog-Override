@@ -31,15 +31,35 @@ public class TutorialManager : MonoBehaviour
     [Tooltip("Check image shown once the player has pushed the crate.")]
     [SerializeField] private GameObject pushCheck;
 
+    [Tooltip("Check image shown once the player has held the stretch key for Stretch Hold Seconds.")]
+    [SerializeField] private GameObject stretchCheck;
+
+    [Tooltip("Check image shown once the player has attacked.")]
+    [SerializeField] private GameObject attackCheck;
+
     [Header("Start Button")]
     [Tooltip("Disabled until every task above is complete.")]
     [SerializeField] private Button startButton;
+
+    [Header("Stretch Task")]
+    [Tooltip("The player, polled each frame to time how long the stretch key is held.")]
+    [SerializeField] private CharacterController player;
+
+    [Tooltip("Seconds the stretch key must be held continuously to complete the stretch task.")]
+    [Min(0f)]
+    [SerializeField] private float stretchHoldSeconds = 1.5f;
 
     // See the class doc comment for why these are static rather than instance fields.
     private static bool hasMoved;
     private static bool hasVisitedCheckpoint;
     private static bool hasReset;
     private static bool hasPushed;
+    private static bool hasStretched;
+    private static bool hasAttacked;
+
+    // Resets whenever the hold breaks, so only one continuous hold counts — not instance
+    // state that needs to survive a reset like the flags above.
+    private float stretchHoldTimer;
 
     private void Awake()
     {
@@ -55,7 +75,27 @@ public class TutorialManager : MonoBehaviour
         ApplyCheckState(checkpointCheck, hasVisitedCheckpoint);
         ApplyCheckState(resetCheck, hasReset);
         ApplyCheckState(pushCheck, hasPushed);
+        ApplyCheckState(stretchCheck, hasStretched);
+        ApplyCheckState(attackCheck, hasAttacked);
         UpdateStartButton();
+    }
+
+    private void Update()
+    {
+        // Times how long the stretch key is held continuously — only an unbroken hold counts,
+        // so the timer resets the instant the player isn't actively holding a stretch. No pause
+        // guard needed: Time.deltaTime is already 0 while paused (Time.timeScale == 0).
+        if (hasStretched || player == null || !player.IsHoldingStretch)
+        {
+            stretchHoldTimer = 0f;
+            return;
+        }
+
+        stretchHoldTimer += Time.deltaTime;
+        if (stretchHoldTimer >= stretchHoldSeconds)
+        {
+            CompleteTask(ref hasStretched, stretchCheck);
+        }
     }
 
     private void OnDestroy()
@@ -75,6 +115,9 @@ public class TutorialManager : MonoBehaviour
     /// <summary>Call when the player successfully pushes the crate — see CharacterController.Update.</summary>
     public void NotifyBlockPushed() => CompleteTask(ref hasPushed, pushCheck);
 
+    /// <summary>Call when the player attacks — see PlayerAttack.AttackRoutine.</summary>
+    public void NotifyAttacked() => CompleteTask(ref hasAttacked, attackCheck);
+
     /// <summary>Idempotent: only the first call for a given task actually does anything, so callers don't need to guard against notifying more than once.</summary>
     private void CompleteTask(ref bool flag, GameObject check)
     {
@@ -93,6 +136,6 @@ public class TutorialManager : MonoBehaviour
     private void UpdateStartButton()
     {
         if (startButton != null)
-            startButton.interactable = hasMoved && hasVisitedCheckpoint && hasReset && hasPushed;
+            startButton.interactable = hasMoved && hasVisitedCheckpoint && hasReset && hasPushed && hasStretched && hasAttacked;
     }
 }

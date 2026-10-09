@@ -12,6 +12,9 @@ public class CharacterController : GridEntity
     /// <summary>True from the start of a stretch until fully contracted again: planted in place, no walking or turning (attack still works).</summary>
     public bool IsStretching => stretchStage != StretchIdle || stretchTarget != StretchIdle;
 
+    /// <summary>True only while a stretch is active AND the stretch key is currently held down (false during the release/contraction tail, even though IsStretching is still true then).</summary>
+    public bool IsHoldingStretch => IsStretching && Input.GetKey(stretchKey);
+
     /// <summary>Body stretch stage for visuals: 0 = normal (mode 1), 1 = half (mode 2), 2 = full (mode 3).</summary>
     public int StretchStage => stretchStage;
 

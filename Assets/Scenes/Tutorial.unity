@@ -913,7 +913,11 @@ MonoBehaviour:
   checkpointCheck: {fileID: 719157629}
   resetCheck: {fileID: 579051683}
   pushCheck: {fileID: 869698311}
+  stretchCheck: {fileID: 219290085}
+  attackCheck: {fileID: 1307492339}
   startButton: {fileID: 1913265146}
+  player: {fileID: 755173767}
+  stretchHoldSeconds: 0.35
 --- !u!4 &298842207
 Transform:
   m_ObjectHideFlags: 0
@@ -2507,6 +2511,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 719157629}
   m_CullTransparentMesh: 1
+--- !u!114 &755173767 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5628018141983903119, guid: ef67ba864d1ecc042b5f4cf48455c0a6, type: 3}
+  m_PrefabInstance: {fileID: 1948228645}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abd146093740c5d43b5909c7913f3109, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &757959685
 GameObject:
   m_ObjectHideFlags: 0
@@ -3202,7 +3217,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1121178379}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b9e97feb20494a52b64b404cb956b56, type: 3}
   m_Name: 
