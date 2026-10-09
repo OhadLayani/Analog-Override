@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Appends one line per tracked gameplay event to a plain text log, for offline analysis
@@ -14,15 +17,15 @@ using UnityEngine;
 /// Log call, written out once at the end of the run.
 ///
 /// The log lives in an "Analog Override" folder created next to the game (in a build, the folder
-/// the game's executable is in; in the Editor, the project folder), and both the folder and the
+/// the game's executable or .app is in; in the Editor, the project folder), and both the folder and the
 /// file are created automatically on first write. Existing lines are never touched, so data
 /// accumulates across every play session instead of resetting each time the game launches. If
 /// that location isn't writable (e.g. a build installed under Program Files) logging is skipped
 /// with a warning rather than breaking the game.
 ///
-/// A "run" is a game launch that actually logged something: the run number is only taken at the
-/// first event, and a launch with no events writes no summary, so opening and closing the game
-/// (or pressing Play in the Editor to look around) doesn't use up run numbers or add empty blocks.
+/// A "run" is one game launch (or one Play in the Editor). The first load of each scene is logged
+/// as SCENE_LOADED, so every run gets a number, and the summary includes the session length.
+/// Lines always end in CRLF and the file is UTF-8, so it reads the same on macOS and Windows.
 ///
 /// Self-bootstrapping: no GameObject needs to be added to any scene — see Bootstrap below.
 /// It creates and persists itself the moment the game starts, so it can't be forgotten
@@ -48,15 +51,35 @@ public class AnalyticsLogger : MonoBehaviour
 
     private const string LogFolderName = "Analog Override";
 
-    // Application.dataPath is the "<game>_Data" folder in a build and "<project>/Assets" in the Editor,
-    // so its parent is the folder holding the game's executable, or the project folder.
-    private string FolderPath => Path.Combine(Directory.GetParent(Application.dataPath).FullName, LogFolderName);
+    // Same line ending on every OS, so a log appended to from both Mac and Windows stays consistent.
+    private const string NewLine = "\r\n";
+
+    private static readonly Encoding FileEncoding = new UTF8Encoding(false);
+
+    private string FolderPath => Path.Combine(GameFolder(), LogFolderName);
 
     private string FilePath => Path.Combine(FolderPath, "analytics_log.txt");
+
+    /// <summary>The folder holding the game's executable (or the .app on macOS), or the project folder in the Editor.</summary>
+    private static string GameFolder()
+    {
+        // Application.dataPath is "<game>_Data" on Windows, "<project>/Assets" in the Editor,
+        // and "<game>.app/Contents" in a macOS build, which needs one extra step up to leave the bundle.
+        var folder = Directory.GetParent(Application.dataPath);
+        if (Application.platform == RuntimePlatform.OSXPlayer && folder.Parent != null)
+            folder = folder.Parent;
+        return folder.FullName;
+    }
 
     // 0 until the first event of this launch (see StartRunIfNeeded).
     private int runNumber;
     private bool summaryWritten;
+
+    // Real time when this launch started, for the session length (unaffected by pause / timeScale).
+    private DateTime sessionStart;
+
+    // Scenes already logged this launch, so reloads after a death or reset aren't logged again.
+    private readonly HashSet<string> loggedScenes = new HashSet<string>();
 
     // Per-run tallies. Only ever reset by a fresh game launch (a new AnalyticsLogger
     // instance) — never mid-run — so the end-of-run summary always covers everything
@@ -75,6 +98,21 @@ public class AnalyticsLogger : MonoBehaviour
             return;
         }
         Instance = this;
+
+        sessionStart = DateTime.Now;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        Debug.Log($"AnalyticsLogger writing to {FilePath}");
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (!loggedScenes.Add(scene.name)) return;
+        Log($"SCENE_LOADED | Scene: {scene.name}");
     }
 
     /// <summary>Takes this launch's run number the first time something is logged, so launches with no events don't use one up.</summary>
@@ -134,7 +172,7 @@ public class AnalyticsLogger : MonoBehaviour
     // שחקן לוחץ quit
     public void LogQuit()
     {
-        Log("QUIT");
+        Log($"QUIT | Session length: {SessionLength()}");
         WriteRunSummary();
     }
 
@@ -153,15 +191,23 @@ public class AnalyticsLogger : MonoBehaviour
         if (runNumber == 0) return;
 
         var summary =
-            $"=== Run {runNumber} summary ({DateTime.Now:yyyy-MM-dd HH:mm:ss}) ===" + Environment.NewLine +
-            $"Deaths: {deathCount}" + Environment.NewLine +
-            $"Stage resets: {resetCount}" + Environment.NewLine +
-            $"Checkpoint visits: {checkpointVisitCount}" + Environment.NewLine +
-            $"Times on last bar: {lastBarCount}" + Environment.NewLine +
-            $"Stages completed: {stageCompleteCount}" + Environment.NewLine +
+            $"=== Run {runNumber} summary ({DateTime.Now:yyyy-MM-dd HH:mm:ss}) ===" + NewLine +
+            $"Session length: {SessionLength()}" + NewLine +
+            $"Deaths: {deathCount}" + NewLine +
+            $"Stage resets: {resetCount}" + NewLine +
+            $"Checkpoint visits: {checkpointVisitCount}" + NewLine +
+            $"Times on last bar: {lastBarCount}" + NewLine +
+            $"Stages completed: {stageCompleteCount}" + NewLine +
             "===================================";
 
         WriteLine(summary);
+    }
+
+    /// <summary>Time since launch as hh:mm:ss (hours keep counting past 24).</summary>
+    private string SessionLength()
+    {
+        var t = DateTime.Now - sessionStart;
+        return $"{(int)t.TotalHours:00}:{t.Minutes:00}:{t.Seconds:00}";
     }
 
     private void WriteLine(string text)
@@ -169,7 +215,7 @@ public class AnalyticsLogger : MonoBehaviour
         try
         {
             Directory.CreateDirectory(FolderPath); // does nothing if it's already there
-            File.AppendAllText(FilePath, text + Environment.NewLine);
+            File.AppendAllText(FilePath, text + NewLine, FileEncoding);
         }
         catch (Exception e) // not just IOException: a read-only install location throws UnauthorizedAccessException
         {
