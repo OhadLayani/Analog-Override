@@ -73,7 +73,7 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 ### Verification
 
 - **Code-only change:** Claude checks first: re-reads the changed code, traces its callers, and looks for compile errors. Then Tsah plays it in the Editor.
-- **Compile check without Unity:** Claude can compile `Assets/Scripts` with Unity's bundled compiler: `dotnet <Unity.app>/Contents/Resources/Scripting/DotNetSdkRoslyn/csc.dll @<scratchpad>/csc.rsp`. The Unity install path has spaces, so the references go in a response file. It lists `-nostdlib -target:library -langversion:9`, a `-r:` line for `Resources/Scripting/NetStandard/ref/2.1.0/netstandard.dll`, every `Resources/Scripting/Managed/UnityEngine/*.dll`, and `Library/ScriptAssemblies/*.dll` except `Assembly-CSharp*`, then every `Assets/Scripts/**/*.cs`, each path in quotes. Output goes to the scratchpad.
+- **Compile check without Unity:** Claude can compile `Assets/Scripts` with Unity's bundled compiler: `dotnet <Unity.app>/Contents/Resources/Scripting/DotNetSdkRoslyn/csc.dll @<scratchpad>/csc.rsp`, where `<Unity.app>` is `/Applications/Unity/Hub/Editor/6000.3.21f1/Unity.app`. The Unity install path has spaces, so the references go in a response file. It lists `-nostdlib -target:library -langversion:9`, a `-r:` line for `Resources/Scripting/NetStandard/ref/2.1.0/netstandard.dll`, every `Resources/Scripting/Managed/UnityEngine/*.dll`, and `Library/ScriptAssemblies/*.dll` except `Assembly-CSharp*`, then every `Assets/Scripts/**/*.cs`, each path in quotes. Output goes to the scratchpad.
 - **Change that needs Editor work:** Tsah does the Editor steps and tests first, then Claude reviews.
 - **Regression check (every time Claude checks a code change):**
   1. Go through the Mechanics list. For each mechanic that touches the changed code (shared base classes like `GridEntity`, events, singletons, callers), trace whether the change can affect it.
@@ -95,6 +95,10 @@ When Tsah says the session is over, propose edits to this file based on what hap
 - **Namespaces:** match the other files in the same folder. `Grid/` uses `AnalogOverride.GridSystem`; `Entities/` and `Combat/` use their own `AnalogOverride.*` namespaces; `Managers/`, `Player/` and most of `UI/` have no namespace.
 - **Input:** keep using the legacy `Input.GetKey` / `Input.GetMouseButtonDown` API for consistency, even though the Input System package is installed.
 - **Analytics:** don't add or change `AnalyticsLogger` events unless asked.
+- **Screen fit & UI layout:** the game is designed around a 16:9 frame that must stay fully visible on any screen. Wider screens get empty space at the sides; narrower ones zoom out (`ResponsiveCamera`).
+  - Canvas Scaler on every canvas: *Scale With Screen Size*, Reference Resolution `924 × 520`, Screen Match Mode **Expand**.
+  - UI that relates to the world (tutorial notes pointing at the room) is anchored **middle-center**, so it stays locked to the world. Only true HUD elements are anchored to screen edges.
+  - Lay out and check UI in the Game view at **16:9**, never Free Aspect. Test at ultrawide (2560×1080), 16:10 and 4:3 too.
 - **Optional singletons:** some singletons only exist in some scenes (`TutorialManager`, `StageOverScreen`) or create themselves at startup (`AnalyticsLogger`). Call them as `X.Instance?.Method()`.
 - **Pause guard:** gameplay `Update()`s return early when `GameManager.Instance.IsGamePaused` is true.
 - **Grid position:** always read `CurrentCell`, never derive a cell from `transform.position` (it lags during the slide).
@@ -201,6 +205,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 - **`Key`**: trigger, and also an `IInteractable`, so it can be collected by a reach (guarded against collecting twice). On pickup it calls `GameManager.CollectKey(keyId)` and raises the static `KeyCollected` event before destroying itself. In `Start` it destroys itself without raising the event if the key was already collected. Also `IAttackable` (an attack collects it). `KeyId` exposes its id.
 - **`SortAbove`**: copies a target sprite's order in layer plus `offset` every `LateUpdate`, for things standing on furniture.
 - **`StageGoal`**: trigger. The first time the player touches it, it calls `StageOverScreen.Instance.Show()`.
+- **`ResponsiveCamera`**: on Main Camera in both scenes. Sets the orthographic size to `referenceOrthographicSize × Max(1, (16/9) / screenAspect)`, so screens narrower than 16:9 zoom out and wider ones are unchanged; re-applies when the screen size changes. With a `CinemachineCamera` assigned (SampleScene) it changes that lens, since the Brain overrides the plain Camera; with the field empty (Tutorial) it changes its own `Camera`. Reference size is 4.54679; the *Capture Current Size* context menu saves the current zoom (do it with the Game view at 16:9).
 
 ## Singleton / init order
 
