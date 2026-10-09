@@ -181,7 +181,7 @@ MonoBehaviour:
   sortingOrderBase: 10000
   keyId: 1
   extraCells:
-  - {x: 1, y: 0}
+  - {x: -1, y: 0}
   - {x: 1, y: 0}
   anim: {fileID: 0}
   disableOnOpen: 1
@@ -9120,7 +9120,7 @@ Transform:
   m_GameObject: {fileID: 1322547197}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.38, y: -6.78, z: 0}
+  m_LocalPosition: {x: 6.38, y: -5.72, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -11353,6 +11353,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4429997260346838182, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4429997260346838182, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4429997260346838182, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4429997260346838182, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5073555520845348814, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -11372,6 +11388,22 @@ PrefabInstance:
     - target: {fileID: 6125959387378154927, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
       propertyPath: m_Name
       value: Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 6475829402998854430, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6475829402998854430, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6475829402998854430, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6475829402998854430, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8903840312626019124, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
       propertyPath: m_Pivot.x
