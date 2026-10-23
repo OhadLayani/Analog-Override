@@ -43,17 +43,25 @@ public class SpringManager : MonoBehaviour
         if (amountToSubtract <= 0)
             return;
 
-        if (bars <= 0)
-        {
-            BarsReachedZero?.Invoke();
-            return;
-        }
+        // Already out: the death was announced when the bars first hit 0, and the scene reload it
+        // triggers only lands at the end of the frame. Announcing it again for a second deduction in
+        // that window would log the death (and start the reload) twice.
+        if (bars <= 0) return;
 
         // Reduce the bars
         bars = Mathf.Max(0, bars - amountToSubtract);
 
         // Fire the event to update the UI with the new count
         BarsChanged?.Invoke(bars);
+
+        // Every deduction passes through here (steps, pushes, stretches, hits, attacks), so this is the
+        // one place that can't miss a close call. It must run right after a deduction and only then:
+        // bars can equal 1 only immediately after the deduction that lands on it, whereas checking each
+        // step would re-log the same close call for every step spent at 1 bar.
+        if (bars == 1)
+        {
+            AnalyticsLogger.Instance?.LogLastBar();
+        }
 
         if (bars <= 0)
         {

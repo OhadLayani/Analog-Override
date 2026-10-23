@@ -12,7 +12,8 @@ namespace AnalogOverride.GridSystem
     ///
     /// Responsibilities:
     /// - World-space &lt;-&gt; cell-space conversion (delegates to Unity's own Grid component).
-    /// - Static walkability, read from an optional collision Tilemap (walls, pits, ...).
+    /// - Static walkability, read from an optional collision Tilemap (walls, pits, ...), plus
+    ///   cells blocked at runtime by Furniture (BlockCell / UnblockCell).
     /// - Dynamic occupancy: which IGridOccupant, if any, currently sits in each cell.
     /// - Height: which elevation "level" a cell is on (read from a stack of Tilemaps).
     ///   GridManager only exposes this data — what levels MEAN (entities can't step between
@@ -61,6 +62,10 @@ namespace AnalogOverride.GridSystem
         private UnityEngine.Grid _grid;
         private IGridOccupant[,] _occupants;
 
+        // Cells blocked by furniture, with how many pieces cover each — so two overlapping pieces
+        // don't free each other's cells when one is removed.
+        private readonly Dictionary<Vector2Int, int> _blockedCells = new Dictionary<Vector2Int, int>();
+
         public Vector2Int Size => size;
         public Vector2Int Origin => origin;
 
@@ -105,12 +110,29 @@ namespace AnalogOverride.GridSystem
             return _grid.GetCellCenterWorld(new Vector3Int(cell.x, cell.y, 0));
         }
 
-        /// <summary>True if the cell is inside the grid and not blocked by static geometry (walls). Ignores occupancy — see IsFree for that.</summary>
+        /// <summary>True if the cell is inside the grid and not blocked by static geometry (walls or furniture). Ignores occupancy — see IsFree for that.</summary>
         public bool IsWalkable(Vector2Int cell)
         {
             if (!InBounds(cell)) return false;
             if (collisionTilemap != null && collisionTilemap.HasTile(new Vector3Int(cell.x, cell.y, 0))) return false;
+            if (_blockedCells.ContainsKey(cell)) return false;
             return true;
+        }
+
+        /// <summary>Marks a cell as solid, like a wall, until a matching UnblockCell (see Furniture).</summary>
+        public void BlockCell(Vector2Int cell)
+        {
+            _blockedCells.TryGetValue(cell, out var count);
+            _blockedCells[cell] = count + 1;
+        }
+
+        /// <summary>Undoes one BlockCell; the cell is walkable again once nothing blocks it.</summary>
+        public void UnblockCell(Vector2Int cell)
+        {
+            if (!_blockedCells.TryGetValue(cell, out var count)) return;
+
+            if (count <= 1) _blockedCells.Remove(cell);
+            else _blockedCells[cell] = count - 1;
         }
 
         /// <summary>

@@ -51,6 +51,19 @@ namespace AnalogOverride.Entities
 
         private bool fallen;
 
+        private void Start()
+        {
+            // A stand-in for a key that's already been collected (e.g. picked up, then died) stays
+            // gone: the scene reload would otherwise put it back on the shelf.
+            if (sweptAwayReplacement != null
+                && sweptAwayReplacement.TryGetComponent<Key>(out var key)
+                && GameManager.Instance != null
+                && GameManager.Instance.HasKey(key.KeyId))
+            {
+                gameObject.SetActive(false);
+            }
+        }
+
         public void Interact(GridEntity source)
         {
             // Destroy() only lands at the end of the frame, so guard against being triggered

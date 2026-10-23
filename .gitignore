@@ -104,3 +104,6 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Analytics log written by AnalyticsLogger when playing in the Editor
+/Analog Override/

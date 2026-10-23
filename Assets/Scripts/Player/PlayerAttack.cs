@@ -93,6 +93,10 @@ public class PlayerAttack : MonoBehaviour
     {
         struckThisSwing.Clear();
         SetAttacking(true);
+
+        // Tutorial task: mark "attack" complete. No-op outside the Tutorial scene.
+        TutorialManager.Instance?.NotifyAttacked();
+
         StrikeReachedCells();
 
         // Charged after the hitbox is on: if this kills the player, the scene reloads anyway.

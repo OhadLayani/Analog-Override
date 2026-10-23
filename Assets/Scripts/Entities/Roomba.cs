@@ -113,6 +113,9 @@ namespace AnalogOverride.Entities
         /// <summary>True while docked: still, flashing, and harmless to touch.</summary>
         public bool IsFrozen => dockedTimer > 0f;
 
+        /// <summary>True while rushing to, or docked at, the station on `stationCell`.</summary>
+        public bool IsRespondingTo(Vector2Int stationCell) => (rushing || IsFrozen) && dockCell == stationCell;
+
         /// <summary>The direction it's currently driving in.</summary>
         public Vector2Int Heading => heading;
 

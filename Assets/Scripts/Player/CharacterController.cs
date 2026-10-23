@@ -12,6 +12,9 @@ public class CharacterController : GridEntity
     /// <summary>True from the start of a stretch until fully contracted again: planted in place, no walking or turning (attack still works).</summary>
     public bool IsStretching => stretchStage != StretchIdle || stretchTarget != StretchIdle;
 
+    /// <summary>True only while a stretch is active AND the stretch key is currently held down (false during the release/contraction tail, even though IsStretching is still true then).</summary>
+    public bool IsHoldingStretch => IsStretching && Input.GetKey(stretchKey);
+
     /// <summary>Body stretch stage for visuals: 0 = normal (mode 1), 1 = half (mode 2), 2 = full (mode 3).</summary>
     public int StretchStage => stretchStage;
 
@@ -45,6 +48,10 @@ public class CharacterController : GridEntity
     private int stretchTarget;
     private float stretchTimer;
 
+    // Turn in place: time left before a held key walks after a turn, and last frame's held direction.
+    private float turnHoldTimer;
+    private Vector2Int heldDirLastFrame;
+
     // The entity's own configured move duration/curve (GridEntity's Inspector-set values),
     // cached once so they can be restored after a high-friction step.
     private float baseMoveDuration;
@@ -65,6 +72,10 @@ public class CharacterController : GridEntity
         new Keyframe(0.3f, 0.55f, 0.3f, 0.3f),
         new Keyframe(0.7f, 0.65f, 0.3f, 0.3f),
         new Keyframe(1f, 1f, 3f, 0f));
+
+    [Tooltip("Pressing a direction the robot isn't facing, while standing still, only turns it. Seconds the key must stay held after that turn before it starts walking. Turning in place is free.")]
+    [Min(0f)]
+    [SerializeField] private float turnHoldSeconds = 0.12f;
 
     [Tooltip("Energy bars charged per unit of Weight pushed, on top of (not counted towards) the normal per-step cost above. E.g. pushing a Weight-3 crate at 1 bar/weight costs 3 bars immediately, and doesn't advance stepCounter. Scaled up further by the friction ratio (stepsPerBar / stepsPerBarHighFriction) when the pusher ends up standing on a high-friction cell.")]
     [SerializeField] private float energyCostPerWeight = 1f;
@@ -170,6 +181,7 @@ public class CharacterController : GridEntity
         if (IsStunned)
         {
             stunTimer -= Time.deltaTime;
+            ResetTurnInput();
             UpdateAnimation(false);
             return;
         }
@@ -189,19 +201,18 @@ public class CharacterController : GridEntity
         // Planted while stretched: no walking, no turning — only PlayerAttack still acts.
         if (IsStretching)
         {
+            ResetTurnInput();
             UpdateAnimation(false);
             return;
         }
 
-        if (dir != Vector2Int.zero)
+        UpdateTurnInPlace(dir);
+        bool walking = dir != Vector2Int.zero && turnHoldTimer <= 0f;
+
+        // If a directional key is held (and not just turning in place), attempt to step on the grid
+        if (walking)
         {
             FacingDirection = dir;
-        }
-
-        // If a directional key is pressed, attempt to step on the grid
-        if (dir != Vector2Int.zero)
-        {
-           
             TutorialManager.Instance?.NotifyPlayerMoved();
 
             
@@ -234,7 +245,40 @@ public class CharacterController : GridEntity
             }
         }
 
-        UpdateAnimation(dir != Vector2Int.zero);
+        UpdateAnimation(walking);
+    }
+
+    /// <summary>
+    /// Pressing a new direction from standing still (no key held last frame, not sliding) only turns
+    /// the robot and starts turnHoldTimer; the key must stay held until it runs out to walk. Pressing
+    /// the faced direction, or changing direction mid-walk, leaves the timer at 0 so it walks at once.
+    /// </summary>
+    private void UpdateTurnInPlace(Vector2Int dir)
+    {
+        bool startingFromStill = heldDirLastFrame == Vector2Int.zero || turnHoldTimer > 0f;
+
+        if (dir == Vector2Int.zero)
+        {
+            turnHoldTimer = 0f;
+        }
+        else if (dir != FacingDirection && !IsMoving && startingFromStill)
+        {
+            FacingDirection = dir;
+            turnHoldTimer = turnHoldSeconds;
+        }
+        else if (turnHoldTimer > 0f)
+        {
+            turnHoldTimer -= Time.deltaTime;
+        }
+
+        heldDirLastFrame = dir;
+    }
+
+    /// <summary>Forgets held-key state, so a key held through a stretch or stun counts as a fresh press afterwards.</summary>
+    private void ResetTurnInput()
+    {
+        turnHoldTimer = 0f;
+        heldDirLastFrame = Vector2Int.zero;
     }
 
     /// <summary>
@@ -249,22 +293,12 @@ public class CharacterController : GridEntity
         ChargeBars(Mathf.Max(1, Mathf.RoundToInt(pushedWeight * energyCostPerWeight * frictionMultiplier)));
     }
 
-    /// <summary>
-    /// Every energy deduction goes through here, so the "close call" analytics check lives in one
-    /// place. It has to run right after a deduction and only then: Bars can equal 1 only immediately
-    /// after the single deduction that lands on it (any deduction FROM 1 goes straight to 0 / death).
-    /// Checking after every step instead would re-log the same close call on each step spent at 1 bar.
-    /// </summary>
+    /// <summary>Every energy deduction by the player goes through here. (The "last bar" analytics check lives in SpringManager.ReduceBars, so deductions from other places, like the attack, are covered too.)</summary>
     private void ChargeBars(int amount)
     {
         if (springManager == null || amount <= 0) return;
 
         springManager.ReduceBars(amount);
-
-        if (springManager.Bars == 1)
-        {
-            AnalyticsLogger.Instance?.LogLastBar();
-        }
     }
 
     /// <summary>Starts the stretch action (1 → 2 → 3): shows the half frame now, full after stretchFrameDuration.</summary>
@@ -321,52 +355,6 @@ public class CharacterController : GridEntity
         return Vector2Int.zero;
     }
 
-    // Disabled: old press-to-toggle stretch (Space on/off). Replaced by hold-to-stretch (BeginStretch / TickStretch).
-    // /// <summary>
-    // /// Starts or ends a stretch. Starting costs energy up front and is refused mid-slide (the pose
-    // /// would play over a character still travelling between cells); ending is always allowed.
-    // /// </summary>
-    // private void ToggleStretch()
-    // {
-    //     if (IsStretching)
-    //     {
-    //         IsStretching = false;
-    //         return;
-    //     }
-    //
-    //     if (IsMoving) return;
-    //
-    //     ChargeBars(stretchEnergyCost);
-    //     IsStretching = true;
-    // }
-
-    // Disabled: WASD reach while stretched (turn + GridEntity.TryReach on the cell one level up).
-    // Tall objects will be reached via stretch + attack instead.
-    // /// <summary>
-    // /// While stretched the direction keys don't walk, they reach: one press is one reach toward the
-    // /// adjacent cell (GetKeyDown, unlike walking's held-key repeat, so holding a key can't re-shove
-    // /// or re-trigger something every frame). Pressing a direction also turns the player to face it,
-    // /// which is what selects the matching directional stretch pose in UpdateAnimation.
-    // /// </summary>
-    // private void HandleStretchInput()
-    // {
-    //     Vector2Int dir = Vector2Int.zero;
-    //
-    //     if (Input.GetKeyDown(KeyCode.A)) dir = Vector2Int.left;
-    //     else if (Input.GetKeyDown(KeyCode.D)) dir = Vector2Int.right;
-    //     else if (Input.GetKeyDown(KeyCode.W)) dir = Vector2Int.up;
-    //     else if (Input.GetKeyDown(KeyCode.S)) dir = Vector2Int.down;
-    //
-    //     if (dir == Vector2Int.zero) return;
-    //
-    //     FacingDirection = dir;
-    //
-    //     if (TryReach(dir, stretchReach, out var pushedWeight) && pushedWeight > 0f)
-    //     {
-    //         var onHighFriction = GridManager.Instance != null && GridManager.Instance.IsHighFriction(CurrentCell);
-    //         ChargePushEnergy(pushedWeight, onHighFriction);
-    //     }
-    // }
 
     /// <summary>
     /// Takes a hit from something harmful (see Roomba): thrown up to knockbackCells cells along
