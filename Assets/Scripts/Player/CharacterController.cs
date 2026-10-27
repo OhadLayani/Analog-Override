@@ -293,7 +293,7 @@ public class CharacterController : GridEntity
         ChargeBars(Mathf.Max(1, Mathf.RoundToInt(pushedWeight * energyCostPerWeight * frictionMultiplier)));
     }
 
-    /// <summary>Every energy deduction by the player goes through here. (The "last bar" analytics check lives in SpringManager.ReduceBars, so deductions from other places, like the attack, are covered too.)</summary>
+    /// <summary>Every energy deduction by the player goes through here.</summary>
     private void ChargeBars(int amount)
     {
         if (springManager == null || amount <= 0) return;

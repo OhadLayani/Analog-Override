@@ -54,15 +54,6 @@ public class SpringManager : MonoBehaviour
         // Fire the event to update the UI with the new count
         BarsChanged?.Invoke(bars);
 
-        // Every deduction passes through here (steps, pushes, stretches, hits, attacks), so this is the
-        // one place that can't miss a close call. It must run right after a deduction and only then:
-        // bars can equal 1 only immediately after the deduction that lands on it, whereas checking each
-        // step would re-log the same close call for every step spent at 1 bar.
-        if (bars == 1)
-        {
-            AnalyticsLogger.Instance?.LogLastBar();
-        }
-
         if (bars <= 0)
         {
             bars = 0;

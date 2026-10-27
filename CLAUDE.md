@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 A 2D top-down grid puzzle game built in Unity 6000.3.21f1 (Universal Render Pipeline). This is a Unity Editor project: there is no CLI build, and there is no automated test suite, and none should be added (`com.unity.test-framework` is installed, but no test assemblies exist).
 
 - All gameplay code lives under `Assets/Scripts/` (~25 files). The codebase is small enough to read the relevant files in full instead of guessing from partial context.
-- Scenes in Build Settings, in order: `Tutorial` (0), then `SampleScene` (1). `SecondPuzzleScene` exists but is **not** in the build. After the last level, `GameManager.LoadNextScene` loops back to `"Tutorial"`.
+- Scenes in Build Settings, in order: `Tutorial` (0), then `Level2-Bedroom` (1). After the last level, `GameManager.LoadNextScene` loops back to `"Tutorial"`.
 
 ## Game design
 
@@ -33,7 +33,7 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 - **Pushing:** one object at a time, never a chain. If anything is behind the pushed object, the push fails. Costs weight-based energy. *(GridEntity.TryStep / TryBePushed)*
 - **Height levels:** the level comes from a stack of tilemap layers. Nothing can step or be pushed between levels. *(GridManager, GridEntity)*
 - **High-friction terrain (carpet):** costs more energy per step and gives a slower, dragging slide. *(GridManager.IsHighFriction, CharacterController)*
-- **Spring energy:** steps, pushes, stretches and attacks drain bars. Reaching exactly 1 bar is logged as a "last bar" moment (steps, pushes and stretches, all through `CharacterController.ChargeBars`; not attacks). *(SpringManager, CharacterController, PlayerAttack)*
+- **Spring energy:** steps, pushes, stretches and attacks drain bars. *(SpringManager, CharacterController, PlayerAttack)*
 - **Death & respawn:** 0 bars reloads the scene, and the player respawns at the last checkpoint. *(CharacterController, GameManager.ReloadScene)*
 - **Checkpoints:** refill bars and reset the step counter; only one checkpoint is active at a time. *(Checkpoint, GameManager)*
 - **Keys & doors:** a door opens only for a key with a matching `keyId`. A door can span several cells. Keys are not used up. *(Key, Door, GameManager)*
@@ -95,6 +95,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 - **Namespaces:** match the other files in the same folder. `Grid/` uses `AnalogOverride.GridSystem`; `Entities/` and `Combat/` use their own `AnalogOverride.*` namespaces; `Managers/`, `Player/` and most of `UI/` have no namespace.
 - **Input:** keep using the legacy `Input.GetKey` / `Input.GetMouseButtonDown` API for consistency, even though the Input System package is installed.
 - **Analytics:** don't add or change `AnalyticsLogger` events unless asked.
+- **Scene names:** don't hardcode scene names in code; read them from the scene itself (`scene.name`, `SceneManager.GetActiveScene()`) or use the build index. The one exception is `"Tutorial"`, which `GameManager.LoadNextScene` uses in 3 places (detecting `TUTORIAL_COMPLETE` and looping back after the last level); renaming the Tutorial scene means updating all three.
 - **Screen fit & UI layout:** the game is designed around a 16:9 frame that must stay fully visible on any screen. Wider screens get empty space at the sides; narrower ones zoom out (`ResponsiveCamera`).
   - Canvas Scaler on every canvas: *Scale With Screen Size*, Reference Resolution `924 × 520`, Screen Match Mode **Expand**.
   - UI that relates to the world (tutorial notes pointing at the room) is anchored **middle-center**, so it stays locked to the world. Only true HUD elements are anchored to screen edges.
@@ -148,7 +149,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 
 - **`CharacterController`** (`GridEntity`):
   - Movement: reads WASD through `ReadHeldDirection()` (one direction at a time), updates `FacingDirection`, then calls `TryStep`. On spawn it teleports to `GameManager.RespawnCell` *before* `base.Start()`. Turn in place: `UpdateTurnInPlace` sets `FacingDirection` and starts `turnHoldTimer` when a new direction is pressed from still; `ResetTurnInput` clears it during stretch and stun.
-  - Energy: a plain step increments `stepCounter`; at `stepsPerBar` (or `stepsPerBarHighFriction` on carpet) it charges 1 bar. A push charges `max(1, round(weight × energyCostPerWeight × frictionMultiplier))`, where the multiplier is `stepsPerBar / stepsPerBarHighFriction` on carpet. All its costs go through `ChargeBars`, which also logs `LAST_BAR`.
+  - Energy: a plain step increments `stepCounter`; at `stepsPerBar` (or `stepsPerBarHighFriction` on carpet) it charges 1 bar. A push charges `max(1, round(weight × energyCostPerWeight × frictionMultiplier))`, where the multiplier is `stepsPerBar / stepsPerBarHighFriction` on carpet. All its costs go through `ChargeBars`.
   - Stretch: `stretchStage` / `stretchTarget` / `stretchTimer`, driven by `BeginStretch()` and `TickStretch(held)`. Space is read with `GetKey`, so releasing it during pause is still noticed on resume. Exposes `IsStretching` (blocks walking and turning), `StretchStage` (0/1/2) for visuals, and `IsHoldingStretch` (`IsStretching && Input.GetKey(stretchKey)`, false during the release/contraction tail) for anything that needs to know the key is actively held right now, e.g. the tutorial's hold-timer. Ohad's `ToggleStretch`, `HandleStretchInput` (WASD reach), `stretchReach` and Animator `Direction` 40–43 are commented out.
   - Carpet slide: a step that **starts** on carpet uses `highFrictionMoveDuration` / `highFrictionMoveCurve`.
   - Exposes `IsWalking` and `StepProgress` (0..1) for visuals.
@@ -189,8 +190,9 @@ When Tsah says the session is over, propose edits to this file based on what hap
   - Events: `BarsChanged(int)`, `BarsReachedZero`.
 - **`TutorialManager`**: exists only in the Tutorial scene. Its 6 task flags are **static**, so they survive the reload on reset, and `Start()` re-applies them to the check images. The Start button becomes interactable when all six are done. Its own `Update()` polls the player's `CharacterController.IsHoldingStretch` to time a continuous 1.5s hold for the stretch task (resets to 0 the instant the hold breaks); the other five tasks are notified directly by the scripts that perform them.
 - **`AnalyticsLogger`**: creates itself at startup (`RuntimeInitializeOnLoadMethod`, `DontDestroyOnLoad`), so it is never placed in a scene.
-  - Appends `DEATH` / `CHECKPOINT_VISIT` / `STAGE_RESET` / `STAGE_COMPLETE` / `LAST_BAR` / `QUIT` lines to `Application.persistentDataPath/analytics_log.txt`.
-  - Writes a summary for each run on quit. The run number is stored in `PlayerPrefs`.
+  - Appends one line per event to `Analog Override/analytics_log.txt`, in a folder next to the game (the project folder in the Editor). A "run" is one game launch or one Play in the Editor.
+  - Events: `SCENE_LOADED` (first load of each scene per run), `LEVEL_CHANGE`, `TUTORIAL_COMPLETE`, `STAGE_COMPLETE`, `STAGE_RESET`, `DEATH`, `CHECKPOINT_VISIT`, `DOOR_CHECKPOINT`, `KEY_PICKUP`, `INTERACT` (door opened, shelf object pushed off or knocked away, lamp spun), `ROOMBA_DOCK_TRIGGERED`, `QUIT`.
+  - Writes a summary at the end of each run: session length, play time per scene (pauses excluded), and a count of each event type, with a breakdown of interactions per object.
 
 ### UI (`Assets/Scripts/UI/`)
 
@@ -205,7 +207,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 - **`Key`**: trigger, and also an `IInteractable`, so it can be collected by a reach (guarded against collecting twice). On pickup it calls `GameManager.CollectKey(keyId)` and raises the static `KeyCollected` event before destroying itself. In `Start` it destroys itself without raising the event if the key was already collected. Also `IAttackable` (an attack collects it). `KeyId` exposes its id.
 - **`SortAbove`**: copies a target sprite's order in layer plus `offset` every `LateUpdate`, for things standing on furniture.
 - **`StageGoal`**: trigger. The first time the player touches it, it calls `StageOverScreen.Instance.Show()`.
-- **`ResponsiveCamera`**: on Main Camera in both scenes. Sets the orthographic size to `referenceOrthographicSize × Max(1, (16/9) / screenAspect)`, so screens narrower than 16:9 zoom out and wider ones are unchanged; re-applies when the screen size changes. With a `CinemachineCamera` assigned (SampleScene) it changes that lens, since the Brain overrides the plain Camera; with the field empty (Tutorial) it changes its own `Camera`. Reference size is 4.54679; the *Capture Current Size* context menu saves the current zoom (do it with the Game view at 16:9).
+- **`ResponsiveCamera`**: on Main Camera in both scenes. Sets the orthographic size to `referenceOrthographicSize × Max(1, (16/9) / screenAspect)`, so screens narrower than 16:9 zoom out and wider ones are unchanged; re-applies when the screen size changes. With a `CinemachineCamera` assigned (Level2-Bedroom) it changes that lens, since the Brain overrides the plain Camera; with the field empty (Tutorial) it changes its own `Camera`. Reference size is 4.54679; the *Capture Current Size* context menu saves the current zoom (do it with the Game view at 16:9).
 
 ## Singleton / init order
 
