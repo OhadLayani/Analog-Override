@@ -93,6 +93,7 @@ namespace AnalogOverride.Entities
                 return;
             }
 
+            AnalyticsLogger.Instance?.LogInteraction(name, "spun");
             StartCoroutine(Spin());
         }
 

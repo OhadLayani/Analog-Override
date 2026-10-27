@@ -77,6 +77,8 @@ public class Key : MonoBehaviour, IInteractable, IAttackable
             GameManager.Instance.CollectKey(keyId);
         }
 
+        AnalyticsLogger.Instance?.LogKeyPickup(keyId);
+
         KeyCollected?.Invoke(keyId);
 
         if (anim != null)

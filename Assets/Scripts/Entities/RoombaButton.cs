@@ -95,6 +95,8 @@ namespace AnalogOverride.Entities
 
         public void TakeDamage(int amount)
         {
+            AnalyticsLogger.Instance?.LogRoombaDockTriggered(name);
+
             foreach (var roomba in roombas)
             {
                 if (roomba != null)

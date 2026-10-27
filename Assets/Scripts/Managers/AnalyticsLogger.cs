@@ -89,6 +89,16 @@ public class AnalyticsLogger : MonoBehaviour
     private int resetCount;
     private int lastBarCount;
     private int stageCompleteCount;
+    private int tutorialCompleteCount;
+    private int doorCheckpointCount;
+    private int keyPickupCount;
+    private int dockTriggerCount;
+    private int interactionCount;
+
+    // Which stages were completed, in order, and how many times each object was used (keyed by
+    // "<object name> <action>", e.g. "Door1 opened"), for the summary.
+    private readonly List<string> completedStages = new List<string>();
+    private readonly Dictionary<string, int> interactionCounts = new Dictionary<string, int>();
 
     private void Awake()
     {
@@ -112,7 +122,7 @@ public class AnalyticsLogger : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (!loggedScenes.Add(scene.name)) return;
-        Log($"SCENE_LOADED | Scene: {scene.name}");
+        Log("SCENE_LOADED", $"Scene: {scene.name}", false);
     }
 
     /// <summary>Takes this launch's run number the first time something is logged, so launches with no events don't use one up.</summary>
@@ -159,7 +169,54 @@ public class AnalyticsLogger : MonoBehaviour
     public void LogStageComplete()
     {
         stageCompleteCount++;
+        completedStages.Add(SceneManager.GetActiveScene().name);
         Log("STAGE_COMPLETE");
+    }
+
+    // The player left the Tutorial scene through its Start button (which only unlocks once every task is done).
+    public void LogTutorialComplete()
+    {
+        tutorialCompleteCount++;
+        Log("TUTORIAL_COMPLETE");
+    }
+
+    // Every move to another level, including revisits (SCENE_LOADED only marks the first load of each scene).
+    public void LogLevelChange(string fromScene, string toScene)
+    {
+        Log("LEVEL_CHANGE", $"{fromScene} -> {toScene}");
+    }
+
+    // A door that acts as a soft checkpoint was opened: the room was saved and the respawn point moved.
+    public void LogDoorCheckpoint(string doorName)
+    {
+        doorCheckpointCount++;
+        Log("DOOR_CHECKPOINT", $"Door: {doorName}");
+    }
+
+    // The player picked up a key (by walking over it, reaching for it or striking it).
+    public void LogKeyPickup(string keyId)
+    {
+        keyPickupCount++;
+        Log("KEY_PICKUP", $"Key: {keyId}");
+    }
+
+    // The player actually used an interactable object: a door opened, a shelf object pushed off or
+    // knocked away, a lamp spun. Not for every bump, so pressing against a locked door isn't logged.
+    public void LogInteraction(string objectName, string action)
+    {
+        interactionCount++;
+
+        var key = $"{objectName} {action}";
+        interactionCounts[key] = interactionCounts.TryGetValue(key, out var n) ? n + 1 : 1;
+
+        Log("INTERACT", $"Object: {objectName} | Action: {action}");
+    }
+
+    // The roomba charging station was hit and called its roombas.
+    public void LogRoombaDockTriggered(string dockName)
+    {
+        dockTriggerCount++;
+        Log("ROOMBA_DOCK_TRIGGERED", $"Dock: {dockName}");
     }
 
     // כמה פעמים היה על הסף (בר אחרון)
@@ -172,14 +229,24 @@ public class AnalyticsLogger : MonoBehaviour
     // שחקן לוחץ quit
     public void LogQuit()
     {
-        Log($"QUIT | Session length: {SessionLength()}");
+        Log("QUIT", $"Session length: {SessionLength()}");
         WriteRunSummary();
     }
 
-    private void Log(string eventName)
+    /// <summary>
+    /// Writes one event line: "time | Run n | EVENT [| detail] | Scene: name". The scene is the one
+    /// the player is in, so a death or a key pickup says which level it happened in; SCENE_LOADED
+    /// passes false because its detail already names the scene.
+    /// </summary>
+    private void Log(string eventName, string detail = null, bool includeScene = true)
     {
         StartRunIfNeeded();
-        WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} | Run {runNumber} | {eventName}");
+
+        var line = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} | Run {runNumber} | {eventName}";
+        if (detail != null) line += $" | {detail}";
+        if (includeScene) line += $" | Scene: {SceneManager.GetActiveScene().name}";
+
+        WriteLine(line);
     }
 
     private void WriteRunSummary()
@@ -197,10 +264,33 @@ public class AnalyticsLogger : MonoBehaviour
             $"Stage resets: {resetCount}" + NewLine +
             $"Checkpoint visits: {checkpointVisitCount}" + NewLine +
             $"Times on last bar: {lastBarCount}" + NewLine +
-            $"Stages completed: {stageCompleteCount}" + NewLine +
+            $"Stages completed: {stageCompleteCount}{StageList()}" + NewLine +
+            $"Tutorials completed: {tutorialCompleteCount}" + NewLine +
+            $"Door checkpoints: {doorCheckpointCount}" + NewLine +
+            $"Keys picked up: {keyPickupCount}" + NewLine +
+            $"Roomba dock triggers: {dockTriggerCount}" + NewLine +
+            $"Interactions: {interactionCount}" + InteractionBreakdown() + NewLine +
             "===================================";
 
         WriteLine(summary);
+    }
+
+    /// <summary>" (SampleScene, ...)" naming each completed stage in order, or nothing if none were.</summary>
+    private string StageList()
+    {
+        return completedStages.Count == 0 ? "" : $" ({string.Join(", ", completedStages)})";
+    }
+
+    /// <summary>One indented "- object action: count" line per kind of interaction, each starting on a new line.</summary>
+    private string InteractionBreakdown()
+    {
+        var sb = new StringBuilder();
+        foreach (var pair in interactionCounts)
+        {
+            sb.Append(NewLine).Append($"  - {pair.Key}: {pair.Value}");
+        }
+
+        return sb.ToString();
     }
 
     /// <summary>Time since launch as hh:mm:ss (hours keep counting past 24).</summary>

@@ -28,7 +28,7 @@ namespace AnalogOverride.Entities
     /// object just switches off and a copy you've already placed in the scene switches on.
     /// </summary>
     [RequireComponent(typeof(Collider2D))]
-    public class PushOffObject : MonoBehaviour, IInteractable, ISweepable
+    public class PushOffObject : MonoBehaviour, IInteractable, ISweepable, ISaveable
     {
         [Header("Knocked away by a lamp")]
         [Tooltip("Optional. An object already placed in the scene, switched OFF, at the spot this should end up when a spinning lamp knocks it away — e.g. key number 2. When the lamp sweeps this, this object is switched off and that one is switched on. Leave empty and a lamp passing through does nothing to this object.")]
@@ -50,6 +50,8 @@ namespace AnalogOverride.Entities
         [SerializeField] private Transform landingSpot;
 
         private bool fallen;
+        private bool swept;
+        private Vector2Int landedCell;
 
         private void Start()
         {
@@ -66,8 +68,8 @@ namespace AnalogOverride.Entities
 
         public void Interact(GridEntity source)
         {
-            // Destroy() only lands at the end of the frame, so guard against being triggered
-            // twice within one (e.g. a second collider on this object).
+            // The object only goes away once its flight ends, so guard against being triggered
+            // again meanwhile (and twice within one frame, e.g. via a second collider on this object).
             if (fallen) return;
 
             var manager = GridManager.Instance;
@@ -85,11 +87,16 @@ namespace AnalogOverride.Entities
                 : FindLandingCell(manager, origin, PushDirection(origin, source));
 
             fallen = true;
-            StartCoroutine(FlyThen(manager.CellToWorld(landingCell), () =>
-            {
-                Instantiate(fallenVariant, manager.CellToWorld(landingCell), Quaternion.identity);
-                Destroy(gameObject);
-            }));
+            landedCell = landingCell;
+            AnalyticsLogger.Instance?.LogInteraction(name, "pushed off");
+            StartCoroutine(FlyThen(manager.CellToWorld(landingCell), () => DropVariantAt(manager, landingCell)));
+        }
+
+        /// <summary>Spawns the fallen variant at `cell` and switches this off. Switched off, not destroyed, so the room snapshot can still ask it what happened.</summary>
+        private void DropVariantAt(GridManager manager, Vector2Int cell)
+        {
+            Instantiate(fallenVariant, manager.CellToWorld(cell), Quaternion.identity);
+            gameObject.SetActive(false);
         }
 
         public void SweptBy(DeskLamp lamp)
@@ -98,14 +105,44 @@ namespace AnalogOverride.Entities
             if (fallen || sweptAwayReplacement == null) return;
 
             fallen = true;
+            swept = true;
+            AnalyticsLogger.Instance?.LogInteraction(name, "knocked away by lamp");
             onSweptAway?.Invoke();
 
             // Switched off, not destroyed, so a level reset (scene reload) brings it back like everything else.
-            StartCoroutine(FlyThen(sweptAwayReplacement.transform.position, () =>
+            StartCoroutine(FlyThen(sweptAwayReplacement.transform.position, SwapForReplacement));
+        }
+
+        private void SwapForReplacement()
+        {
+            sweptAwayReplacement.SetActive(true);
+            gameObject.SetActive(false);
+        }
+
+        /// <summary>"intact", "swept" or "fallen,x,y" (where the variant landed), for the room snapshot. Decided the moment it's triggered, so a checkpoint touched mid-flight still saves the outcome.</summary>
+        public string CaptureState()
+        {
+            if (swept) return "swept";
+            return fallen ? "fallen," + landedCell.x + "," + landedCell.y : "intact";
+        }
+
+        /// <summary>Replays what had happened when the room was saved, instantly: no flight, no event.</summary>
+        public void RestoreState(string state)
+        {
+            if (fallen) return;
+
+            if (state == "swept" && sweptAwayReplacement != null)
             {
-                sweptAwayReplacement.SetActive(true);
-                gameObject.SetActive(false);
-            }));
+                fallen = swept = true;
+                SwapForReplacement();
+            }
+            else if (state.StartsWith("fallen,") && fallenVariant != null && GridManager.Instance != null)
+            {
+                var parts = state.Split(',');
+                fallen = true;
+                landedCell = new Vector2Int(int.Parse(parts[1]), int.Parse(parts[2]));
+                DropVariantAt(GridManager.Instance, landedCell);
+            }
         }
 
         /// <summary>

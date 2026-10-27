@@ -29,7 +29,7 @@ namespace AnalogOverride.Entities
     /// The bump and the turn are purely cosmetic: the grid never sees the roomba leave its cell
     /// (CurrentCell and occupancy don't change), they just play out on the Transform.
     /// </summary>
-    public class Roomba : GridEntity, IInteractable
+    public class Roomba : GridEntity, IInteractable, ISaveable
     {
         private static readonly Vector2Int[] Headings =
         {
@@ -118,6 +118,23 @@ namespace AnalogOverride.Entities
 
         /// <summary>The direction it's currently driving in.</summary>
         public Vector2Int Heading => heading;
+
+        /// <summary>A roomba drives around on its own, so a room snapshot saves its cell too.</summary>
+        public override bool IsMovable => true;
+
+        /// <summary>Heading and patrol position as "hx,hy,patrolIndex", for the room snapshot. Its cell is saved by the snapshot itself.</summary>
+        public string CaptureState() => heading.x + "," + heading.y + "," + patrolIndex;
+
+        /// <summary>Faces the saved way and resumes the patrol from the saved point. Anything it was in the middle of (a rush to the dock, a bump) just starts over as normal driving.</summary>
+        public void RestoreState(string state)
+        {
+            var parts = state.Split(',');
+            heading = new Vector2Int(int.Parse(parts[0]), int.Parse(parts[1]));
+            patrolIndex = int.Parse(parts[2]);
+
+            facingAngle = AngleFor(heading);
+            transform.rotation = Quaternion.Euler(0f, 0f, facingAngle);
+        }
 
         // Reset() only sets inspector defaults when this component is first added (or via the
         // right-click Reset menu). A roomba should roll slowly, not hop at GridEntity's brisk default.

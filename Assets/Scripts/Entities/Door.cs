@@ -17,7 +17,7 @@ namespace AnalogOverride.Entities
     /// offset in extraCells — so bumping any of them finds this same Door instance and
     /// opening it clears every cell at once, not just the one you happened to touch.
     /// </summary>
-    public class Door : GridEntity, IInteractable
+    public class Door : GridEntity, IInteractable, ISaveable
     {
         [Tooltip("Must match a Key's keyId for that key to open this door.")]
         [SerializeField] private string keyId = "default";
@@ -30,6 +30,10 @@ namespace AnalogOverride.Entities
 
         [Tooltip("If true, the door GameObject is deactivated once opened (disappears entirely, stops registering as a grid occupant via OnDisable). If false, it stays active - e.g. to keep an 'open door' sprite visible - but is explicitly removed from every cell it occupies so it stops blocking.")]
         [SerializeField] private bool disableOnOpen = true;
+
+        [Header("Checkpoint")]
+        [Tooltip("For a door that leads to a new area. When it's opened it also acts as a soft checkpoint: it saves the room as it is and makes the cell the player opened it from the respawn point. Unlike a charging station it doesn't refill the spring or count as a visit, and the next charging station touched replaces it.")]
+        [SerializeField] private bool savesCheckpointWhenOpened;
 
         private bool isOpen;
 
@@ -68,6 +72,28 @@ namespace AnalogOverride.Entities
             }
 
             Open();
+            AnalyticsLogger.Instance?.LogInteraction(name, "opened");
+
+            if (savesCheckpointWhenOpened && source != null)
+            {
+                // After Open(), so the snapshot has this door open. No checkpoint object to activate:
+                // null just means "deactivate every charging station's active marker".
+                GameManager.Instance.ActivateCheckpoint(null, source.CurrentCell);
+                RoomSnapshot.Instance?.Capture();
+                AnalyticsLogger.Instance?.LogDoorCheckpoint(name);
+            }
+        }
+
+        /// <summary>"open" or "closed", for the room snapshot.</summary>
+        public string CaptureState() => isOpen ? "open" : "closed";
+
+        /// <summary>Re-opens a door that was open when the room was saved. A closed one is already as the scene made it.</summary>
+        public void RestoreState(string state)
+        {
+            if (state == "open" && !isOpen)
+            {
+                Open();
+            }
         }
 
         private void Open()

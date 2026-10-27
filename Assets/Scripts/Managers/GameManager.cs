@@ -34,6 +34,12 @@ public class GameManager : MonoBehaviour
 
         // Ensures the GameManager and its saved checkpoint data survive scene reloads
         DontDestroyOnLoad(gameObject);
+
+        // The saved room state has to survive reloads too, so it lives here rather than in the scene.
+        if (!TryGetComponent<RoomSnapshot>(out _))
+        {
+            gameObject.AddComponent<RoomSnapshot>();
+        }
     }
 
     public void RegisterCheckpoint(Checkpoint checkpoint)
@@ -76,6 +82,16 @@ public class GameManager : MonoBehaviour
 
     public bool HasKey(string keyId) => collectedKeys.Contains(keyId);
 
+    /// <summary>The ids of every key collected so far (see RoomSnapshot, which saves and restores this).</summary>
+    public IReadOnlyCollection<string> CollectedKeys => collectedKeys;
+
+    /// <summary>Replaces the collected keys with exactly `keyIds` — used to roll keys back to a room snapshot.</summary>
+    public void ReplaceKeys(IEnumerable<string> keyIds)
+    {
+        collectedKeys.Clear();
+        collectedKeys.UnionWith(keyIds);
+    }
+
     public void CollectKey(string keyId)
     {
         collectedKeys.Add(keyId);
@@ -102,6 +118,7 @@ public class GameManager : MonoBehaviour
         AnalyticsLogger.Instance?.LogStageReset();
         ClearCheckpoint();
         ClearKeys();
+        RoomSnapshot.Instance?.Clear();
         ReloadScene();
     }
 
@@ -131,14 +148,25 @@ public class GameManager : MonoBehaviour
         // ALWAYS unpause and restore time before loading a scene to prevent a frozen reload
         SetPauseState(false);
 
-        int nextIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        var currentScene = SceneManager.GetActiveScene();
+        int nextIndex = currentScene.buildIndex + 1;
+
+        // Logged before the load, so the line's own scene tag is the level being left.
+        if (currentScene.name == "Tutorial")
+        {
+            AnalyticsLogger.Instance?.LogTutorialComplete();
+        }
+
         if (nextIndex < SceneManager.sceneCountInBuildSettings)
         {
+            var nextName = System.IO.Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(nextIndex));
+            AnalyticsLogger.Instance?.LogLevelChange(currentScene.name, nextName);
             SceneManager.LoadScene(nextIndex);
         }
         else
         {
             // SceneManager.LoadScene("MainMenuScene");
+            AnalyticsLogger.Instance?.LogLevelChange(currentScene.name, "Tutorial");
             SceneManager.LoadScene("Tutorial");
         }
     }

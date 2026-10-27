@@ -81,6 +81,22 @@ namespace AnalogOverride.GridSystem
 
         public bool IsPushable => pushable;
 
+        /// <summary>Whether this entity can end up in a different cell than it started in, so a room snapshot (see RoomSnapshot) should save and restore its cell. Pushables do; subclasses that move themselves override this.</summary>
+        public virtual bool IsMovable => pushable;
+
+        /// <summary>Frees this entity's cell without moving it. Only for restoring a snapshot, paired with PlaceAtCell: every moving entity is lifted first so none finds its target cell still held by another that hasn't moved yet.</summary>
+        public void LiftFromGrid()
+        {
+            Manager?.RemoveOccupant(CurrentCell, this);
+        }
+
+        /// <summary>Puts this entity straight into `cell` (no slide), snapping its Transform to the cell's center. Only for restoring a snapshot; see LiftFromGrid.</summary>
+        public void PlaceAtCell(Vector2Int cell)
+        {
+            transform.position = Manager.CellToWorld(cell);
+            SnapToCurrentPosition();
+        }
+
         /// <summary>How much this entity should "count for" when something pushes it. See the tooltip above — this class assigns it no meaning of its own.</summary>
         public float Weight => weight;
 

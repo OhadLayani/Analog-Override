@@ -55,6 +55,10 @@ public class Checkpoint : MonoBehaviour
             {
                 ActivateCheckpoint();
             }
+
+            // 3. ALWAYS save the room as it is now, replacing the previous snapshot, so a death
+            // brings it back to this state instead of resetting it
+            RoomSnapshot.Instance?.Capture();
         }
     }
 
