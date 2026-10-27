@@ -78,8 +78,9 @@ namespace AnalogOverride.Entities
             {
                 // After Open(), so the snapshot has this door open. No checkpoint object to activate:
                 // null just means "deactivate every charging station's active marker".
-                GameManager.Instance.ActivateCheckpoint(null, source.CurrentCell);
-                RoomSnapshot.Instance?.Capture();
+                // Disabled: death now fully resets the level, so the door no longer saves a respawn cell or the room.
+                // GameManager.Instance.ActivateCheckpoint(null, source.CurrentCell);
+                // RoomSnapshot.Instance?.Capture();
                 AnalyticsLogger.Instance?.LogDoorCheckpoint(name);
             }
         }

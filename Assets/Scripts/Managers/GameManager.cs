@@ -56,8 +56,9 @@ public class GameManager : MonoBehaviour
 
     public void ActivateCheckpoint(Checkpoint activeCheckpoint, Vector2Int cell)
     {
-        HasCheckpoint = true;
-        RespawnCell = cell;
+        // Disabled: death now fully resets the level, so a checkpoint no longer saves a respawn cell.
+        // HasCheckpoint = true;
+        // RespawnCell = cell;
 
         // Deactivate all other checkpoints
         foreach (var cp in allCheckpoints)
@@ -116,6 +117,12 @@ public class GameManager : MonoBehaviour
     public void ResetLevel()
     {
         AnalyticsLogger.Instance?.LogStageReset();
+        RestartLevel();
+    }
+
+    /// <summary>Full reset without logging: used by ResetLevel and by a death (which logs DEATH itself).</summary>
+    public void RestartLevel()
+    {
         ClearCheckpoint();
         ClearKeys();
         RoomSnapshot.Instance?.Clear();

@@ -56,9 +56,10 @@ public class Checkpoint : MonoBehaviour
                 ActivateCheckpoint();
             }
 
+            // Disabled: death now fully resets the level, so the room isn't saved here.
             // 3. ALWAYS save the room as it is now, replacing the previous snapshot, so a death
             // brings it back to this state instead of resetting it
-            RoomSnapshot.Instance?.Capture();
+            // RoomSnapshot.Instance?.Capture();
         }
     }
 
