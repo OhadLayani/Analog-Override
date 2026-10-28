@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2ac833705c19b4eea9f8f629c8395a38
+guid: d6445a8d885e747f09651678cdcb192f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6784033001051898778
-    second: ingame rug 572x488_0
+      213: 7779204785082318967
+    second: ver2 ingame bed 193x135_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ingame rug 572x488_0
+      name: ver2 ingame bed 193x135_0
       rect:
         serializedVersion: 2
-        x: 14
-        y: 15
-        width: 546
-        height: 455
+        x: 0
+        y: 0
+        width: 193
+        height: 135
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a93c934321ab52e50800000000000000
-      internalID: 6784033001051898778
+      spriteID: 770c9d9398945fb60800000000000000
+      internalID: 7779204785082318967
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ingame rug 572x488_0: 6784033001051898778
+      ver2 ingame bed 193x135_0: 7779204785082318967
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

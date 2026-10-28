@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 40204ef2ad7eb497f9bcb10a226b2d66
+guid: 197c0616ef21e4c3eaa5e220c318bd01
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2691313666816148385
-    second: ingame door 237x140_0
+      213: 4716235631753993311
+    second: ver2 ingame stool 33x39_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ingame door 237x140_0
+      name: ver2 ingame stool 33x39_0
       rect:
         serializedVersion: 2
-        x: 16
+        x: 0
         y: 0
-        width: 221
-        height: 135
+        width: 33
+        height: 39
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f5cf44eaa7886aad0800000000000000
-      internalID: -2691313666816148385
+      spriteID: f5c9cb3c15f637140800000000000000
+      internalID: 4716235631753993311
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ingame door 237x140_0: -2691313666816148385
+      ver2 ingame stool 33x39_0: 4716235631753993311
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

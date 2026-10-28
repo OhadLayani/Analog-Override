@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 11a0d601ab73f40c4aa7e228b58508b8
+guid: 25d778e8675b2459d872eab0751adcbb
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2965750864759755511
-    second: ingame bed 577x440_0
+      213: -464743518963360326
+    second: ver2 ingame roomba charge station green 9x9_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ingame bed 577x440_0
+      name: ver2 ingame roomba charge station green 9x9_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 570
-        height: 439
+        width: 9
+        height: 9
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7f21052c2b6782920800000000000000
-      internalID: 2965750864759755511
+      spriteID: abd16885b36ec89f0800000000000000
+      internalID: -464743518963360326
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ingame bed 577x440_0: 2965750864759755511
+      ver2 ingame roomba charge station green 9x9_0: -464743518963360326
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
