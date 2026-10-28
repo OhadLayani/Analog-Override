@@ -7,8 +7,26 @@ public class Checkpoint : MonoBehaviour
     [Header("Visuals")]
     [SerializeField] private Animator anim;
 
+    /// <summary>How many times this station can recharge the player before it stops working.</summary>
+    [Header("Charges")]
+    [SerializeField] private int maxUses = 2;
+
+    [Header("Charge Sprites")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Sprite fullSprite;
+    [SerializeField] private Sprite halfSprite;
+    [SerializeField] private Sprite emptySprite;
+
     private bool isActive;
     private Vector2Int gridCell;
+    /// <summary>Charges left; resets to maxUses on every scene load (death and reset reload the scene).</summary>
+    private int usesLeft;
+
+    private void Awake()
+    {
+        usesLeft = maxUses;
+        UpdateSprite();
+    }
 
     private void Start()
     {
@@ -38,6 +56,9 @@ public class Checkpoint : MonoBehaviour
         
         if (player != null)
         {
+            // An empty station does nothing: no refill, no step-counter reset, no log
+            if (usesLeft <= 0) return;
+
             AnalyticsLogger.Instance?.LogCheckpointVisit();
 
             // Tutorial task: mark "checkpoint" complete. No-op outside the Tutorial scene.
@@ -60,7 +81,23 @@ public class Checkpoint : MonoBehaviour
             // 3. ALWAYS save the room as it is now, replacing the previous snapshot, so a death
             // brings it back to this state instead of resetting it
             // RoomSnapshot.Instance?.Capture();
+
+            usesLeft--;
+            UpdateSprite();
         }
+    }
+
+    /// <summary>Shows the full, half or empty sprite to match the charges left.</summary>
+    private void UpdateSprite()
+    {
+        if (spriteRenderer == null) return;
+
+        Sprite sprite = usesLeft >= maxUses ? fullSprite
+                      : usesLeft <= 0 ? emptySprite
+                      : halfSprite;
+
+        if (sprite != null)
+            spriteRenderer.sprite = sprite;
     }
 
     private void ActivateCheckpoint()
