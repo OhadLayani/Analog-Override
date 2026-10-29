@@ -93,11 +93,15 @@ public class AnalyticsLogger : MonoBehaviour
     private int keyPickupCount;
     private int dockTriggerCount;
     private int interactionCount;
+    private int zoomOutCount;
 
     // Which stages were completed, in order, and how many times each object was used (keyed by
     // "<object name> <action>", e.g. "Door1 opened"), for the summary.
     private readonly List<string> completedStages = new List<string>();
     private readonly Dictionary<string, int> interactionCounts = new Dictionary<string, int>();
+
+    // Zoom-outs per scene, in order of first zoom-out, for the summary.
+    private readonly Dictionary<string, int> zoomOutCounts = new Dictionary<string, int>();
 
     // Play time per scene, in order of first visit. Measured with Time.time, which stops while the
     // game is paused (timeScale 0), so the pause menu and the stage-over screen aren't counted.
@@ -232,6 +236,17 @@ public class AnalyticsLogger : MonoBehaviour
         Log("ROOMBA_DOCK_TRIGGERED", $"Dock: {dockName}");
     }
 
+    // The player clicked the HUD zoom button to see the whole room (zooming back in isn't logged).
+    public void LogZoomOut()
+    {
+        zoomOutCount++;
+
+        var scene = SceneManager.GetActiveScene().name;
+        zoomOutCounts[scene] = zoomOutCounts.TryGetValue(scene, out var n) ? n + 1 : 1;
+
+        Log("ZOOM_OUT");
+    }
+
     // שחקן לוחץ quit
     public void LogQuit()
     {
@@ -278,6 +293,7 @@ public class AnalyticsLogger : MonoBehaviour
             $"Keys picked up: {keyPickupCount}" + NewLine +
             $"Roomba dock triggers: {dockTriggerCount}" + NewLine +
             $"Interactions: {interactionCount}" + InteractionBreakdown() + NewLine +
+            $"Zoom-outs: {zoomOutCount}" + CountBreakdown(zoomOutCounts) + NewLine +
             "===================================";
 
         WriteLine(summary);
@@ -292,8 +308,14 @@ public class AnalyticsLogger : MonoBehaviour
     /// <summary>One indented "- object action: count" line per kind of interaction, each starting on a new line.</summary>
     private string InteractionBreakdown()
     {
+        return CountBreakdown(interactionCounts);
+    }
+
+    /// <summary>One indented "- key: count" line per entry, each starting on a new line.</summary>
+    private static string CountBreakdown(Dictionary<string, int> counts)
+    {
         var sb = new StringBuilder();
-        foreach (var pair in interactionCounts)
+        foreach (var pair in counts)
         {
             sb.Append(NewLine).Append($"  - {pair.Key}: {pair.Value}");
         }

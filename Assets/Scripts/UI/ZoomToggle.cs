@@ -40,6 +40,9 @@ public class ZoomToggle : MonoBehaviour
             return;
 
         SetZoomedOut(!isZoomedOut);
+
+        if (isZoomedOut)
+            AnalyticsLogger.Instance?.LogZoomOut();
     }
 
     private void SetZoomedOut(bool zoomedOut)
