@@ -31,6 +31,9 @@ namespace AnalogOverride.Entities
 
         private readonly List<Vector2Int> blockedCells = new List<Vector2Int>();
 
+        /// <summary>The cells this piece blocks right now (empty while disabled).</summary>
+        public IReadOnlyList<Vector2Int> BlockedCells => blockedCells;
+
         private void Start()
         {
             RefreshFootprint();
