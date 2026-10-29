@@ -33,12 +33,23 @@ namespace AnalogOverride.Entities
 
         private void Start()
         {
+            RefreshFootprint();
+        }
+
+        /// <summary>Frees the cells blocked so far, then blocks the cells under the currently enabled colliders and redoes the draw order (e.g. after a Fence opens).</summary>
+        public void RefreshFootprint()
+        {
             var manager = GridManager.Instance;
             if (manager == null)
             {
                 Debug.LogError($"{nameof(Furniture)} on '{name}' found no GridManager in the scene.", this);
                 enabled = false;
                 return;
+            }
+
+            foreach (var cell in blockedCells)
+            {
+                manager.UnblockCell(cell);
             }
 
             CollectFootprint(manager.GetComponent<UnityEngine.Grid>(), blockedCells);
