@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using AnalogOverride.Combat;
 using AnalogOverride.GridSystem;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 /// <summary>
 /// Drives the attack: on click, charges energy, turns on the attack-hitbox child and plays
@@ -83,10 +85,30 @@ public class PlayerAttack : MonoBehaviour
         // A stunned player can't swing (see CharacterController.ReceiveHit).
         if (characterController != null && characterController.IsStunned) return;
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !IsPointerOverButton())
         {
             StartCoroutine(AttackRoutine());
         }
+    }
+
+    // Scratch list for the UI raycast below.
+    private readonly List<RaycastResult> uiHits = new List<RaycastResult>();
+
+    /// <summary>True if the mouse is over a clickable UI element (a HUD button), so the click isn't an attack.</summary>
+    private bool IsPointerOverButton()
+    {
+        if (EventSystem.current == null) return false;
+
+        var pointer = new PointerEventData(EventSystem.current) { position = Input.mousePosition };
+        uiHits.Clear();
+        EventSystem.current.RaycastAll(pointer, uiHits);
+
+        foreach (var hit in uiHits)
+        {
+            if (hit.gameObject.GetComponentInParent<Selectable>() != null)
+                return true;
+        }
+        return false;
     }
 
     private IEnumerator AttackRoutine()
