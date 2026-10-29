@@ -7,7 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 A 2D top-down grid puzzle game built in Unity 6000.3.21f1 (Universal Render Pipeline). This is a Unity Editor project: there is no CLI build, and there is no automated test suite, and none should be added (`com.unity.test-framework` is installed, but no test assemblies exist).
 
 - All gameplay code lives under `Assets/Scripts/` (~25 files). The codebase is small enough to read the relevant files in full instead of guessing from partial context.
-- Scenes in Build Settings, in order: `Tutorial` (0), then `Level2-Bedroom` (1). After the last level, `GameManager.LoadNextScene` loops back to `"Tutorial"`.
+- Levels: the 1st level is the `Level1-Attic` scene and the 2nd level is the `Level2-Bedroom` scene, both played after `Tutorial`.
+- Scenes in Build Settings, in order: `Tutorial` (0), then `Level2-Bedroom` (1). `Level1-Attic` isn't in Build Settings yet; it belongs between them. After the last level, `GameManager.LoadNextScene` loops back to `"Tutorial"`.
 
 ## Game design
 
@@ -20,6 +21,7 @@ The player is a wind-up robot on a top-down grid. Its energy is a spring, shown 
 - **Checkpoints:** touching one refills the bars and resets the step counter. They are not respawn points.
 - **Death:** at 0 bars the level fully resets, exactly like Reset Level from the pause menu (player back at the start, no keys, every object in its original place). The only difference is the log line: `DEATH` instead of `STAGE_RESET`.
 - **Keys and doors:** a Key opens every Door with the same `keyId`. Keys are cleared on death and on a level reset.
+- **Fences:** hitting a fence with the attack opens it for good, freeing part of the cells it blocked. A level reset or death closes it again.
 - **Stretching:** hold Space while standing still. The robot grows taller (mode 1 → 2 → 3) and stays at full height while Space is held; releasing contracts it (3 → 2 → 1). Costs 1 bar to start. While stretched there's no walking or turning; only the attack works.
 
 **Terms:** *bars / spring* (energy), *checkpoint* (charging station), *high-friction* (carpet tiles), *weight* (how much energy a pushable costs), *keyId* (what pairs keys with doors), *stretch* (the body growing taller; separate from the attack's *arm stretch*).
@@ -43,6 +45,7 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 - **Push-off objects:** a stand-in on a shelf or table. A spinning desk lamp knocks it away: it flies to its `sweptAwayReplacement` (e.g. a real Key placed on the floor, switched off), switches that on and itself off. A stand-in whose replacement key is already collected switches itself off on load; since death and reset both clear the keys, after either one the stand-in is always back on the table. The reach route (`Interact` → `fallenVariant`) still has no trigger. *(PushOffObject, ISweepable, DeskLamp, Key)*
 - **Desk lamp:** a lamp riding on a pushable table, one level tall. When the arms touch its head circle at full stretch, it spins once (4 frames, counter-clockwise) and its head circle swings with the frames, reporting what it sweeps into through `SweptInto` and calling `SweptBy` on anything `ISweepable` on its own level (e.g. a stand-in key on a neighbouring table). *(DeskLamp, HeightOffset, PlayerAttack, ISweepable)*
 - **Furniture:** solid pieces of any size and shape. Every cell whose centre the footprint collider covers acts like a wall for walking, pushing, knockback, the Roomba and landing spots. Draw order comes from the footprint's lowest row. *(Furniture, GridManager.BlockCell, SortAbove)*
+- **Fence:** fixed furniture that the attack opens, one-shot. It plays closed → middle → open; after the last frame its closed footprint box is swapped for the smaller open box and the freed cells become walkable. Hit from one of its ends, in its row, facing it sideways. Reset and death reload it closed. *(Fence, Furniture.RefreshFootprint)*
 - **Stage goal & next level:** reaching the goal shows the stage-over screen and pauses the game. The next level comes from the Build Settings order. *(StageGoal, StageOverScreen, GameManager)*
 - **Level reset:** a full restart that logs `STAGE_RESET`, clears the checkpoint and keys, then reloads the scene. Shares `RestartLevel` with death; only the log line differs. *(GameManager.ResetLevel, PauseMenu, StageOverScreen)*
 - **Pause:** Esc toggles pause; time scale goes to 0 and player input is blocked. *(PauseMenu, GameManager)*
@@ -69,6 +72,8 @@ Each line gives the mechanic, a short description and its main scripts. **This l
    - The red squares show what's solid: a cell turns red once the box covers its **centre**. Adjust until exactly the right cells are red.
    - For an L-shape, add more BoxCollider2Ds to the same GameObject, or use one PolygonCollider2D.
 4. **Things on top** (a vase, a stand-in key): make them **child objects**. Give each one `SortAbove` with **Target** = the furniture's SpriteRenderer.
+
+Pieces placed from the shared `Prefab furniture` prefab: add any scene-specific components (like `Fence`) on the instance only, and never apply those overrides back to the prefab, or every piece built from it gets them.
 
 ### Verification
 
@@ -142,7 +147,8 @@ When Tsah says the session is over, propose edits to this file based on what hap
   - Also `ISweepable`: `SweptBy` (only with a `sweptAwayReplacement` assigned) flies it to the replacement over `flySeconds`, then switches the replacement on and itself off. `Start` switches it off if the replacement is a Key that's already collected.
 - **`DeskLamp`**: `IAttackable`, not a `GridEntity`; a child of the table it stands on. On a hit it plays its spin frames once, moving a trigger `CircleCollider2D` to each frame's `headOffsets` entry (shown as Scene-view circles when selected). Every frame it checks what the circle overlaps and raises `SweptInto` once per object per spin, skipping its own table and the player. Its draw order follows the table's sprite plus an offset.
 - **`ISweepable`**: `SweptBy(DeskLamp)`, implemented by anything that reacts to a spinning lamp's head.
-- **`Furniture`**: not a `GridEntity`. In `Start` it blocks every cell whose centre lies inside one of its own enabled colliders (not its children's), and frees them in `OnDisable`. It sets its `sortingSprite` order from the lowest footprint row, one step behind so the player wins a tie. `OnDrawGizmosSelected` shows the blocked cells as red squares.
+- **`Furniture`**: not a `GridEntity`. In `Start` it blocks every cell whose centre lies inside one of its own enabled colliders (not its children's), and frees them in `OnDisable`. It sets its `sortingSprite` order from the lowest footprint row, one step behind so the player wins a tie. `OnDrawGizmosSelected` shows the blocked cells as red squares. All of this lives in the public `RefreshFootprint()`, which `Start` calls; call it again after switching its colliders on or off, and it frees the old cells first.
+- **`Fence`**: `IAttackable`, placed next to a `Furniture` component. It has two trigger BoxCollider2D footprints, closed and open; `Awake` turns the open one off before `Furniture.Start` reads the footprint. On a hit it plays `openFrames` (closed → middle → open) over `frameDuration` each, logs `INTERACT` "opened", then swaps the boxes and calls `Furniture.RefreshFootprint()`. `IsAlive` is false from the hit on, so it opens only once.
 - **`Door`**: a non-pushable `IInteractable` that opens when bumped, if `GameManager.HasKey(keyId)`. It can occupy extra cells through `extraCells`, which are claimed in `Start` and freed in `OnDisable`. `disableOnOpen` either deactivates the GameObject or just frees all of its cells.
 
 ### Player (`Assets/Scripts/Player/`)
@@ -193,7 +199,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 - **`TutorialManager`**: exists only in the Tutorial scene. Its 6 task flags are **static**, so they survive the reload on reset, and `Start()` re-applies them to the check images. The Start button becomes interactable when all six are done. Its own `Update()` polls the player's `CharacterController.IsHoldingStretch` to time a continuous 1.5s hold for the stretch task (resets to 0 the instant the hold breaks); the other five tasks are notified directly by the scripts that perform them.
 - **`AnalyticsLogger`**: creates itself at startup (`RuntimeInitializeOnLoadMethod`, `DontDestroyOnLoad`), so it is never placed in a scene.
   - Appends one line per event to `Analog Override/analytics_log.txt`, in a folder next to the game (the project folder in the Editor). A "run" is one game launch or one Play in the Editor.
-  - Events: `SCENE_LOADED` (first load of each scene per run), `LEVEL_CHANGE`, `TUTORIAL_COMPLETE`, `STAGE_COMPLETE`, `STAGE_RESET`, `DEATH`, `CHECKPOINT_VISIT`, `DOOR_CHECKPOINT`, `KEY_PICKUP`, `INTERACT` (door opened, shelf object pushed off or knocked away, lamp spun), `ROOMBA_DOCK_TRIGGERED`, `QUIT`.
+  - Events: `SCENE_LOADED` (first load of each scene per run), `LEVEL_CHANGE`, `TUTORIAL_COMPLETE`, `STAGE_COMPLETE`, `STAGE_RESET`, `DEATH`, `CHECKPOINT_VISIT`, `DOOR_CHECKPOINT`, `KEY_PICKUP`, `INTERACT` (door opened, shelf object pushed off or knocked away, lamp spun, fence opened), `ROOMBA_DOCK_TRIGGERED`, `QUIT`.
   - Writes a summary at the end of each run: session length, play time per scene (pauses excluded), and a count of each event type, with a breakdown of interactions per object.
 
 ### UI (`Assets/Scripts/UI/`)
