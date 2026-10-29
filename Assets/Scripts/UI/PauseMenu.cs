@@ -52,6 +52,12 @@ public class PauseMenu : MonoBehaviour
         GameManager.Instance?.ResetLevel();
     }
 
+    /// <summary>Button hook: skips to the next level (or back to the first scene after the last).</summary>
+    public void NextLevel()
+    {
+        GameManager.Instance?.SkipToNextScene();
+    }
+
     public void QuitGame()
     {
         AnalyticsLogger.Instance?.LogQuit();

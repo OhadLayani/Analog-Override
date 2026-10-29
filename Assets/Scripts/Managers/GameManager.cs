@@ -177,4 +177,18 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene("Tutorial");
         }
     }
+
+    /// <summary>Skips to the next scene in Build Settings, or the first one after the last; full reset, no analytics.</summary>
+    public void SkipToNextScene()
+    {
+        ClearCheckpoint();
+        ClearKeys();
+        RoomSnapshot.Instance?.Clear();
+        SetPauseState(false);
+
+        int nextIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        if (nextIndex >= SceneManager.sceneCountInBuildSettings)
+            nextIndex = 0;
+        SceneManager.LoadScene(nextIndex);
+    }
 }
