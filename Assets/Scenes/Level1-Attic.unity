@@ -8132,6 +8132,22 @@ PrefabInstance:
       propertyPath: overviewCamera
       value: 
       objectReference: {fileID: 1416489267}
+    - target: {fileID: 4429997260346838182, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4429997260346838182, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4429997260346838182, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4429997260346838182, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5073555520845348814, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -8151,6 +8167,22 @@ PrefabInstance:
     - target: {fileID: 6125959387378154927, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
       propertyPath: m_Name
       value: Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 6475829402998854430, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6475829402998854430, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6475829402998854430, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6475829402998854430, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8903840312626019124, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
       propertyPath: m_Pivot.x
