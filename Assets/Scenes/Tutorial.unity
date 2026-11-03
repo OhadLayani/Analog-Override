@@ -1603,6 +1603,9 @@ MonoBehaviour:
   referenceHeight: 9
   cinemachineCamera: {fileID: 0}
   referenceOrthographicSize: 4.54679
+  overviewCamera: {fileID: 0}
+  overviewBounds: {fileID: 0}
+  overviewMargin: 0.05
 --- !u!1 &579051683
 GameObject:
   m_ObjectHideFlags: 0
@@ -3246,6 +3249,8 @@ MonoBehaviour:
   releasedSpacing: 0.1
   keyId: default
   keyIcon: {fileID: 0}
+  itemSlot: {fileID: 0}
+  showItemSlot: 1
 --- !u!114 &1121178382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3290,6 +3295,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AnalogOverride.SpringManager
   bars: 0
   maxBars: 20
+  deathAtZero: 0
 --- !u!4 &1161048783
 Transform:
   m_ObjectHideFlags: 0

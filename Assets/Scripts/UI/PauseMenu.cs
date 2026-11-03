@@ -39,15 +39,19 @@ public class PauseMenu : MonoBehaviour
 
     public void Resume()
     {
+        // Tutorial task: closing a menu that was actually open counts. No-op outside the Tutorial scene.
+        if (pauseMenuUI != null && pauseMenuUI.activeSelf)
+            TutorialManager.Instance?.NotifyPauseMenuUsed();
+
         GameManager.Instance.SetPauseState(false);
         pauseMenuUI.SetActive(false);
     }
 
     public void ResetLevel()
     {
-        // Tutorial task: mark "reset" complete. No-op outside the Tutorial scene. Must fire
-        // before GameManager.ResetLevel() reloads the scene below.
-        TutorialManager.Instance?.NotifyLevelReset();
+        // Tutorial task: resetting from the menu also counts. No-op outside the Tutorial scene.
+        // Must fire before GameManager.ResetLevel() reloads the scene below.
+        TutorialManager.Instance?.NotifyPauseMenuUsed();
 
         GameManager.Instance?.ResetLevel();
     }

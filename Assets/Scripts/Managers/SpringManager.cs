@@ -13,6 +13,8 @@ public class SpringManager : MonoBehaviour
 
     public int bars;
     [SerializeField] private int maxBars = 20;
+    /// <summary>When off, reaching 0 bars doesn't kill the player (used in the Tutorial).</summary>
+    [SerializeField] private bool deathAtZero = true;
 
     // Event for game over state
     public event Action BarsReachedZero;
@@ -57,7 +59,7 @@ public class SpringManager : MonoBehaviour
         if (bars <= 0)
         {
             bars = 0;
-            BarsReachedZero?.Invoke();
+            if (deathAtZero) BarsReachedZero?.Invoke();
         }
     }
     public void ResetBars()

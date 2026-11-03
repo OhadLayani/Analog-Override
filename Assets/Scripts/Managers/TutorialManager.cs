@@ -25,7 +25,7 @@ public class TutorialManager : MonoBehaviour
     [Tooltip("Check image shown once the player has stood on the checkpoint.")]
     [SerializeField] private GameObject checkpointCheck;
 
-    [Tooltip("Check image shown once the player has reset the level via the pause menu.")]
+    [Tooltip("Check image shown once the player has opened and closed the pause menu (or reset from it).")]
     [SerializeField] private GameObject resetCheck;
 
     [Tooltip("Check image shown once the player has pushed the crate.")]
@@ -52,7 +52,7 @@ public class TutorialManager : MonoBehaviour
     // See the class doc comment for why these are static rather than instance fields.
     private static bool hasMoved;
     private static bool hasVisitedCheckpoint;
-    private static bool hasReset;
+    private static bool hasUsedPauseMenu;
     private static bool hasPushed;
     private static bool hasStretched;
     private static bool hasAttacked;
@@ -73,7 +73,7 @@ public class TutorialManager : MonoBehaviour
         // a blank slate.
         ApplyCheckState(moveCheck, hasMoved);
         ApplyCheckState(checkpointCheck, hasVisitedCheckpoint);
-        ApplyCheckState(resetCheck, hasReset);
+        ApplyCheckState(resetCheck, hasUsedPauseMenu);
         ApplyCheckState(pushCheck, hasPushed);
         ApplyCheckState(stretchCheck, hasStretched);
         ApplyCheckState(attackCheck, hasAttacked);
@@ -109,8 +109,8 @@ public class TutorialManager : MonoBehaviour
     /// <summary>Call when the player stands on the checkpoint — see Checkpoint.OnTriggerEnter2D.</summary>
     public void NotifyCheckpointVisited() => CompleteTask(ref hasVisitedCheckpoint, checkpointCheck);
 
-    /// <summary>Call when the player resets the level via the pause menu — see PauseMenu.ResetLevel.</summary>
-    public void NotifyLevelReset() => CompleteTask(ref hasReset, resetCheck);
+    /// <summary>Call when the player closes the pause menu or resets from it — see PauseMenu.</summary>
+    public void NotifyPauseMenuUsed() => CompleteTask(ref hasUsedPauseMenu, resetCheck);
 
     /// <summary>Call when the player successfully pushes the crate — see CharacterController.Update.</summary>
     public void NotifyBlockPushed() => CompleteTask(ref hasPushed, pushCheck);
@@ -136,6 +136,6 @@ public class TutorialManager : MonoBehaviour
     private void UpdateStartButton()
     {
         if (startButton != null)
-            startButton.interactable = hasMoved && hasVisitedCheckpoint && hasReset && hasPushed && hasStretched && hasAttacked;
+            startButton.interactable = hasMoved && hasVisitedCheckpoint && hasUsedPauseMenu && hasPushed && hasStretched && hasAttacked;
     }
 }

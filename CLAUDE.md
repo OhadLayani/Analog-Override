@@ -19,7 +19,7 @@ The player is a wind-up robot on a top-down grid. Its energy is a spring, shown 
 - **Attacking:** costs 3 bars per attack (`energyCost`), even if that empties the spring and kills the player.
 - **Tall objects:** a target one level above the player (on a raised tile, or standing on furniture like the desk lamp) can only be hit at full stretch. Two or more levels up can never be hit.
 - **Checkpoints:** touching one refills the bars and resets the step counter. They are not respawn points.
-- **Death:** at 0 bars the level fully resets, exactly like Reset Level from the pause menu (player back at the start, no keys, every object in its original place). The only difference is the log line: `DEATH` instead of `STAGE_RESET`.
+- **Death:** at 0 bars the level fully resets, exactly like Reset Level from the pause menu (player back at the start, no keys, every object in its original place). The only difference is the log line: `DEATH` instead of `STAGE_RESET`. The Tutorial has no death: at 0 bars the spring stays empty, every action is free, and play goes on.
 - **Keys and doors:** a Key opens every Door with the same `keyId`. Keys are cleared on death and on a level reset.
 - **Fences:** hitting a fence with the attack opens it for good, freeing part of the cells it blocked. A level reset or death closes it again.
 - **Stretching:** hold Space while standing still. The robot grows taller (mode 1 → 2 → 3) and stays at full height while Space is held; releasing contracts it (3 → 2 → 1). Costs 1 bar to start. While stretched there's no walking or turning; only the attack works.
@@ -36,7 +36,7 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 - **Height levels:** the level comes from a stack of tilemap layers. Nothing can step or be pushed between levels. *(GridManager, GridEntity)*
 - **High-friction terrain (carpet):** costs more energy per step and gives a slower, dragging slide. *(GridManager.IsHighFriction, CharacterController)*
 - **Spring energy:** steps, pushes, stretches and attacks drain bars. *(SpringManager, CharacterController, PlayerAttack)*
-- **Death:** 0 bars logs `DEATH` and fully resets the level (clears checkpoint, keys and room snapshot, then reloads). *(CharacterController, GameManager.RestartLevel)*
+- **Death:** 0 bars logs `DEATH` and fully resets the level (clears checkpoint, keys and room snapshot, then reloads). Turned off per scene with `SpringManager`'s **Death At Zero** (off in the Tutorial). *(CharacterController, GameManager.RestartLevel, SpringManager)*
 - **Checkpoints:** refill bars and reset the step counter; only one checkpoint is active at a time (activation animation). Not a respawn point. *(Checkpoint, GameManager)*
 - **Keys & doors:** a door opens only for a key with a matching `keyId`. A door can span several cells. Keys are not used up. *(Key, Door, GameManager)*
 - **Attack:** a mouse click charges energy and stretches both arms (stage 1 → 2 → 3 → 2 → 1 over `attackDuration`). The hitbox follows the drawn arms sprite and damages any `IAttackable` it touches. A target's cell is its own grid cell, or the cell of the grid object it rides on. Targets one level up need full stretch. *(PlayerAttack, ArmsVisual, AttackHitbox, HeightOffset)*
@@ -50,7 +50,7 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 - **Stage goal & next level:** reaching the goal shows the stage-over screen and pauses the game. The next level comes from the Build Settings order. *(StageGoal, StageOverScreen, GameManager)*
 - **Level reset:** a full restart that logs `STAGE_RESET`, clears the checkpoint and keys, then reloads the scene. Shares `RestartLevel` with death; only the log line differs. *(GameManager.ResetLevel, PauseMenu, StageOverScreen)*
 - **Pause:** Esc toggles pause; time scale goes to 0 and player input is blocked. *(PauseMenu, GameManager)*
-- **Tutorial checklist:** six tasks (move, checkpoint, reset, push, hold the stretch key 1.5s, attack) unlock the Start button, and progress survives a reset. *(TutorialManager)*
+- **Tutorial checklist:** six tasks (move, checkpoint, open and close the pause menu, push, hold the stretch key 1.5s, attack) unlock the Start button, and progress survives a reset. The pause-menu task counts when the menu is closed (Esc or Resume) or Reset Level is pressed. *(TutorialManager, PauseMenu)*
 - **Spring UI & key visual:** the on-screen spring and the key on the robot's back follow the energy level; the key is raised while the body is stretched. *(UiManager, SpringKeyAnimator)*
 - **Draw order:** entities are sorted by world Y so they overlap correctly. *(GridEntity, Furniture, SortAbove, SpringKeyAnimator, ArmsVisual)*
 
@@ -199,6 +199,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 - **`SpringManager`**: scene singleton for the bars.
   - `ReduceBars(n)` and `ResetBars()`.
   - Events: `BarsChanged(int)`, `BarsReachedZero`.
+  - `deathAtZero` (Inspector **Death At Zero**, on by default): when off, the bars still clamp to 0 but `BarsReachedZero` is never raised. It's off on the Tutorial scene's SpringManager.
 - **`TutorialManager`**: exists only in the Tutorial scene. Its 6 task flags are **static**, so they survive the reload on reset, and `Start()` re-applies them to the check images. The Start button becomes interactable when all six are done. Its own `Update()` polls the player's `CharacterController.IsHoldingStretch` to time a continuous 1.5s hold for the stretch task (resets to 0 the instant the hold breaks); the other five tasks are notified directly by the scripts that perform them.
 - **`AnalyticsLogger`**: creates itself at startup (`RuntimeInitializeOnLoadMethod`, `DontDestroyOnLoad`), so it is never placed in a scene.
   - Appends one line per event to `Analog Override/analytics_log.txt`, in a folder next to the game (the project folder in the Editor). A "run" is one game launch or one Play in the Editor.
@@ -207,7 +208,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 
 ### UI (`Assets/Scripts/UI/`)
 
-- **`PauseMenu`**: Esc toggles pause through `GameManager`. Its button methods are wired in the Inspector. `ResetLevel` notifies the tutorial before it calls `GameManager.ResetLevel()`.
+- **`PauseMenu`**: Esc toggles pause through `GameManager`. Its button methods are wired in the Inspector. It notifies the tutorial (`NotifyPauseMenuUsed`) from `Resume`, only if the menu was actually open, and from `ResetLevel` before it calls `GameManager.ResetLevel()`. The task's check image field is still named `resetCheck`.
 - **`StageOverScreen`**: scene singleton. `Show()` logs the stage completion, shows the panel and pauses. `RestartLevel` / `NextLevel` are wired to buttons.
 - **`SceneNavigationButtons`** (`AnalogOverride.UI`): a button hook for `LoadNextScene`.
 - **`UiManager`**: spawns `MaxBars` spring segments and blends the layout spacing between compressed (full energy) and released (empty) on `BarsChanged`. It also shows the key icon through `Key.KeyCollected`, or on load if the key is already collected.
