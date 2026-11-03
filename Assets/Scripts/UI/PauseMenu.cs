@@ -17,6 +17,10 @@ public class PauseMenu : MonoBehaviour
 
     private void Update()
     {
+        // The stage is over: Esc must not pause or unpause.
+        if (StageOverScreen.Instance != null && StageOverScreen.Instance.IsShowing)
+            return;
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             // Read the centralized state from GameManager
