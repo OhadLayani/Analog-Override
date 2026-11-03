@@ -10119,6 +10119,11 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!1 &1618126642 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5989851655796377812, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+  m_PrefabInstance: {fileID: 3660323996328635918}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1629355526
 GameObject:
   m_ObjectHideFlags: 0
@@ -11222,6 +11227,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 676912678687367571, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+      propertyPath: itemSlot
+      value: 
+      objectReference: {fileID: 1618126642}
     - target: {fileID: 1673219876549923302, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
       propertyPath: overviewCamera
       value: 

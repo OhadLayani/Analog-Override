@@ -27,6 +27,12 @@ public class UiManager : MonoBehaviour
     [Tooltip("The key icon Image, shown once the matching key is collected. Should start inactive in the scene.")]
     [SerializeField] private GameObject keyIcon;
 
+    [Tooltip("The empty item square (the 'item' object). Hidden when Show Item Slot is off.")]
+    [SerializeField] private GameObject itemSlot;
+
+    [Tooltip("Untick in levels with nothing to collect (e.g. the Attic).")]
+    [SerializeField] private bool showItemSlot = true;
+
     private SpringManager springManager;
     
     // Cached to avoid GetComponent allocations during gameplay
@@ -34,6 +40,9 @@ public class UiManager : MonoBehaviour
 
     private void Start()
     {
+        // Hide the empty item square in levels with nothing to collect
+        if (itemSlot != null) itemSlot.SetActive(showItemSlot);
+
         // Cache references
         springManager = SpringManager.Instance;
         springBarsRect = springLayoutGroup.GetComponent<RectTransform>();
