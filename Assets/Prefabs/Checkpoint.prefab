@@ -152,3 +152,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Checkpoint
   anim: {fileID: 0}
+  maxUses: 2
+  spriteRenderer: {fileID: 1266598332395781407}
+  fullSprite: {fileID: -9138413583963610136, guid: a2aa046d76877407d95f6e44400613f6, type: 3}
+  halfSprite: {fileID: 5035791139366275030, guid: 13425fa7306794a25bc8454b407f9072, type: 3}
+  emptySprite: {fileID: 1825878999864998322, guid: 9028a5d58740d4286ba2e0e7e4a4cdec, type: 3}

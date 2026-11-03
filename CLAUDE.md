@@ -7,7 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 A 2D top-down grid puzzle game built in Unity 6000.3.21f1 (Universal Render Pipeline). This is a Unity Editor project: there is no CLI build, and there is no automated test suite, and none should be added (`com.unity.test-framework` is installed, but no test assemblies exist).
 
 - All gameplay code lives under `Assets/Scripts/` (~25 files). The codebase is small enough to read the relevant files in full instead of guessing from partial context.
-- Scenes in Build Settings, in order: `Tutorial` (0), then `SampleScene` (1). `SecondPuzzleScene` exists but is **not** in the build. After the last level, `GameManager.LoadNextScene` loops back to `"Tutorial"`.
+- Levels: the 1st level is the `Level1-Attic` scene and the 2nd level is the `Level2-Bedroom` scene, both played after `Tutorial`.
+- Scenes in Build Settings, in order: `Tutorial` (0), then `Level2-Bedroom` (1). `Level1-Attic` isn't in Build Settings yet; it belongs between them. After the last level, `GameManager.LoadNextScene` loops back to `"Tutorial"`.
 
 ## Game design
 
@@ -17,9 +18,10 @@ The player is a wind-up robot on a top-down grid. Its energy is a spring, shown 
 - **Pushing:** costs `weight × energyCostPerWeight` bars right away and doesn't count toward the step counter. The cost is scaled up when the player ends the push on carpet.
 - **Attacking:** costs 3 bars per attack (`energyCost`), even if that empties the spring and kills the player.
 - **Tall objects:** a target one level above the player (on a raised tile, or standing on furniture like the desk lamp) can only be hit at full stretch. Two or more levels up can never be hit.
-- **Checkpoints:** touching one refills the bars, resets the step counter and saves the respawn point.
-- **Death:** at 0 bars the scene reloads and the player respawns at the last checkpoint.
-- **Keys and doors:** a Key opens every Door with the same `keyId`. Keys are kept on death and cleared by a full level reset.
+- **Checkpoints:** touching one refills the bars and resets the step counter. They are not respawn points.
+- **Death:** at 0 bars the level fully resets, exactly like Reset Level from the pause menu (player back at the start, no keys, every object in its original place). The only difference is the log line: `DEATH` instead of `STAGE_RESET`.
+- **Keys and doors:** a Key opens every Door with the same `keyId`. Keys are cleared on death and on a level reset.
+- **Fences:** hitting a fence with the attack opens it for good, freeing part of the cells it blocked. A level reset or death closes it again.
 - **Stretching:** hold Space while standing still. The robot grows taller (mode 1 → 2 → 3) and stays at full height while Space is held; releasing contracts it (3 → 2 → 1). Costs 1 bar to start. While stretched there's no walking or turning; only the attack works.
 
 **Terms:** *bars / spring* (energy), *checkpoint* (charging station), *high-friction* (carpet tiles), *weight* (how much energy a pushable costs), *keyId* (what pairs keys with doors), *stretch* (the body growing taller; separate from the attack's *arm stretch*).
@@ -33,18 +35,20 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 - **Pushing:** one object at a time, never a chain. If anything is behind the pushed object, the push fails. Costs weight-based energy. *(GridEntity.TryStep / TryBePushed)*
 - **Height levels:** the level comes from a stack of tilemap layers. Nothing can step or be pushed between levels. *(GridManager, GridEntity)*
 - **High-friction terrain (carpet):** costs more energy per step and gives a slower, dragging slide. *(GridManager.IsHighFriction, CharacterController)*
-- **Spring energy:** steps, pushes, stretches and attacks drain bars. Reaching exactly 1 bar is logged as a "last bar" moment (steps, pushes and stretches, all through `CharacterController.ChargeBars`; not attacks). *(SpringManager, CharacterController, PlayerAttack)*
-- **Death & respawn:** 0 bars reloads the scene, and the player respawns at the last checkpoint. *(CharacterController, GameManager.ReloadScene)*
-- **Checkpoints:** refill bars and reset the step counter; only one checkpoint is active at a time. *(Checkpoint, GameManager)*
+- **Spring energy:** steps, pushes, stretches and attacks drain bars. *(SpringManager, CharacterController, PlayerAttack)*
+- **Death:** 0 bars logs `DEATH` and fully resets the level (clears checkpoint, keys and room snapshot, then reloads). *(CharacterController, GameManager.RestartLevel)*
+- **Checkpoints:** refill bars and reset the step counter; only one checkpoint is active at a time (activation animation). Not a respawn point. *(Checkpoint, GameManager)*
 - **Keys & doors:** a door opens only for a key with a matching `keyId`. A door can span several cells. Keys are not used up. *(Key, Door, GameManager)*
 - **Attack:** a mouse click charges energy and stretches both arms (stage 1 → 2 → 3 → 2 → 1 over `attackDuration`). The hitbox follows the drawn arms sprite and damages any `IAttackable` it touches. A target's cell is its own grid cell, or the cell of the grid object it rides on. Targets one level up need full stretch. *(PlayerAttack, ArmsVisual, AttackHitbox, HeightOffset)*
 - **Arms visual:** the arms sprite is picked by facing (front/back or profile) and attack stretch stage, with per-facing offset and scale, and is raised while walking and while the body is stretched. *(ArmsVisual)*
 - **Body stretch:** hold-to-stretch (see Game design). The body sprite switches to the stretch frames, and the arms and key rise with it. No walking or turning until fully contracted. *(CharacterController, StretchVisual, ArmsVisual, SpringKeyAnimator)*
-- **Push-off objects:** a stand-in on a shelf or table. A spinning desk lamp knocks it away: it flies to its `sweptAwayReplacement` (e.g. a real Key placed on the floor, switched off), switches that on and itself off. A stand-in whose replacement key is already collected switches itself off on load, so after a death it doesn't return; a knocked-down key that wasn't picked up is back on the table after a death. The reach route (`Interact` → `fallenVariant`) still has no trigger. *(PushOffObject, ISweepable, DeskLamp, Key)*
+- **Push-off objects:** a stand-in on a shelf or table. A spinning desk lamp knocks it away: it flies to its `sweptAwayReplacement` (e.g. a real Key placed on the floor, switched off), switches that on and itself off. A stand-in whose replacement key is already collected switches itself off on load; since death and reset both clear the keys, after either one the stand-in is always back on the table. The reach route (`Interact` → `fallenVariant`) still has no trigger. *(PushOffObject, ISweepable, DeskLamp, Key)*
 - **Desk lamp:** a lamp riding on a pushable table, one level tall. When the arms touch its head circle at full stretch, it spins once (4 frames, counter-clockwise) and its head circle swings with the frames, reporting what it sweeps into through `SweptInto` and calling `SweptBy` on anything `ISweepable` on its own level (e.g. a stand-in key on a neighbouring table). *(DeskLamp, HeightOffset, PlayerAttack, ISweepable)*
 - **Furniture:** solid pieces of any size and shape. Every cell whose centre the footprint collider covers acts like a wall for walking, pushing, knockback, the Roomba and landing spots. Draw order comes from the footprint's lowest row. *(Furniture, GridManager.BlockCell, SortAbove)*
+- **Fence:** fixed furniture that the attack opens, one-shot. It plays closed → middle → open; after the last frame its closed footprint box is swapped for the smaller open box and the freed cells become walkable. Hit from one of its ends, in its row, facing it sideways. Reset and death reload it closed. *(Fence, Furniture.RefreshFootprint)*
+- **Wall switch & timed door:** hitting the switch (from the side, in profile) flips it on and opens its door for `openSeconds`: the door plays its frames open, frees its cells, then waits until nothing stands in them, turns solid again and plays the frames back to closed. Once fully closed, the switch flips back off. Hits while the door is busy are ignored (the attack still costs energy). Reset and death reload it closed. *(WallSwitch, TimedDoor, Furniture)*
 - **Stage goal & next level:** reaching the goal shows the stage-over screen and pauses the game. The next level comes from the Build Settings order. *(StageGoal, StageOverScreen, GameManager)*
-- **Level reset:** a full restart that clears the checkpoint and keys, then reloads the scene. *(GameManager.ResetLevel, PauseMenu, StageOverScreen)*
+- **Level reset:** a full restart that logs `STAGE_RESET`, clears the checkpoint and keys, then reloads the scene. Shares `RestartLevel` with death; only the log line differs. *(GameManager.ResetLevel, PauseMenu, StageOverScreen)*
 - **Pause:** Esc toggles pause; time scale goes to 0 and player input is blocked. *(PauseMenu, GameManager)*
 - **Tutorial checklist:** six tasks (move, checkpoint, reset, push, hold the stretch key 1.5s, attack) unlock the Start button, and progress survives a reset. *(TutorialManager)*
 - **Spring UI & key visual:** the on-screen spring and the key on the robot's back follow the energy level; the key is raised while the body is stretched. *(UiManager, SpringKeyAnimator)*
@@ -69,6 +73,8 @@ Each line gives the mechanic, a short description and its main scripts. **This l
    - The red squares show what's solid: a cell turns red once the box covers its **centre**. Adjust until exactly the right cells are red.
    - For an L-shape, add more BoxCollider2Ds to the same GameObject, or use one PolygonCollider2D.
 4. **Things on top** (a vase, a stand-in key): make them **child objects**. Give each one `SortAbove` with **Target** = the furniture's SpriteRenderer.
+
+Pieces placed from the shared `Prefab furniture` prefab: add any scene-specific components (like `Fence`) on the instance only, and never apply those overrides back to the prefab, or every piece built from it gets them.
 
 ### Verification
 
@@ -95,6 +101,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 - **Namespaces:** match the other files in the same folder. `Grid/` uses `AnalogOverride.GridSystem`; `Entities/` and `Combat/` use their own `AnalogOverride.*` namespaces; `Managers/`, `Player/` and most of `UI/` have no namespace.
 - **Input:** keep using the legacy `Input.GetKey` / `Input.GetMouseButtonDown` API for consistency, even though the Input System package is installed.
 - **Analytics:** don't add or change `AnalyticsLogger` events unless asked.
+- **Scene names:** don't hardcode scene names in code; read them from the scene itself (`scene.name`, `SceneManager.GetActiveScene()`) or use the build index. The one exception is `"Tutorial"`, which `GameManager.LoadNextScene` uses in 3 places (detecting `TUTORIAL_COMPLETE` and looping back after the last level); renaming the Tutorial scene means updating all three.
 - **Screen fit & UI layout:** the game is designed around a 16:9 frame that must stay fully visible on any screen. Wider screens get empty space at the sides; narrower ones zoom out (`ResponsiveCamera`).
   - Canvas Scaler on every canvas: *Scale With Screen Size*, Reference Resolution `924 × 520`, Screen Match Mode **Expand**.
   - UI that relates to the world (tutorial notes pointing at the room) is anchored **middle-center**, so it stays locked to the world. Only true HUD elements are anchored to screen edges.
@@ -141,18 +148,21 @@ When Tsah says the session is over, propose edits to this file based on what hap
   - Also `ISweepable`: `SweptBy` (only with a `sweptAwayReplacement` assigned) flies it to the replacement over `flySeconds`, then switches the replacement on and itself off. `Start` switches it off if the replacement is a Key that's already collected.
 - **`DeskLamp`**: `IAttackable`, not a `GridEntity`; a child of the table it stands on. On a hit it plays its spin frames once, moving a trigger `CircleCollider2D` to each frame's `headOffsets` entry (shown as Scene-view circles when selected). Every frame it checks what the circle overlaps and raises `SweptInto` once per object per spin, skipping its own table and the player. Its draw order follows the table's sprite plus an offset.
 - **`ISweepable`**: `SweptBy(DeskLamp)`, implemented by anything that reacts to a spinning lamp's head.
-- **`Furniture`**: not a `GridEntity`. In `Start` it blocks every cell whose centre lies inside one of its own enabled colliders (not its children's), and frees them in `OnDisable`. It sets its `sortingSprite` order from the lowest footprint row, one step behind so the player wins a tie. `OnDrawGizmosSelected` shows the blocked cells as red squares.
+- **`Furniture`**: not a `GridEntity`. In `Start` it blocks every cell whose centre lies inside one of its own enabled colliders (not its children's), and frees them in `OnDisable`. It sets its `sortingSprite` order from the lowest footprint row, one step behind so the player wins a tie. `OnDrawGizmosSelected` shows the blocked cells as red squares. All of this lives in the public `RefreshFootprint()`, which `Start` calls; call it again after switching its colliders on or off, and it frees the old cells first. `BlockedCells` exposes the cells it currently blocks (empty while disabled).
+- **`Fence`**: `IAttackable`, placed next to a `Furniture` component. It has two trigger BoxCollider2D footprints, closed and open; `Awake` turns the open one off before `Furniture.Start` reads the footprint. On a hit it plays `openFrames` (closed → middle → open) over `frameDuration` each, logs `INTERACT` "opened", then swaps the boxes and calls `Furniture.RefreshFootprint()`. `IsAlive` is false from the hit on, so it opens only once.
+- **`TimedDoor`**: placed next to a `Furniture` component with one trigger BoxCollider2D footprint. `OpenBriefly()` (refused while `IsBusy`) plays `frames` closed → open, copies `Furniture.BlockedCells`, then turns off the footprint and disables `Furniture` to free the cells. After `openSeconds` it waits until no grid occupant stands in those cells, re-enables the footprint and `Furniture`, calls `RefreshFootprint()` (solid again before the closing frames), plays the frames back to 0, and raises `Closed`.
+- **`WallSwitch`**: `IAttackable` with a trigger Collider2D over its art; not a grid object (it sits on a wall cell). `IsAlive` is false while its `TimedDoor` is busy. A hit calls `door.OpenBriefly()`, logs `INTERACT` "pressed" and shows `onSprite`; the door's `Closed` event switches it back to `offSprite`.
 - **`Door`**: a non-pushable `IInteractable` that opens when bumped, if `GameManager.HasKey(keyId)`. It can occupy extra cells through `extraCells`, which are claimed in `Start` and freed in `OnDisable`. `disableOnOpen` either deactivates the GameObject or just frees all of its cells.
 
 ### Player (`Assets/Scripts/Player/`)
 
 - **`CharacterController`** (`GridEntity`):
-  - Movement: reads WASD through `ReadHeldDirection()` (one direction at a time), updates `FacingDirection`, then calls `TryStep`. On spawn it teleports to `GameManager.RespawnCell` *before* `base.Start()`. Turn in place: `UpdateTurnInPlace` sets `FacingDirection` and starts `turnHoldTimer` when a new direction is pressed from still; `ResetTurnInput` clears it during stretch and stun.
-  - Energy: a plain step increments `stepCounter`; at `stepsPerBar` (or `stepsPerBarHighFriction` on carpet) it charges 1 bar. A push charges `max(1, round(weight × energyCostPerWeight × frictionMultiplier))`, where the multiplier is `stepsPerBar / stepsPerBarHighFriction` on carpet. All its costs go through `ChargeBars`, which also logs `LAST_BAR`.
+  - Movement: reads WASD through `ReadHeldDirection()` (one direction at a time), updates `FacingDirection`, then calls `TryStep`. Turn in place: `UpdateTurnInPlace` sets `FacingDirection` and starts `turnHoldTimer` when a new direction is pressed from still; `ResetTurnInput` clears it during stretch and stun.
+  - Energy: a plain step increments `stepCounter`; at `stepsPerBar` (or `stepsPerBarHighFriction` on carpet) it charges 1 bar. A push charges `max(1, round(weight × energyCostPerWeight × frictionMultiplier))`, where the multiplier is `stepsPerBar / stepsPerBarHighFriction` on carpet. All its costs go through `ChargeBars`.
   - Stretch: `stretchStage` / `stretchTarget` / `stretchTimer`, driven by `BeginStretch()` and `TickStretch(held)`. Space is read with `GetKey`, so releasing it during pause is still noticed on resume. Exposes `IsStretching` (blocks walking and turning), `StretchStage` (0/1/2) for visuals, and `IsHoldingStretch` (`IsStretching && Input.GetKey(stretchKey)`, false during the release/contraction tail) for anything that needs to know the key is actively held right now, e.g. the tutorial's hold-timer. Ohad's `ToggleStretch`, `HandleStretchInput` (WASD reach), `stretchReach` and Animator `Direction` 40–43 are commented out.
   - Carpet slide: a step that **starts** on carpet uses `highFrictionMoveDuration` / `highFrictionMoveCurve`.
   - Exposes `IsWalking` and `StepProgress` (0..1) for visuals.
-  - Death: subscribes to `SpringManager.BarsReachedZero`, then logs the death and calls `GameManager.ReloadScene()`.
+  - Death: subscribes to `SpringManager.BarsReachedZero`, then logs `DEATH` and calls `GameManager.RestartLevel()`.
   - Animator int `Direction`: walking down/up/right/left = 0/1/2/3; idle = 5/10/20/30. The idle states also need **Any State** transitions (Direction = 5/10/20/30, no exit time, duration 0, Can Transition To Self off), so turning in place can switch from one idle to another without passing through a walk state.
 - **`PlayerAttack`**: on left click, charges `energyCost` bars, turns on the `AttackHitbox` child, and steps `ArmsVisual.Stage` through out → hold → back over `attackDuration`. `fullStretchShare` is the share of that time spent at full stretch, and the duration is also the cooldown. Damage is applied through the hitbox's `TargetDetected` event.
   - It hits two ways: the **cell check** (`StrikeReachedCells`; only targets that belong to the checked cell) and the **arms hitbox** (filtered by `IsInReach`: facing up or down, only the player's own row).
@@ -180,17 +190,20 @@ When Tsah says the session is over, propose edits to this file based on what hap
   - Keys: a `HashSet<string>` with `HasKey` / `CollectKey` / `ClearKeys`.
   - Pause: `SetPauseState` drives `Time.timeScale`.
   - Scene flow:
-    - `ReloadScene()`: death respawn; keeps the checkpoint and keys.
-    - `ResetLevel()`: full restart; logs it, clears the checkpoint and keys, then reloads.
+    - `ReloadScene()`: plain reload that keeps the checkpoint and keys; no longer used by death.
+    - `RestartLevel()`: full restart without logging; clears the checkpoint, keys and room snapshot, then reloads. Used by death.
+    - `ResetLevel()`: logs `STAGE_RESET`, then `RestartLevel()`. Used by the pause menu and stage-over screen.
     - `LoadNextScene()`: next scene in the build order.
   - Every scene load unpauses first.
+- **Commented out, kept to revert (checkpoint respawn):** death used to respawn at the last checkpoint with the room restored. That code is commented out with a "Disabled: death now fully resets the level" note, so it can be switched back on. It covers `GameManager.ActivateCheckpoint` (saving `RespawnCell` / `HasCheckpoint`), the respawn teleport in `CharacterController.Start`, `RoomSnapshot.Capture()` in `Checkpoint` and `Door`, and the door's "Saves Checkpoint When Opened" checkpoint (it still logs `DOOR_CHECKPOINT`). `RoomSnapshot` (on the GameManager object; saves the room at a checkpoint and restores it after a death) is untouched but inactive, since nothing captures a snapshot.
 - **`SpringManager`**: scene singleton for the bars.
   - `ReduceBars(n)` and `ResetBars()`.
   - Events: `BarsChanged(int)`, `BarsReachedZero`.
 - **`TutorialManager`**: exists only in the Tutorial scene. Its 6 task flags are **static**, so they survive the reload on reset, and `Start()` re-applies them to the check images. The Start button becomes interactable when all six are done. Its own `Update()` polls the player's `CharacterController.IsHoldingStretch` to time a continuous 1.5s hold for the stretch task (resets to 0 the instant the hold breaks); the other five tasks are notified directly by the scripts that perform them.
 - **`AnalyticsLogger`**: creates itself at startup (`RuntimeInitializeOnLoadMethod`, `DontDestroyOnLoad`), so it is never placed in a scene.
-  - Appends `DEATH` / `CHECKPOINT_VISIT` / `STAGE_RESET` / `STAGE_COMPLETE` / `LAST_BAR` / `QUIT` lines to `Application.persistentDataPath/analytics_log.txt`.
-  - Writes a summary for each run on quit. The run number is stored in `PlayerPrefs`.
+  - Appends one line per event to `Analog Override/analytics_log.txt`, in a folder next to the game (the project folder in the Editor). A "run" is one game launch or one Play in the Editor.
+  - Events: `SCENE_LOADED` (first load of each scene per run), `LEVEL_CHANGE`, `TUTORIAL_COMPLETE`, `STAGE_COMPLETE`, `STAGE_RESET`, `DEATH`, `CHECKPOINT_VISIT`, `DOOR_CHECKPOINT`, `KEY_PICKUP`, `INTERACT` (door opened, shelf object pushed off or knocked away, lamp spun, fence opened, switch pressed), `ROOMBA_DOCK_TRIGGERED`, `QUIT`.
+  - Writes a summary at the end of each run: session length, play time per scene (pauses excluded), and a count of each event type, with a breakdown of interactions per object.
 
 ### UI (`Assets/Scripts/UI/`)
 
@@ -201,11 +214,11 @@ When Tsah says the session is over, propose edits to this file based on what hap
 
 ### Misc (`Assets/Scripts/`, no namespace)
 
-- **`Checkpoint`**: trigger. On player contact it logs the visit, notifies the tutorial, resets the step counter and the bars, and activates itself (saving the respawn point and firing the `activate` animation) only if it isn't already active.
+- **`Checkpoint`**: trigger. On player contact it logs the visit, notifies the tutorial, resets the step counter and the bars, and activates itself (firing the `activate` animation and deactivating the other checkpoints) only if it isn't already active. It no longer saves a respawn point.
 - **`Key`**: trigger, and also an `IInteractable`, so it can be collected by a reach (guarded against collecting twice). On pickup it calls `GameManager.CollectKey(keyId)` and raises the static `KeyCollected` event before destroying itself. In `Start` it destroys itself without raising the event if the key was already collected. Also `IAttackable` (an attack collects it). `KeyId` exposes its id.
 - **`SortAbove`**: copies a target sprite's order in layer plus `offset` every `LateUpdate`, for things standing on furniture.
 - **`StageGoal`**: trigger. The first time the player touches it, it calls `StageOverScreen.Instance.Show()`.
-- **`ResponsiveCamera`**: on Main Camera in both scenes. Sets the orthographic size to `referenceOrthographicSize × Max(1, (16/9) / screenAspect)`, so screens narrower than 16:9 zoom out and wider ones are unchanged; re-applies when the screen size changes. With a `CinemachineCamera` assigned (SampleScene) it changes that lens, since the Brain overrides the plain Camera; with the field empty (Tutorial) it changes its own `Camera`. Reference size is 4.54679; the *Capture Current Size* context menu saves the current zoom (do it with the Game view at 16:9).
+- **`ResponsiveCamera`**: on Main Camera in both scenes. Sets the orthographic size to `referenceOrthographicSize × Max(1, (16/9) / screenAspect)`, so screens narrower than 16:9 zoom out and wider ones are unchanged; re-applies when the screen size changes. With a `CinemachineCamera` assigned (Level2-Bedroom) it changes that lens, since the Brain overrides the plain Camera; with the field empty (Tutorial) it changes its own `Camera`. Reference size is 4.54679; the *Capture Current Size* context menu saves the current zoom (do it with the Game view at 16:9).
 
 ## Singleton / init order
 

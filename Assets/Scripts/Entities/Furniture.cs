@@ -31,7 +31,16 @@ namespace AnalogOverride.Entities
 
         private readonly List<Vector2Int> blockedCells = new List<Vector2Int>();
 
+        /// <summary>The cells this piece blocks right now (empty while disabled).</summary>
+        public IReadOnlyList<Vector2Int> BlockedCells => blockedCells;
+
         private void Start()
+        {
+            RefreshFootprint();
+        }
+
+        /// <summary>Frees the cells blocked so far, then blocks the cells under the currently enabled colliders and redoes the draw order (e.g. after a Fence opens).</summary>
+        public void RefreshFootprint()
         {
             var manager = GridManager.Instance;
             if (manager == null)
@@ -39,6 +48,11 @@ namespace AnalogOverride.Entities
                 Debug.LogError($"{nameof(Furniture)} on '{name}' found no GridManager in the scene.", this);
                 enabled = false;
                 return;
+            }
+
+            foreach (var cell in blockedCells)
+            {
+                manager.UnblockCell(cell);
             }
 
             CollectFootprint(manager.GetComponent<UnityEngine.Grid>(), blockedCells);

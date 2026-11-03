@@ -87,18 +87,29 @@ public class AnalyticsLogger : MonoBehaviour
     private int deathCount;
     private int checkpointVisitCount;
     private int resetCount;
-    private int lastBarCount;
     private int stageCompleteCount;
     private int tutorialCompleteCount;
     private int doorCheckpointCount;
     private int keyPickupCount;
     private int dockTriggerCount;
     private int interactionCount;
+    private int zoomOutCount;
 
     // Which stages were completed, in order, and how many times each object was used (keyed by
     // "<object name> <action>", e.g. "Door1 opened"), for the summary.
     private readonly List<string> completedStages = new List<string>();
     private readonly Dictionary<string, int> interactionCounts = new Dictionary<string, int>();
+
+    // Zoom-outs per scene, in order of first zoom-out, for the summary.
+    private readonly Dictionary<string, int> zoomOutCounts = new Dictionary<string, int>();
+
+    // Play time per scene, in order of first visit. Measured with Time.time, which stops while the
+    // game is paused (timeScale 0), so the pause menu and the stage-over screen aren't counted.
+    // Reloading the same scene (death, reset) keeps counting; a revisit adds to the same total.
+    private readonly List<string> sceneOrder = new List<string>();
+    private readonly Dictionary<string, float> sceneTimes = new Dictionary<string, float>();
+    private string currentScene;
+    private float sceneEnterTime;
 
     private void Awake()
     {
@@ -121,8 +132,14 @@ public class AnalyticsLogger : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (scene.name != currentScene)
+        {
+            AddCurrentSceneTime();
+            currentScene = scene.name;
+        }
+
         if (!loggedScenes.Add(scene.name)) return;
-        Log("SCENE_LOADED", $"Scene: {scene.name}", false);
+        Log("SCENE_LOADED", $"Scene: {scene.name}");
     }
 
     /// <summary>Takes this launch's run number the first time something is logged, so launches with no events don't use one up.</summary>
@@ -183,7 +200,7 @@ public class AnalyticsLogger : MonoBehaviour
     // Every move to another level, including revisits (SCENE_LOADED only marks the first load of each scene).
     public void LogLevelChange(string fromScene, string toScene)
     {
-        Log("LEVEL_CHANGE", $"{fromScene} -> {toScene}");
+        Log("LEVEL_CHANGE", $"{fromScene} -> {toScene}", true);
     }
 
     // A door that acts as a soft checkpoint was opened: the room was saved and the respawn point moved.
@@ -219,11 +236,15 @@ public class AnalyticsLogger : MonoBehaviour
         Log("ROOMBA_DOCK_TRIGGERED", $"Dock: {dockName}");
     }
 
-    // כמה פעמים היה על הסף (בר אחרון)
-    public void LogLastBar()
+    // The player clicked the HUD zoom button to see the whole room (zooming back in isn't logged).
+    public void LogZoomOut()
     {
-        lastBarCount++;
-        Log("LAST_BAR");
+        zoomOutCount++;
+
+        var scene = SceneManager.GetActiveScene().name;
+        zoomOutCounts[scene] = zoomOutCounts.TryGetValue(scene, out var n) ? n + 1 : 1;
+
+        Log("ZOOM_OUT");
     }
 
     // שחקן לוחץ quit
@@ -234,11 +255,11 @@ public class AnalyticsLogger : MonoBehaviour
     }
 
     /// <summary>
-    /// Writes one event line: "time | Run n | EVENT [| detail] | Scene: name". The scene is the one
-    /// the player is in, so a death or a key pickup says which level it happened in; SCENE_LOADED
-    /// passes false because its detail already names the scene.
+    /// Writes one event line: "time | Run n | EVENT [| detail] [| Scene: name]". The scene tag is off
+    /// by default, since SCENE_LOADED lines already mark which level the events after them belong to;
+    /// LEVEL_CHANGE turns it on to name the level being left.
     /// </summary>
-    private void Log(string eventName, string detail = null, bool includeScene = true)
+    private void Log(string eventName, string detail = null, bool includeScene = false)
     {
         StartRunIfNeeded();
 
@@ -257,19 +278,22 @@ public class AnalyticsLogger : MonoBehaviour
         // Nothing was logged this launch, so there's no run to summarize.
         if (runNumber == 0) return;
 
+        AddCurrentSceneTime();
+
         var summary =
             $"=== Run {runNumber} summary ({DateTime.Now:yyyy-MM-dd HH:mm:ss}) ===" + NewLine +
             $"Session length: {SessionLength()}" + NewLine +
+            "Time per scene:" + SceneTimeBreakdown() + NewLine +
             $"Deaths: {deathCount}" + NewLine +
             $"Stage resets: {resetCount}" + NewLine +
             $"Checkpoint visits: {checkpointVisitCount}" + NewLine +
-            $"Times on last bar: {lastBarCount}" + NewLine +
             $"Stages completed: {stageCompleteCount}{StageList()}" + NewLine +
             $"Tutorials completed: {tutorialCompleteCount}" + NewLine +
             $"Door checkpoints: {doorCheckpointCount}" + NewLine +
             $"Keys picked up: {keyPickupCount}" + NewLine +
             $"Roomba dock triggers: {dockTriggerCount}" + NewLine +
             $"Interactions: {interactionCount}" + InteractionBreakdown() + NewLine +
+            $"Zoom-outs: {zoomOutCount}" + CountBreakdown(zoomOutCounts) + NewLine +
             "===================================";
 
         WriteLine(summary);
@@ -284,10 +308,45 @@ public class AnalyticsLogger : MonoBehaviour
     /// <summary>One indented "- object action: count" line per kind of interaction, each starting on a new line.</summary>
     private string InteractionBreakdown()
     {
+        return CountBreakdown(interactionCounts);
+    }
+
+    /// <summary>One indented "- key: count" line per entry, each starting on a new line.</summary>
+    private static string CountBreakdown(Dictionary<string, int> counts)
+    {
         var sb = new StringBuilder();
-        foreach (var pair in interactionCounts)
+        foreach (var pair in counts)
         {
             sb.Append(NewLine).Append($"  - {pair.Key}: {pair.Value}");
+        }
+
+        return sb.ToString();
+    }
+
+    /// <summary>Adds the play time since entering the current scene to its total, and restarts the count.</summary>
+    private void AddCurrentSceneTime()
+    {
+        if (currentScene != null)
+        {
+            if (!sceneTimes.ContainsKey(currentScene))
+            {
+                sceneOrder.Add(currentScene);
+                sceneTimes[currentScene] = 0f;
+            }
+
+            sceneTimes[currentScene] += Time.time - sceneEnterTime;
+        }
+
+        sceneEnterTime = Time.time;
+    }
+
+    /// <summary>One indented "- scene: hh:mm:ss" line per scene, in order of first visit, each starting on a new line.</summary>
+    private string SceneTimeBreakdown()
+    {
+        var sb = new StringBuilder();
+        foreach (var scene in sceneOrder)
+        {
+            sb.Append(NewLine).Append($"  - {scene}: {FormatDuration(TimeSpan.FromSeconds(sceneTimes[scene]))}");
         }
 
         return sb.ToString();
@@ -296,7 +355,12 @@ public class AnalyticsLogger : MonoBehaviour
     /// <summary>Time since launch as hh:mm:ss (hours keep counting past 24).</summary>
     private string SessionLength()
     {
-        var t = DateTime.Now - sessionStart;
+        return FormatDuration(DateTime.Now - sessionStart);
+    }
+
+    /// <summary>A duration as hh:mm:ss (hours keep counting past 24).</summary>
+    private static string FormatDuration(TimeSpan t)
+    {
         return $"{(int)t.TotalHours:00}:{t.Minutes:00}:{t.Seconds:00}";
     }
 

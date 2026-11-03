@@ -132,11 +132,12 @@ public class CharacterController : GridEntity
 
     protected override void Start()
     {
+        // Disabled: death now fully resets the level, so there's no respawn cell to teleport to.
         // If a checkpoint is saved, teleport to it BEFORE snapping to the grid
-        if (GameManager.Instance != null && GameManager.Instance.HasCheckpoint)
-        {
-            transform.position = GridManager.Instance.CellToWorld(GameManager.Instance.RespawnCell);
-        }
+        // if (GameManager.Instance != null && GameManager.Instance.HasCheckpoint)
+        // {
+        //     transform.position = GridManager.Instance.CellToWorld(GameManager.Instance.RespawnCell);
+        // }
 
         base.Start(); // Snaps the player to the grid's center on spawn and claims the cell
         baseMoveDuration = MoveDuration; // Remember the Inspector-configured slide speed/shape before we ever override them
@@ -293,7 +294,7 @@ public class CharacterController : GridEntity
         ChargeBars(Mathf.Max(1, Mathf.RoundToInt(pushedWeight * energyCostPerWeight * frictionMultiplier)));
     }
 
-    /// <summary>Every energy deduction by the player goes through here. (The "last bar" analytics check lives in SpringManager.ReduceBars, so deductions from other places, like the attack, are covered too.)</summary>
+    /// <summary>Every energy deduction by the player goes through here.</summary>
     private void ChargeBars(int amount)
     {
         if (springManager == null || amount <= 0) return;
@@ -425,10 +426,12 @@ public class CharacterController : GridEntity
     {
         Debug.Log("GAME OVER");
         AnalyticsLogger.Instance?.LogDeath();
-        // Reload the scene when the player dies
+        // A death fully resets the level, same as Reset Level in the pause menu
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.ReloadScene();
+            // Disabled: the old death kept the checkpoint, keys and room snapshot.
+            // GameManager.Instance.ReloadScene();
+            GameManager.Instance.RestartLevel();
         }
     }
     
