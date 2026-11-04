@@ -27,6 +27,11 @@ public class ResponsiveCamera : MonoBehaviour
     [Min(0f)]
     [SerializeField] private float overviewMargin = 0.05f;
 
+    [Tooltip("Optional. HUD element at the bottom of the screen (the energy bar). The overview keeps the room above it.")]
+    [SerializeField] private RectTransform overviewBottomUI;
+
+    private readonly Vector3[] bottomUICorners = new Vector3[4];
+
     private Camera cam;
     private int lastScreenWidth;
     private int lastScreenHeight;
@@ -39,10 +44,14 @@ public class ResponsiveCamera : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (Screen.width == lastScreenWidth && Screen.height == lastScreenHeight)
+        if (Screen.width != lastScreenWidth || Screen.height != lastScreenHeight)
+        {
+            ApplySize();
             return;
+        }
 
-        ApplySize();
+        // Every frame: the bottom UI's size settles after Awake (Canvas Scaler, layout).
+        ApplyOverview((float)Screen.width / Screen.height);
     }
 
     private void ApplySize()
@@ -68,19 +77,35 @@ public class ResponsiveCamera : MonoBehaviour
         ApplyOverview(currentAspect);
     }
 
-    /// <summary>Centres the overview camera on the room and sizes it so the whole room fits at this aspect.</summary>
+    /// <summary>Sizes the overview camera so the whole room fits above the bottom UI at this aspect, and centres the room in that area.</summary>
     private void ApplyOverview(float currentAspect)
     {
         if (overviewCamera == null || overviewBounds == null)
             return;
 
         Bounds room = overviewBounds.bounds;
+        float bottomShare = BottomUIShare();
+        float size = Mathf.Max(room.extents.y / (1f - bottomShare), room.extents.x / currentAspect) * (1f + overviewMargin);
+
+        // Shift down so the room sits in the area above the bottom UI.
         Vector3 pos = overviewCamera.transform.position;
-        overviewCamera.transform.position = new Vector3(room.center.x, room.center.y, pos.z);
+        overviewCamera.transform.position = new Vector3(room.center.x, room.center.y - size * bottomShare, pos.z);
 
         LensSettings lens = overviewCamera.Lens;
-        lens.OrthographicSize = Mathf.Max(room.extents.y, room.extents.x / currentAspect) * (1f + overviewMargin);
+        lens.OrthographicSize = size;
         overviewCamera.Lens = lens;
+    }
+
+    /// <summary>Share of the screen height (0..0.9) covered from the bottom edge up to the top of the bottom UI.</summary>
+    private float BottomUIShare()
+    {
+        if (overviewBottomUI == null || Screen.height <= 0)
+            return 0f;
+
+        // Screen Space Overlay canvas: world corners are screen pixels.
+        overviewBottomUI.GetWorldCorners(bottomUICorners);
+        float top = Mathf.Max(bottomUICorners[1].y, bottomUICorners[2].y);
+        return Mathf.Clamp(top / Screen.height, 0f, 0.9f);
     }
 
     [ContextMenu("Capture Current Size")]

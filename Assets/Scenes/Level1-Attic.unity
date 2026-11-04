@@ -693,6 +693,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!224 &154013401 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8068805832389221034, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
+  m_PrefabInstance: {fileID: 3660323996328635918}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &229215260
 GameObject:
   m_ObjectHideFlags: 0
@@ -5494,6 +5499,7 @@ MonoBehaviour:
   overviewCamera: {fileID: 1416489267}
   overviewBounds: {fileID: 625021414}
   overviewMargin: 0.05
+  overviewBottomUI: {fileID: 154013401}
 --- !u!1 &524025472 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5989851655796377812, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
@@ -7962,6 +7968,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AnalogOverride.SpringManager
   bars: 0
   maxBars: 20
+  deathAtZero: 1
 --- !u!4 &1161048783
 Transform:
   m_ObjectHideFlags: 0
