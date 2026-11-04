@@ -8,7 +8,7 @@ A 2D top-down grid puzzle game built in Unity 6000.3.21f1 (Universal Render Pipe
 
 - All gameplay code lives under `Assets/Scripts/` (~25 files). The codebase is small enough to read the relevant files in full instead of guessing from partial context.
 - Levels: the 1st level is the `Level1-Attic` scene and the 2nd level is the `Level2-Bedroom` scene, both played after `Tutorial`.
-- Scenes in Build Settings, in order: `Tutorial` (0), then `Level2-Bedroom` (1). `Level1-Attic` isn't in Build Settings yet; it belongs between them. After the last level, `GameManager.LoadNextScene` loops back to `"Tutorial"`.
+- Scenes in Build Settings, in order: `MainMenu` (0), `Tutorial` (1), `Level1-Attic` (2), `Level2-Bedroom` (3). The game opens on the Main Menu, and after the last level `GameManager.LoadNextScene` returns to it (build index 0).
 
 ## Game design
 
@@ -48,6 +48,7 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 - **Fence:** fixed furniture that the attack opens, one-shot. It plays closed → middle → open; after the last frame its closed footprint box is swapped for the smaller open box and the freed cells become walkable. Hit from one of its ends, in its row, facing it sideways. Reset and death reload it closed. *(Fence, Furniture.RefreshFootprint)*
 - **Wall switch & timed door:** hitting the switch (from the side, in profile) flips it on and opens its door for `openSeconds`: the door plays its frames open, frees its cells, then waits until nothing stands in them, turns solid again and plays the frames back to closed. Once fully closed, the switch flips back off. Hits while the door is busy are ignored (the attack still costs energy). Reset and death reload it closed. *(WallSwitch, TimedDoor, Furniture)*
 - **Stage goal & next level:** reaching the goal shows the stage-over screen and pauses the game. The next level comes from the Build Settings order. *(StageGoal, StageOverScreen, GameManager)*
+- **Main menu:** its own scene (build index 0) with a full-screen background (Aspect Ratio Fitter, Envelope Parent) and centered buttons: Play (Level1-Attic), Tutorial, Controls (a hidden panel with an X button; Esc also closes it) and Quit. Loading a level from it clears keys and checkpoint first. The pause menu's and stage-over screen's "Main Menu" buttons, and the end of the last level, all return to it. *(MainMenu, PauseMenu.ReturnToMainMenu, GameManager.LoadMainMenu)*
 - **Level reset:** a full restart that logs `STAGE_RESET`, clears the checkpoint and keys, then reloads the scene. Shares `RestartLevel` with death; only the log line differs. *(GameManager.ResetLevel, PauseMenu, StageOverScreen)*
 - **Pause:** Esc toggles pause; time scale goes to 0 and player input is blocked. *(PauseMenu, GameManager)*
 - **Tutorial checklist:** six tasks (move, checkpoint, open and close the pause menu, push, hold the stretch key 1.5s, attack) unlock the Start button, and progress survives a reset. The pause-menu task counts when the menu is closed (Esc or Resume) or Reset Level is pressed. *(TutorialManager, PauseMenu)*
@@ -101,7 +102,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 - **Namespaces:** match the other files in the same folder. `Grid/` uses `AnalogOverride.GridSystem`; `Entities/` and `Combat/` use their own `AnalogOverride.*` namespaces; `Managers/`, `Player/` and most of `UI/` have no namespace.
 - **Input:** keep using the legacy `Input.GetKey` / `Input.GetMouseButtonDown` API for consistency, even though the Input System package is installed.
 - **Analytics:** don't add or change `AnalyticsLogger` events unless asked.
-- **Scene names:** don't hardcode scene names in code; read them from the scene itself (`scene.name`, `SceneManager.GetActiveScene()`) or use the build index. The one exception is `"Tutorial"`, which `GameManager.LoadNextScene` uses in 3 places (detecting `TUTORIAL_COMPLETE` and looping back after the last level); renaming the Tutorial scene means updating all three.
+- **Scene names:** don't hardcode scene names in code; read them from the scene itself (`scene.name`, `SceneManager.GetActiveScene()`) or use the build index. The one exception is `"Tutorial"`, which `GameManager.LoadNextScene` uses once to detect `TUTORIAL_COMPLETE`; renaming the Tutorial scene means updating it. The Main Menu's target scenes are Inspector fields on `MainMenu`, not code.
 - **Screen fit & UI layout:** the game is designed around a 16:9 frame that must stay fully visible on any screen. Wider screens get empty space at the sides; narrower ones zoom out (`ResponsiveCamera`).
   - Canvas Scaler on every canvas: *Scale With Screen Size*, Reference Resolution `924 × 520`, Screen Match Mode **Expand**.
   - UI that relates to the world (tutorial notes pointing at the room) is anchored **middle-center**, so it stays locked to the world. Only true HUD elements are anchored to screen edges.
@@ -114,7 +115,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 - **Objects on furniture:** make them a child of the piece they stand on, never a `GridEntity` themselves (a cell holds only one occupant), and give them `SortAbove`. On a pushable table their cell is the parent's `CurrentCell`; on fixed `Furniture` it's the cell under their pivot, so keep the pivot over the piece. Give them a `HeightOffset` (usually 1) so they count as being on top.
 - **Stand-in keys:** a stand-in's identity comes from its replacement Key, so give that Key the same Key Id as the UI (`UiManager.keyId`) and the Door. Never put a `Key` component on the stand-in itself.
 - **`TakeDamage` isn't a generic "hit":** `Key.TakeDamage` collects the key. For anything other than the player's attack (like the lamp's sweep), raise an event or use a dedicated hook instead.
-- **Inspector wiring risk:** renaming or removing a `[SerializeField]` field, or changing a public method wired to a button `OnClick`, still compiles, but the Inspector loses the reference without any error. Inspector-wired methods include `PauseMenu.Pause/Resume/ResetLevel/QuitGame`, `StageOverScreen.RestartLevel/NextLevel` and `SceneNavigationButtons.LoadNextScene`. Flag this whenever such a change is proposed.
+- **Inspector wiring risk:** renaming or removing a `[SerializeField]` field, or changing a public method wired to a button `OnClick`, still compiles, but the Inspector loses the reference without any error. Inspector-wired methods include `PauseMenu.Pause/Resume/ResetLevel/NextLevel/ReturnToMainMenu`, `StageOverScreen.RestartLevel/NextLevel`, `SceneNavigationButtons.LoadNextScene` and `MainMenu.Play/OpenTutorial/ShowControls/HideControls/QuitGame`. Flag this whenever such a change is proposed.
 - **Don't edit generated files:** `*.csproj`, `Analog-Override.slnx`, `Library/`, `Logs/`, `UserSettings/`, `ProjectSettings/` (except for a deliberate project-settings change).
 
 ## Architecture
@@ -193,7 +194,8 @@ When Tsah says the session is over, propose edits to this file based on what hap
     - `ReloadScene()`: plain reload that keeps the checkpoint and keys; no longer used by death.
     - `RestartLevel()`: full restart without logging; clears the checkpoint, keys and room snapshot, then reloads. Used by death.
     - `ResetLevel()`: logs `STAGE_RESET`, then `RestartLevel()`. Used by the pause menu and stage-over screen.
-    - `LoadNextScene()`: next scene in the build order.
+    - `LoadNextScene()`: next scene in the build order; after the last one, the main menu (index 0).
+    - `LoadMainMenu()`: clears the checkpoint, keys and room snapshot, logs `LEVEL_CHANGE`, loads index 0. Used by `PauseMenu.ReturnToMainMenu`.
   - Every scene load unpauses first.
 - **Commented out, kept to revert (checkpoint respawn):** death used to respawn at the last checkpoint with the room restored. That code is commented out with a "Disabled: death now fully resets the level" note, so it can be switched back on. It covers `GameManager.ActivateCheckpoint` (saving `RespawnCell` / `HasCheckpoint`), the respawn teleport in `CharacterController.Start`, `RoomSnapshot.Capture()` in `Checkpoint` and `Door`, and the door's "Saves Checkpoint When Opened" checkpoint (it still logs `DOOR_CHECKPOINT`). `RoomSnapshot` (on the GameManager object; saves the room at a checkpoint and restores it after a death) is untouched but inactive, since nothing captures a snapshot.
 - **`SpringManager`**: scene singleton for the bars.
@@ -209,6 +211,8 @@ When Tsah says the session is over, propose edits to this file based on what hap
 ### UI (`Assets/Scripts/UI/`)
 
 - **`PauseMenu`**: Esc toggles pause through `GameManager`. Its button methods are wired in the Inspector. It notifies the tutorial (`NotifyPauseMenuUsed`) from `Resume`, only if the menu was actually open, and from `ResetLevel` before it calls `GameManager.ResetLevel()`. The task's check image field is still named `resetCheck`.
+- **`MainMenu`**: the Main Menu scene's button hooks. `playSceneName` / `tutorialSceneName` are set in the Inspector; loading one clears keys, checkpoint and snapshot (GameManager survives scene loads). `ShowControls` / `HideControls` toggle `controlsPanel`. `QuitGame` logs `QUIT` and exits.
+- **`PauseMenu.ReturnToMainMenu`**: the in-game "Main Menu" button (pause menu and stage-over screen in `Main UI Prefab`, and the Tutorial's pause menu). It doesn't log `QUIT`, because that writes the run summary. `PauseMenu.QuitGame` is kept but no longer wired in-game.
 - **`StageOverScreen`**: scene singleton. `Show()` logs the stage completion, shows the panel and pauses. `RestartLevel` / `NextLevel` are wired to buttons.
 - **`SceneNavigationButtons`** (`AnalogOverride.UI`): a button hook for `LoadNextScene`.
 - **`UiManager`**: spawns `MaxBars` spring segments and blends the layout spacing between compressed (full energy) and released (empty) on `BarsChanged`. It also shows the key icon through `Key.KeyCollected`, or on load if the key is already collected.
