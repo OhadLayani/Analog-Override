@@ -66,6 +66,12 @@ public class PauseMenu : MonoBehaviour
         GameManager.Instance?.SkipToNextScene();
     }
 
+    /// <summary>Button hook: back to the main menu (pause menu and stage-over screen).</summary>
+    public void ReturnToMainMenu()
+    {
+        GameManager.Instance?.LoadMainMenu();
+    }
+
     public void QuitGame()
     {
         AnalyticsLogger.Instance?.LogQuit();

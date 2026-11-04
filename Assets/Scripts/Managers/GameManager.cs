@@ -129,6 +129,19 @@ public class GameManager : MonoBehaviour
         ReloadScene();
     }
 
+    /// <summary>Leaves the current level for the main menu (build index 0) with a full reset of keys and checkpoint.</summary>
+    public void LoadMainMenu()
+    {
+        ClearCheckpoint();
+        ClearKeys();
+        RoomSnapshot.Instance?.Clear();
+        SetPauseState(false);
+
+        var menuName = System.IO.Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(0));
+        AnalyticsLogger.Instance?.LogLevelChange(SceneManager.GetActiveScene().name, menuName);
+        SceneManager.LoadScene(0);
+    }
+
     /// <summary>
     /// Centralized method to handle pause state and time scaling.
     /// </summary>
@@ -148,7 +161,7 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// Advances to the next scene in the Build Settings list, or loops back to the main
-    /// menu (by name) once the last level has been completed.
+    /// menu (build index 0) once the last level has been completed.
     /// </summary>
     public void LoadNextScene()
     {
@@ -172,9 +185,10 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // SceneManager.LoadScene("MainMenuScene");
-            AnalyticsLogger.Instance?.LogLevelChange(currentScene.name, "Tutorial");
-            SceneManager.LoadScene("Tutorial");
+            // After the last level, back to the main menu (build index 0).
+            var menuName = System.IO.Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(0));
+            AnalyticsLogger.Instance?.LogLevelChange(currentScene.name, menuName);
+            SceneManager.LoadScene(0);
         }
     }
 
