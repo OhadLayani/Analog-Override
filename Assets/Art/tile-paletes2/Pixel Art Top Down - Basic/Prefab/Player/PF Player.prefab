@@ -512,7 +512,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
   arms: {fileID: 7403235385506271734}
   attackHitbox: {fileID: 9045417636246211915}
-  attackDuration: 0.3
+  attackDuration: 0.5
   fullStretchShare: 0.5
   energyCost: 3
   attackDamage: 1
