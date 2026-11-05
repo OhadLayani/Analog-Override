@@ -9,10 +9,15 @@ public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private GameObject pauseMenuUI;
 
+    [Tooltip("Controls image + X button inside the pause menu. Optional; hidden on start.")]
+    [SerializeField] private GameObject controlsPanel;
+
     private void Awake()
     {
         if (pauseMenuUI == null)
             Resume(); // Ensure the pause menu is hidden on start
+
+        HideControls();
     }
 
     private void Update()
@@ -23,6 +28,13 @@ public class PauseMenu : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            // Esc on the controls screen closes only that screen; the game stays paused.
+            if (controlsPanel != null && controlsPanel.activeSelf)
+            {
+                HideControls();
+                return;
+            }
+
             // Read the centralized state from GameManager
             if (GameManager.Instance.IsGamePaused)
             {
@@ -38,7 +50,22 @@ public class PauseMenu : MonoBehaviour
     public void Pause()
     {
         GameManager.Instance.SetPauseState(true);
+        HideControls();
         pauseMenuUI.SetActive(true);
+    }
+
+    /// <summary>Button hook: shows the controls screen over the pause buttons.</summary>
+    public void ShowControls()
+    {
+        if (controlsPanel != null)
+            controlsPanel.SetActive(true);
+    }
+
+    /// <summary>Button hook (X): hides the controls screen.</summary>
+    public void HideControls()
+    {
+        if (controlsPanel != null)
+            controlsPanel.SetActive(false);
     }
 
     public void Resume()
@@ -48,6 +75,7 @@ public class PauseMenu : MonoBehaviour
             TutorialManager.Instance?.NotifyPauseMenuUsed();
 
         GameManager.Instance.SetPauseState(false);
+        HideControls();
         pauseMenuUI.SetActive(false);
     }
 
