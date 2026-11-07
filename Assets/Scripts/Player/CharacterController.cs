@@ -158,6 +158,7 @@ public class CharacterController : GridEntity
     protected override void OnDisable()
     {
         base.OnDisable();
+        AudioManager.Instance?.SetWalking(false, false);
         if (springManager != null)
         {
             springManager.BarsReachedZero -= HandleBarsReachedZero;
@@ -197,6 +198,7 @@ public class CharacterController : GridEntity
         {
             ChargeBars(stretchEnergyCost);
             BeginStretch();
+            AudioManager.Instance?.PlayStretch();
         }
 
         // Planted while stretched: no walking, no turning — only PlayerAttack still acts.
@@ -391,6 +393,9 @@ public class CharacterController : GridEntity
     {
         // Stunned reads as idle even while the knockback slide is still moving the character.
         IsWalking = !IsStretching && !IsStunned && (hasInput || IsMoving);
+
+        bool onCarpet = GridManager.Instance != null && GridManager.Instance.IsHighFriction(CurrentCell);
+        AudioManager.Instance?.SetWalking(IsWalking, onCarpet);
 
         if (animator == null) return;
 

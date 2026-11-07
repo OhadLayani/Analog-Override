@@ -235,7 +235,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 5
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 8764252835910261910, guid: bc127c210ea854be9a6bf05716607ab9, type: 3}
+  m_Sprite: {fileID: -3171865003953554486, guid: f7da6ae1a3d8e4597a72db1810d9f9de, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -254,8 +254,8 @@ Transform:
   m_GameObject: {fileID: 34342166}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.5114, y: -8.7, z: 0}
-  m_LocalScale: {x: 1.7709483, y: 1.2030448, z: 1.5625}
+  m_LocalPosition: {x: 6.4995, y: -8.4998, z: 0}
+  m_LocalScale: {x: 1.3088307, y: 0.7860371, z: 1.5625}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -8470,7 +8470,7 @@ PrefabInstance:
     - target: {fileID: 1929234680699320214, guid: 7f7616e07e7135238e4750f3bfeb6dc2, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 3921717334088832072, guid: 4fd02a25932784c74b5c4ef987ea05de, type: 3}
+      objectReference: {fileID: -1446774785799290876, guid: 74f34664bfd82412ba7e86830034446d, type: 3}
     - target: {fileID: 2227816985491125038, guid: 7f7616e07e7135238e4750f3bfeb6dc2, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -10126,11 +10126,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8068805832389221034, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
   m_PrefabInstance: {fileID: 3660323996328635918}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1618126642 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5989851655796377812, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
-  m_PrefabInstance: {fileID: 3660323996328635918}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1629355526
 GameObject:
   m_ObjectHideFlags: 0
@@ -11141,7 +11136,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 3
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -125372684591249337, guid: a869e0f3d0c444e579ebd9c43e350ce3, type: 3}
+  m_Sprite: {fileID: 579259695821955034, guid: d5228d9f569cb4268b107e02ed22424a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -11165,7 +11160,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AnalogOverride.Entities.DeskLamp
   lampRenderer: {fileID: 2061136420}
   spinFrames:
-  - {fileID: -125372684591249337, guid: a869e0f3d0c444e579ebd9c43e350ce3, type: 3}
+  - {fileID: 579259695821955034, guid: d5228d9f569cb4268b107e02ed22424a, type: 3}
   - {fileID: 8225541731099590130, guid: 9eaaa7f11d5254066be7009a68b11e47, type: 3}
   - {fileID: 6470445019827030567, guid: bc6b3c3f9e3cd498398253e4a918de63, type: 3}
   - {fileID: 1630333860340218599, guid: 89e19cd11012b4a19a0f1383833e114e, type: 3}
@@ -11234,30 +11229,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 676912678687367571, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
-      propertyPath: itemSlot
-      value: 
-      objectReference: {fileID: 1618126642}
     - target: {fileID: 1673219876549923302, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
       propertyPath: overviewCamera
       value: 
       objectReference: {fileID: 1885061373}
-    - target: {fileID: 4429997260346838182, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4429997260346838182, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4429997260346838182, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4429997260346838182, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5073555520845348814, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -11277,22 +11252,6 @@ PrefabInstance:
     - target: {fileID: 6125959387378154927, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
       propertyPath: m_Name
       value: Canvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 6475829402998854430, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6475829402998854430, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6475829402998854430, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6475829402998854430, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8903840312626019124, guid: d6194f33b680e4be3b2930f0bab1a51e, type: 3}
       propertyPath: m_Pivot.x

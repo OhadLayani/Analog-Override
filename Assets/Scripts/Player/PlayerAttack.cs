@@ -119,6 +119,8 @@ public class PlayerAttack : MonoBehaviour
         // Tutorial task: mark "attack" complete. No-op outside the Tutorial scene.
         TutorialManager.Instance?.NotifyAttacked();
 
+        AudioManager.Instance?.PlayAttack();
+
         StrikeReachedCells();
 
         // Charged after the hitbox is on: if this kills the player, the scene reloads anyway.
