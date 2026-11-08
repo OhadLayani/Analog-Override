@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -12,6 +13,8 @@ using UnityEngine.UI;
 /// reloads the scene, destroying and recreating this component like everything else in it.
 /// Static fields survive that (no domain reload happens on a runtime scene load) — Start()
 /// re-applies them to the freshly recreated check images so a reset never undoes progress.
+/// Progress is kept only across a reload of the same scene: loading a different scene
+/// (e.g. the Main Menu or a level) or starting a new run clears it.
 /// </summary>
 [DefaultExecutionOrder(-40)] // After SpringManager (-50), before default (0) — consistent with the project's singleton ordering convention.
 public class TutorialManager : MonoBehaviour
@@ -57,9 +60,40 @@ public class TutorialManager : MonoBehaviour
     private static bool hasStretched;
     private static bool hasAttacked;
 
+    // Name of the last loaded scene, to tell a same-scene reload (keep progress) from a scene change (clear it).
+    private static string lastLoadedSceneName;
+
     // Resets whenever the hold breaks, so only one continuous hold counts — not instance
     // state that needs to survive a reset like the flags above.
     private float stretchHoldTimer;
+
+    /// <summary>Runs once per run before any scene loads: clears progress and starts watching scene loads.</summary>
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void InitProgressTracking()
+    {
+        ClearProgress();
+        lastLoadedSceneName = null;
+        // Domain reload is off in the Editor, so remove a subscription left over from the previous Play.
+        SceneManager.sceneLoaded -= OnAnySceneLoaded;
+        SceneManager.sceneLoaded += OnAnySceneLoaded;
+    }
+
+    /// <summary>Clears progress when a different scene loads; fires before Start, so Start shows the cleared state.</summary>
+    private static void OnAnySceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name != lastLoadedSceneName) ClearProgress();
+        lastLoadedSceneName = scene.name;
+    }
+
+    private static void ClearProgress()
+    {
+        hasMoved = false;
+        hasVisitedCheckpoint = false;
+        hasUsedPauseMenu = false;
+        hasPushed = false;
+        hasStretched = false;
+        hasAttacked = false;
+    }
 
     private void Awake()
     {
