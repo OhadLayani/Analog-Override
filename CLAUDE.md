@@ -37,7 +37,7 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 - **High-friction terrain (carpet):** costs more energy per step and gives a slower, dragging slide. *(GridManager.IsHighFriction, CharacterController)*
 - **Spring energy:** steps, pushes, stretches and attacks drain bars. *(SpringManager, CharacterController, PlayerAttack)*
 - **Death:** 0 bars logs `DEATH` and fully resets the level (clears checkpoint, keys and room snapshot, then reloads). Turned off per scene with `SpringManager`'s **Death At Zero** (off in the Tutorial). *(CharacterController, GameManager.RestartLevel, SpringManager)*
-- **Checkpoints:** refill bars and reset the step counter; only one checkpoint is active at a time (activation animation). Not a respawn point. *(Checkpoint, GameManager)*
+- **Checkpoints:** refill bars and reset the step counter; only one checkpoint is active at a time (activation animation). Not a respawn point. Each station has limited charges (`maxUses`, shown by its full/half/empty sprites); an empty station does nothing (no refill, no log, no sound). Charges come back on every scene load. *(Checkpoint, GameManager)*
 - **Keys & doors:** a door opens only for a key with a matching `keyId`. A door can span several cells. Keys are not used up. *(Key, Door, GameManager)*
 - **Attack:** a mouse click charges energy and stretches both arms (stage 1 → 2 → 3 → 2 → 1 over `attackDuration`). The hitbox follows the drawn arms sprite and damages any `IAttackable` it touches. A target's cell is its own grid cell, or the cell of the grid object it rides on. Targets one level up need full stretch. *(PlayerAttack, ArmsVisual, AttackHitbox, HeightOffset)*
 - **Arms visual:** the arms sprite is picked by facing (front/back or profile) and attack stretch stage, with per-facing offset and scale, and is raised while walking and while the body is stretched. *(ArmsVisual)*
@@ -54,6 +54,7 @@ Each line gives the mechanic, a short description and its main scripts. **This l
 - **Tutorial checklist:** six tasks (move, checkpoint, open and close the pause menu, push, hold the stretch key 1.5s, attack) unlock the Start button. Progress survives a reset, but is cleared when another scene loads (Main Menu, a level) or a new run starts. The pause-menu task counts when the menu is closed (Esc or Resume) or Reset Level is pressed. *(TutorialManager, PauseMenu)*
 - **Spring UI & key visual:** the on-screen spring and the key on the robot's back follow the energy level; the key is raised while the body is stretched. *(UiManager, SpringKeyAnimator)*
 - **Draw order:** entities are sorted by world Y so they overlap correctly. *(GridEntity, Furniture, SortAbove, SpringKeyAnimator, ArmsVisual)*
+- **Audio:** each scene loops its own music track (by build index); it carries on without restarting through a reset or death. One-shot effects: button click, attack, stretch start, checkpoint charge (only when the station actually charges) and death (when the bars reach 0; it keeps playing through the reload, and there's none in the Tutorial or on Reset Level). Walking loops a footstep sound while the walk animation shows (not when only turning in place, stretched or stunned); on carpet the carpet sound is layered on top and the footsteps drop to `walkVolumeOnCarpet`. Both loops go quiet on pause and stop on a scene load. Music keeps playing while paused. Volumes are Inspector-only: master Music and SFX, times each clip's own volume. *(AudioManager, ButtonClickSound, CharacterController, PlayerAttack, Checkpoint)*
 
 ## How we work
 
@@ -75,6 +76,16 @@ Each line gives the mechanic, a short description and its main scripts. **This l
    - The red squares show what's solid: a cell turns red once the box covers its **centre**. Adjust until exactly the right cells are red.
    - For an L-shape, add more BoxCollider2Ds to the same GameObject, or use one PolygonCollider2D.
 4. **Things on top** (a vase, a stand-in key): make them **child objects**. Give each one `SortAbove` with **Target** = the furniture's SpriteRenderer.
+
+### Editor steps: audio
+
+- The `AudioManager` prefab is placed in all 4 scenes, so every scene has sound when played directly. Change clips and volumes **only on the prefab** (double-click it in the Project window), never on a scene copy: during Play the copy from the first scene entered is the one that survives.
+- Values tuned during Play are lost on stop: copy them back with the component's ⋮ → **Copy Component**, then on the prefab ⋮ → **Paste Component Values**.
+- Every UI button gets a `ButtonClickSound` component (MainMenu, `Main UI Prefab`, the Tutorial's own pause menu); don't add the click to the button's OnClick list.
+- Import settings: music `Streaming` + `Vorbis`; short effects `Decompress On Load` + `ADPCM`; a long effect `Compressed In Memory` + `Vorbis`. Unity can't trim clips: trim them in Audacity and overwrite the file with the same name and format, so its `.meta` and the Inspector reference stay.
+- Each scene needs exactly one Audio Listener (on Main Camera).
+
+### Editor steps: shared furniture prefab
 
 Pieces placed from the shared `Prefab furniture` prefab: add any scene-specific components (like `Fence`) on the instance only, and never apply those overrides back to the prefab, or every piece built from it gets them.
 
@@ -98,7 +109,8 @@ When Tsah says the session is over, propose edits to this file based on what hap
 
 ## Code conventions
 
-- **MonoBehaviour only:** every script inherits from `MonoBehaviour` or a subclass of it. No plain C# logic classes and no test assemblies. The existing interfaces (`IGridOccupant`, `IInteractable`, `IAttackable`, `ISweepable`) are the only exception.
+- **MonoBehaviour only:** every script inherits from `MonoBehaviour` or a subclass of it. No plain C# logic classes and no test assemblies. The exceptions are the existing interfaces (`IGridOccupant`, `IInteractable`, `IAttackable`, `ISweepable`) and `AudioManager.SoundClip`, a nested `[Serializable]` data class (clip + volume) with no logic.
+- **Adding a sound:** one `SoundClip` field on `AudioManager` plus a one-line `PlayX()` that goes through `PlaySfx`, called as `AudioManager.Instance?.PlayX()` from the script where it happens. A looping sound needs its own AudioSource (a one-shot can't be stopped).
 - **Doc comments:** a short one-line `/// <summary>` on new classes and non-obvious members. Leave the existing longer comments as they are.
 - **Namespaces:** match the other files in the same folder. `Grid/` uses `AnalogOverride.GridSystem`; `Entities/` and `Combat/` use their own `AnalogOverride.*` namespaces; `Managers/`, `Player/` and most of `UI/` have no namespace.
 - **Input:** keep using the legacy `Input.GetKey` / `Input.GetMouseButtonDown` API for consistency, even though the Input System package is installed.
@@ -116,7 +128,7 @@ When Tsah says the session is over, propose edits to this file based on what hap
 - **Objects on furniture:** make them a child of the piece they stand on, never a `GridEntity` themselves (a cell holds only one occupant), and give them `SortAbove`. On a pushable table their cell is the parent's `CurrentCell`; on fixed `Furniture` it's the cell under their pivot, so keep the pivot over the piece. Give them a `HeightOffset` (usually 1) so they count as being on top.
 - **Stand-in keys:** a stand-in's identity comes from its replacement Key, so give that Key the same Key Id as the UI (`UiManager.keyId`) and the Door. Never put a `Key` component on the stand-in itself.
 - **`TakeDamage` isn't a generic "hit":** `Key.TakeDamage` collects the key. For anything other than the player's attack (like the lamp's sweep), raise an event or use a dedicated hook instead.
-- **Inspector wiring risk:** renaming or removing a `[SerializeField]` field, or changing a public method wired to a button `OnClick`, still compiles, but the Inspector loses the reference without any error. Inspector-wired methods include `PauseMenu.Pause/Resume/ResetLevel/NextLevel/ReturnToMainMenu/ShowControls/HideControls`, `StageOverScreen.RestartLevel/NextLevel`, `SceneNavigationButtons.LoadNextScene` and `MainMenu.Play/OpenTutorial/ShowControls/HideControls/QuitGame`. Flag this whenever such a change is proposed.
+- **Inspector wiring risk:** renaming or removing a `[SerializeField]` field, or changing a public method wired to a button `OnClick`, still compiles, but the Inspector loses the reference without any error. Inspector-wired methods include `PauseMenu.Pause/Resume/ResetLevel/NextLevel/ReturnToMainMenu/ShowControls/HideControls`, `StageOverScreen.RestartLevel/NextLevel`, `SceneNavigationButtons.LoadNextScene` and `MainMenu.Play/OpenTutorial/ShowControls/HideControls/QuitGame`. The `AudioManager` fields (`musicByBuildIndex`, `buttonClick`, `walk`, `walkOnCarpet`, `attack`, `stretch`, `checkpointCharge`, `death`, and the volume sliders) hold clips assigned on the prefab, so renaming one silently drops its clip. Flag this whenever such a change is proposed.
 - **Don't edit generated files:** `*.csproj`, `Analog-Override.slnx`, `Library/`, `Logs/`, `UserSettings/`, `ProjectSettings/` (except for a deliberate project-settings change).
 
 ## Architecture
@@ -199,6 +211,12 @@ When Tsah says the session is over, propose edits to this file based on what hap
     - `LoadMainMenu()`: clears the checkpoint, keys and room snapshot, logs `LEVEL_CHANGE`, loads index 0. Used by `PauseMenu.ReturnToMainMenu`.
   - Every scene load unpauses first.
 - **Commented out, kept to revert (checkpoint respawn):** death used to respawn at the last checkpoint with the room restored. That code is commented out with a "Disabled: death now fully resets the level" note, so it can be switched back on. It covers `GameManager.ActivateCheckpoint` (saving `RespawnCell` / `HasCheckpoint`), the respawn teleport in `CharacterController.Start`, `RoomSnapshot.Capture()` in `Checkpoint` and `Door`, and the door's "Saves Checkpoint When Opened" checkpoint (it still logs `DOOR_CHECKPOINT`). `RoomSnapshot` (on the GameManager object; saves the room at a checkpoint and restores it after a death) is untouched but inactive, since nothing captures a snapshot.
+- **`AudioManager`**: persists across scene loads (`DontDestroyOnLoad`); a second copy (from the next scene's prefab) destroys itself in `Awake`.
+  - Creates 4 AudioSources in `Awake` (2D, no Play On Awake): `musicSource` (loop), `sfxSource` (`PlayOneShot`, so effects overlap and survive scene loads), `loopSfxSource` (walking) and `carpetLoopSource` (the carpet layer).
+  - Sounds are `SoundClip` slots (clip + `[Range]` volume). Final volume = `musicVolume` or `sfxVolume` × the clip's volume, re-applied every frame so Inspector changes during Play are heard at once.
+  - Music: `musicByBuildIndex` (0 MainMenu, 1 Tutorial, 2 Attic, 3 Bedroom). Played on `SceneManager.sceneLoaded` (and in `Start` for the first scene); the same clip already playing carries on, an empty slot stops the music.
+  - Walking: `SetWalking(walking, onCarpet)`, called every frame from `CharacterController.UpdateAnimation` and with false from its `OnDisable`. `Update` drives both loops: paused while `IsGamePaused`; the carpet layer only with a `walkOnCarpet` clip, and then the walk loop is scaled by `walkVolumeOnCarpet`. A scene load stops them.
+  - One-shots: `PlayButtonClick`, `PlayAttack` (start of `AttackRoutine`), `PlayStretch` (when a stretch starts), `PlayCheckpointCharge` (`Checkpoint`, after the empty-station check), `PlayDeath` (`CharacterController.HandleBarsReachedZero`, before `RestartLevel`). Also `PlayMusic(SoundClip)` / `StopMusic()`.
 - **`SpringManager`**: scene singleton for the bars.
   - `ReduceBars(n)` and `ResetBars()`.
   - Events: `BarsChanged(int)`, `BarsReachedZero`.
@@ -216,11 +234,12 @@ When Tsah says the session is over, propose edits to this file based on what hap
 - **`PauseMenu.ReturnToMainMenu`**: the in-game "Main Menu" button (pause menu and stage-over screen in `Main UI Prefab`, and the Tutorial's pause menu). It doesn't log `QUIT`, because that writes the run summary. `PauseMenu.QuitGame` is kept but no longer wired in-game.
 - **`StageOverScreen`**: scene singleton. `Show()` logs the stage completion, shows the panel and pauses. `RestartLevel` / `NextLevel` are wired to buttons. In `Main UI Prefab`, though, the stage-over **next level button** is wired to `PauseMenu.NextLevel` (`SkipToNextScene`), so finishing a level that way doesn't log `LEVEL_CHANGE` and clears keys between levels.
 - **`SceneNavigationButtons`** (`AnalogOverride.UI`): a button hook for `LoadNextScene`.
+- **`ButtonClickSound`**: `[RequireComponent(typeof(Button))]`; in `Awake` it adds `AudioManager.Instance?.PlayButtonClick()` to the button's `onClick` in code. It isn't wired in the OnClick list, because a scene's own AudioManager copy destroys itself when another copy already survived, which would leave such a link dead.
 - **`UiManager`**: spawns `MaxBars` spring segments and blends the layout spacing between compressed (full energy) and released (empty) on `BarsChanged`. It also shows the key icon through `Key.KeyCollected`, or on load if the key is already collected.
 
 ### Misc (`Assets/Scripts/`, no namespace)
 
-- **`Checkpoint`**: trigger. On player contact it logs the visit, notifies the tutorial, resets the step counter and the bars, and activates itself (firing the `activate` animation and deactivating the other checkpoints) only if it isn't already active. It no longer saves a respawn point.
+- **`Checkpoint`**: trigger with `usesLeft` charges (reset to `maxUses` in `Awake`, so on every scene load) and full/half/empty sprites. An empty station returns at once. Otherwise, on player contact it plays the charge sound, logs the visit, notifies the tutorial, resets the step counter and the bars, and activates itself (firing the `activate` animation and deactivating the other checkpoints) only if it isn't already active. It no longer saves a respawn point.
 - **`Key`**: trigger, and also an `IInteractable`, so it can be collected by a reach (guarded against collecting twice). On pickup it calls `GameManager.CollectKey(keyId)` and raises the static `KeyCollected` event before destroying itself. In `Start` it destroys itself without raising the event if the key was already collected. Also `IAttackable` (an attack collects it). `KeyId` exposes its id.
 - **`SortAbove`**: copies a target sprite's order in layer plus `offset` every `LateUpdate`, for things standing on furniture.
 - **`StageGoal`**: trigger. The first time the player touches it, it calls `StageOverScreen.Instance.Show()`.
@@ -228,4 +247,4 @@ When Tsah says the session is over, propose edits to this file based on what hap
 
 ## Singleton / init order
 
-`[DefaultExecutionOrder]` enforces: `GridManager` (-100) → `GameManager` (-60) → `SpringManager` (-50) → `TutorialManager` (-40) → default scripts. `AnalyticsLogger` creates itself before the first scene loads. A new manager that other `Start()`-time code reads through `Instance` needs an explicit execution order earlier than the code that uses it; don't rely on the order of objects in the scene.
+`[DefaultExecutionOrder]` enforces: `GridManager` (-100) → `GameManager` (-60) → `AudioManager` (-55) → `SpringManager` (-50) → `TutorialManager` (-40) → default scripts. `AnalyticsLogger` creates itself before the first scene loads. A new manager that other `Start()`-time code reads through `Instance` needs an explicit execution order earlier than the code that uses it; don't rely on the order of objects in the scene.
