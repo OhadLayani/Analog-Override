@@ -27,18 +27,23 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private SoundClip buttonClick = new SoundClip();
     [Tooltip("Looped while the robot walks.")]
     [SerializeField] private SoundClip walk = new SoundClip();
-    [Tooltip("Optional: looped while walking on carpet. Empty = the normal walk sound.")]
+    [Tooltip("Optional: looped on carpet, layered on top of the walk sound. Empty = only the walk sound, at its normal volume.")]
     [SerializeField] private SoundClip walkOnCarpet = new SoundClip();
+    [Tooltip("Scales the walk sound while on carpet (when a carpet sound is assigned).")]
+    [Range(0f, 1f)] [SerializeField] private float walkVolumeOnCarpet = 0.5f;
     [SerializeField] private SoundClip attack = new SoundClip();
     [SerializeField] private SoundClip stretch = new SoundClip();
+    [Tooltip("Played once when a checkpoint charges the player.")]
+    [SerializeField] private SoundClip checkpointCharge = new SoundClip();
 
     private AudioSource musicSource;
     private AudioSource sfxSource;
     private AudioSource loopSfxSource;
+    private AudioSource carpetLoopSource;
 
     private SoundClip currentMusic;
-    private SoundClip currentLoop;
     private bool wantsWalking;
+    private bool wantsCarpet;
 
     private void Awake()
     {
@@ -53,6 +58,7 @@ public class AudioManager : MonoBehaviour
         musicSource = CreateSource(loop: true);
         sfxSource = CreateSource(loop: false);
         loopSfxSource = CreateSource(loop: true);
+        carpetLoopSource = CreateSource(loop: true);
 
         SceneManager.sceneLoaded += HandleSceneLoaded;
     }
@@ -74,13 +80,35 @@ public class AudioManager : MonoBehaviour
     {
         // Volumes are re-applied every frame, so moving a slider during Play is heard at once.
         if (currentMusic != null) musicSource.volume = musicVolume * currentMusic.volume;
-        if (currentLoop != null) loopSfxSource.volume = sfxVolume * currentLoop.volume;
 
-        // The walk loop goes quiet while paused (the player's Update doesn't run then).
+        // The walk loops go quiet while paused (the player's Update doesn't run then).
         bool paused = GameManager.Instance != null && GameManager.Instance.IsGamePaused;
-        bool shouldPlay = wantsWalking && !paused && loopSfxSource.clip != null;
-        if (shouldPlay && !loopSfxSource.isPlaying) loopSfxSource.Play();
-        else if (!shouldPlay && loopSfxSource.isPlaying) loopSfxSource.Pause();
+        bool walking = wantsWalking && !paused;
+        bool carpetLayer = wantsCarpet && walkOnCarpet.clip != null;
+
+        UpdateLoop(loopSfxSource, walk, walking, carpetLayer ? walkVolumeOnCarpet : 1f);
+        UpdateLoop(carpetLoopSource, walkOnCarpet, walking && carpetLayer, 1f);
+    }
+
+    /// <summary>Keeps one looping source playing or stopped, with its clip and volume up to date.</summary>
+    private void UpdateLoop(AudioSource source, SoundClip sound, bool play, float volumeScale)
+    {
+        if (sound.clip == null)
+        {
+            if (source.isPlaying) source.Stop();
+            return;
+        }
+
+        if (source.clip != sound.clip)
+        {
+            source.Stop();
+            source.clip = sound.clip;
+        }
+
+        source.volume = sfxVolume * sound.volume * volumeScale;
+
+        if (play && !source.isPlaying) source.Play();
+        else if (!play && source.isPlaying) source.Stop();
     }
 
     private AudioSource CreateSource(bool loop)
@@ -133,24 +161,20 @@ public class AudioManager : MonoBehaviour
     public void PlayButtonClick() => PlaySfx(buttonClick);
     public void PlayAttack() => PlaySfx(attack);
     public void PlayStretch() => PlaySfx(stretch);
+    public void PlayCheckpointCharge() => PlaySfx(checkpointCharge);
 
-    /// <summary>Starts or stops the looped walking sound; called every frame by the player.</summary>
+    /// <summary>Starts or stops the looped walking sounds (plus the carpet layer on carpet); called every frame by the player.</summary>
     public void SetWalking(bool walking, bool onCarpet)
     {
         wantsWalking = walking;
+        wantsCarpet = walking && onCarpet;
+
+        // Stop at once instead of waiting for the next Update (e.g. the player is disabled on a scene load).
         if (!walking)
         {
             if (loopSfxSource != null) loopSfxSource.Stop();
-            return;
+            if (carpetLoopSource != null) carpetLoopSource.Stop();
         }
-
-        var sound = onCarpet && walkOnCarpet.clip != null ? walkOnCarpet : walk;
-        if (sound.clip == null || loopSfxSource.clip == sound.clip) return;
-
-        currentLoop = sound;
-        loopSfxSource.clip = sound.clip;
-        loopSfxSource.volume = sfxVolume * sound.volume;
-        loopSfxSource.Play();
     }
 
     private void PlaySfx(SoundClip sound)

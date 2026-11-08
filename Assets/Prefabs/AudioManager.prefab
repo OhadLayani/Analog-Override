@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea752689530a24ca480d4d7f014b1ef4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
-  musicVolume: 0.2
+  musicVolume: 1
   sfxVolume: 1
   musicByBuildIndex:
   - clip: {fileID: 8300000, guid: 897d9eb4cb91a4c42a6b2e3fdb94c3a0, type: 3}
@@ -64,9 +64,13 @@ MonoBehaviour:
   walkOnCarpet:
     clip: {fileID: 8300000, guid: 3b26edda9c6df4d10a42f7e88d9589e5, type: 3}
     volume: 1
+  walkVolumeOnCarpet: 0.1
   attack:
     clip: {fileID: 8300000, guid: edd5efce15d7c47d089a9e6ce97589a2, type: 3}
     volume: 0.3
   stretch:
     clip: {fileID: 8300000, guid: 41b354585e73a40b99c776f2bbf2e63c, type: 3}
     volume: 0.1
+  checkpointCharge:
+    clip: {fileID: 8300000, guid: 35b02ee5f445e48c19404960fd9e7b04, type: 3}
+    volume: 1
