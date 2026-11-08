@@ -224,6 +224,7 @@ GameObject:
   - component: {fileID: 3230708716122918929}
   - component: {fileID: 6721724442930344719}
   - component: {fileID: 69969929820966417}
+  - component: {fileID: 6138179591841824098}
   m_Layer: 5
   m_Name: Controls Button
   m_TagString: Untagged
@@ -344,6 +345,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &6138179591841824098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155532203856171660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d2020fab60614c92b59041c6c123b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickSound
 --- !u!1 &261905707237925003
 GameObject:
   m_ObjectHideFlags: 0
@@ -930,6 +943,7 @@ GameObject:
   - component: {fileID: 3674814300552194698}
   - component: {fileID: 8330043092613868946}
   - component: {fileID: 2648906505910371398}
+  - component: {fileID: 3484558957224261216}
   m_Layer: 5
   m_Name: Restart Level Button
   m_TagString: Untagged
@@ -1050,6 +1064,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &3484558957224261216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1248961676614090305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d2020fab60614c92b59041c6c123b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickSound
 --- !u!1 &2126394012303819791
 GameObject:
   m_ObjectHideFlags: 0
@@ -1112,6 +1138,7 @@ GameObject:
   - component: {fileID: 6866228844510031472}
   - component: {fileID: 531545553716545164}
   - component: {fileID: 8474511286003916784}
+  - component: {fileID: 704688628929431090}
   m_Layer: 5
   m_Name: next level button
   m_TagString: Untagged
@@ -1233,6 +1260,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &704688628929431090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2457416722020482445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d2020fab60614c92b59041c6c123b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickSound
 --- !u!1 &4161857133195859797
 GameObject:
   m_ObjectHideFlags: 0
@@ -1535,6 +1574,7 @@ GameObject:
   - component: {fileID: 266074255316411110}
   - component: {fileID: 8173330735626138253}
   - component: {fileID: 1673219876549923302}
+  - component: {fileID: 7289150461171362797}
   m_Layer: 5
   m_Name: ZoomButton
   m_TagString: Untagged
@@ -1660,6 +1700,18 @@ MonoBehaviour:
   overviewCamera: {fileID: 0}
   zoomOutSprite: {fileID: 5413075229024326987, guid: 51a806f18d0fb4a85acc6f9c4f0d2c6d, type: 3}
   zoomInSprite: {fileID: 2158165262140775240, guid: 51a806f18d0fb4a85acc6f9c4f0d2c6d, type: 3}
+--- !u!114 &7289150461171362797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4919725418585763352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d2020fab60614c92b59041c6c123b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickSound
 --- !u!1 &5870221406723476492
 GameObject:
   m_ObjectHideFlags: 0
@@ -1672,6 +1724,7 @@ GameObject:
   - component: {fileID: 7216076352456852049}
   - component: {fileID: 1495392608604719877}
   - component: {fileID: 5979948298346577999}
+  - component: {fileID: 5568804227201644373}
   m_Layer: 5
   m_Name: main manu button
   m_TagString: Untagged
@@ -1793,6 +1846,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &5568804227201644373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5870221406723476492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d2020fab60614c92b59041c6c123b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickSound
 --- !u!1 &5989851655796377812
 GameObject:
   m_ObjectHideFlags: 0
@@ -2309,6 +2374,7 @@ GameObject:
   - component: {fileID: 6750245895306745808}
   - component: {fileID: 5246506255359537843}
   - component: {fileID: 7965569430970764199}
+  - component: {fileID: 8124259543681419161}
   m_Layer: 5
   m_Name: Resume Button
   m_TagString: Untagged
@@ -2429,6 +2495,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &8124259543681419161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6825503443816093749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d2020fab60614c92b59041c6c123b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickSound
 --- !u!1 &7660371838321093229
 GameObject:
   m_ObjectHideFlags: 0
@@ -2598,6 +2676,7 @@ GameObject:
   - component: {fileID: 9158978135966495435}
   - component: {fileID: 3717112580702459292}
   - component: {fileID: 1480138760779507308}
+  - component: {fileID: 6224288048075510618}
   m_Layer: 5
   m_Name: Quit Button
   m_TagString: Untagged
@@ -2718,6 +2797,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &6224288048075510618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8176104976627909148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d2020fab60614c92b59041c6c123b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickSound
 --- !u!1 &8494967302554436600
 GameObject:
   m_ObjectHideFlags: 0
@@ -2843,6 +2934,7 @@ GameObject:
   - component: {fileID: 8070540063935199154}
   - component: {fileID: 7847798550595095369}
   - component: {fileID: 4607851730746361623}
+  - component: {fileID: 3012094077627793516}
   m_Layer: 5
   m_Name: CloseButton
   m_TagString: Untagged
@@ -2963,6 +3055,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &3012094077627793516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8777443296192504405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d2020fab60614c92b59041c6c123b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickSound
 --- !u!1 &9176167741294001223
 GameObject:
   m_ObjectHideFlags: 0

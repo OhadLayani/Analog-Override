@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3184758953908353154
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2471602454206750360}
+  - component: {fileID: 8988004822541098622}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2471602454206750360
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3184758953908353154}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 829.1176, y: 475.5744, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8988004822541098622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3184758953908353154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea752689530a24ca480d4d7f014b1ef4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  musicVolume: 0.2
+  sfxVolume: 1
+  musicByBuildIndex:
+  - clip: {fileID: 8300000, guid: 897d9eb4cb91a4c42a6b2e3fdb94c3a0, type: 3}
+    volume: 0.2
+  - clip: {fileID: 0}
+    volume: 1
+  - clip: {fileID: 8300000, guid: c47da29e61cae4bd497d195a7a0864bb, type: 3}
+    volume: 0.04
+  - clip: {fileID: 8300000, guid: e748cd890e2f143798610fb2423a1dee, type: 3}
+    volume: 0.04
+  buttonClick:
+    clip: {fileID: 8300000, guid: 9c0af15874d914da9a9730d7921f04cc, type: 3}
+    volume: 0.1
+  walk:
+    clip: {fileID: 8300000, guid: dccaed1e62ee74d02825951677cbf638, type: 3}
+    volume: 0.2
+  walkOnCarpet:
+    clip: {fileID: 8300000, guid: 3b26edda9c6df4d10a42f7e88d9589e5, type: 3}
+    volume: 1
+  attack:
+    clip: {fileID: 8300000, guid: edd5efce15d7c47d089a9e6ce97589a2, type: 3}
+    volume: 0.3
+  stretch:
+    clip: {fileID: 8300000, guid: 41b354585e73a40b99c776f2bbf2e63c, type: 3}
+    volume: 0.1
