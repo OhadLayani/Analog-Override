@@ -35,6 +35,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private SoundClip stretch = new SoundClip();
     [Tooltip("Played once when a checkpoint charges the player.")]
     [SerializeField] private SoundClip checkpointCharge = new SoundClip();
+    [Tooltip("Played once when the bars reach 0. Keeps playing through the level reload.")]
+    [SerializeField] private SoundClip death = new SoundClip();
 
     private AudioSource musicSource;
     private AudioSource sfxSource;
@@ -162,6 +164,7 @@ public class AudioManager : MonoBehaviour
     public void PlayAttack() => PlaySfx(attack);
     public void PlayStretch() => PlaySfx(stretch);
     public void PlayCheckpointCharge() => PlaySfx(checkpointCharge);
+    public void PlayDeath() => PlaySfx(death);
 
     /// <summary>Starts or stops the looped walking sounds (plus the carpet layer on carpet); called every frame by the player.</summary>
     public void SetWalking(bool walking, bool onCarpet)

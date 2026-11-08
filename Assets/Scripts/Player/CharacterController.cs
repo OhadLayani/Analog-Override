@@ -431,6 +431,8 @@ public class CharacterController : GridEntity
     {
         Debug.Log("GAME OVER");
         AnalyticsLogger.Instance?.LogDeath();
+        // Played before the reload; the AudioManager survives it, so the sound plays to its end.
+        AudioManager.Instance?.PlayDeath();
         // A death fully resets the level, same as Reset Level in the pause menu
         if (GameManager.Instance != null)
         {

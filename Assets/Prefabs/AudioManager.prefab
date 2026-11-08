@@ -72,5 +72,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 41b354585e73a40b99c776f2bbf2e63c, type: 3}
     volume: 0.1
   checkpointCharge:
-    clip: {fileID: 8300000, guid: 35b02ee5f445e48c19404960fd9e7b04, type: 3}
-    volume: 1
+    clip: {fileID: 8300000, guid: 6ba283f39b1f64157b10b1705d71f066, type: 3}
+    volume: 0.5
+  death:
+    clip: {fileID: 8300000, guid: 912f70fe4144d45f4832b0925256bed1, type: 3}
+    volume: 0.2
