@@ -17,10 +17,15 @@ public class ZoomToggle : MonoBehaviour
     [Tooltip("Shown while zoomed out (click to zoom back in).")]
     [SerializeField] private Sprite zoomInSprite;
 
+    /// <summary>The scene's zoom button, if it has one.</summary>
+    public static ZoomToggle Instance { get; private set; }
+
     private bool isZoomedOut;
 
     private void Awake()
     {
+        Instance = this;
+
         if (button != null)
             button.onClick.AddListener(Toggle);
 
@@ -30,8 +35,20 @@ public class ZoomToggle : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (Instance == this)
+            Instance = null;
+
         if (button != null)
             button.onClick.RemoveListener(Toggle);
+    }
+
+    /// <summary>Switches to the overview, e.g. to show what a hit set off. Returns true if it wasn't zoomed out already. Not logged as ZOOM_OUT.</summary>
+    public bool ZoomOut()
+    {
+        if (isZoomedOut) return false;
+
+        SetZoomedOut(true);
+        return true;
     }
 
     private void Toggle()

@@ -49,8 +49,8 @@ MonoBehaviour:
   musicByBuildIndex:
   - clip: {fileID: 8300000, guid: 897d9eb4cb91a4c42a6b2e3fdb94c3a0, type: 3}
     volume: 0.2
-  - clip: {fileID: 0}
-    volume: 1
+  - clip: {fileID: 8300000, guid: d9e46d60174b44f3288997a6a1ea0d69, type: 3}
+    volume: 0.4
   - clip: {fileID: 8300000, guid: c47da29e61cae4bd497d195a7a0864bb, type: 3}
     volume: 0.04
   - clip: {fileID: 8300000, guid: e748cd890e2f143798610fb2423a1dee, type: 3}
@@ -77,3 +77,27 @@ MonoBehaviour:
   death:
     clip: {fileID: 8300000, guid: 912f70fe4144d45f4832b0925256bed1, type: 3}
     volume: 0.2
+  lampHit:
+    clip: {fileID: 8300000, guid: e4f0aac2e640e478b8c65ca2495ffd45, type: 3}
+    volume: 1
+  keyKnockedDown:
+    clip: {fileID: 8300000, guid: 6f6e41bdb6f614d44aa634fbbb1bc93a, type: 3}
+    volume: 1
+  roombaDockHit:
+    clip: {fileID: 8300000, guid: 500a707cf3e5c45d384feaf3a927bbf2, type: 3}
+    volume: 1
+  doorOpen:
+    clip: {fileID: 8300000, guid: d014e725f55b24509b094254f2d12954, type: 3}
+    volume: 1
+  switchHit:
+    clip: {fileID: 8300000, guid: c61ed6acca3994e52b088d82311a74be, type: 3}
+    volume: 1
+  timedDoorOpen:
+    clip: {fileID: 8300000, guid: 4a7cfd6f4e7a2432380b3e84b6b0c675, type: 3}
+    volume: 1
+  timedDoorClose:
+    clip: {fileID: 8300000, guid: c9e150e10caad40fc8cd9848537ff794, type: 3}
+    volume: 1
+  fenceHit:
+    clip: {fileID: 8300000, guid: 90e516c897e204f7980be3021dba3d31, type: 3}
+    volume: 1

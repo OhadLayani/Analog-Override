@@ -38,6 +38,24 @@ public class AudioManager : MonoBehaviour
     [Tooltip("Played once when the bars reach 0. Keeps playing through the level reload.")]
     [SerializeField] private SoundClip death = new SoundClip();
 
+    [Header("Level objects")]
+    [Tooltip("A desk lamp starts spinning.")]
+    [SerializeField] private SoundClip lampHit = new SoundClip();
+    [Tooltip("An object knocked off by a lamp lands (e.g. the key on the floor).")]
+    [SerializeField] private SoundClip keyKnockedDown = new SoundClip();
+    [Tooltip("Every hit on the Roomba docking station.")]
+    [SerializeField] private SoundClip roombaDockHit = new SoundClip();
+    [Tooltip("A key door opens.")]
+    [SerializeField] private SoundClip doorOpen = new SoundClip();
+    [Tooltip("A wall switch is hit.")]
+    [SerializeField] private SoundClip switchHit = new SoundClip();
+    [Tooltip("A timed door (e.g. the staircase door) starts opening.")]
+    [SerializeField] private SoundClip timedDoorOpen = new SoundClip();
+    [Tooltip("A timed door starts closing.")]
+    [SerializeField] private SoundClip timedDoorClose = new SoundClip();
+    [Tooltip("A fence is hit open.")]
+    [SerializeField] private SoundClip fenceHit = new SoundClip();
+
     private AudioSource musicSource;
     private AudioSource sfxSource;
     private AudioSource loopSfxSource;
@@ -165,6 +183,14 @@ public class AudioManager : MonoBehaviour
     public void PlayStretch() => PlaySfx(stretch);
     public void PlayCheckpointCharge() => PlaySfx(checkpointCharge);
     public void PlayDeath() => PlaySfx(death);
+    public void PlayLampHit() => PlaySfx(lampHit);
+    public void PlayKeyKnockedDown() => PlaySfx(keyKnockedDown);
+    public void PlayRoombaDockHit() => PlaySfx(roombaDockHit);
+    public void PlayDoorOpen() => PlaySfx(doorOpen);
+    public void PlaySwitchHit() => PlaySfx(switchHit);
+    public void PlayTimedDoorOpen() => PlaySfx(timedDoorOpen);
+    public void PlayTimedDoorClose() => PlaySfx(timedDoorClose);
+    public void PlayFenceHit() => PlaySfx(fenceHit);
 
     /// <summary>Starts or stops the looped walking sounds (plus the carpet layer on carpet); called every frame by the player.</summary>
     public void SetWalking(bool walking, bool onCarpet)

@@ -94,6 +94,7 @@ namespace AnalogOverride.Entities
             }
 
             AnalyticsLogger.Instance?.LogInteraction(name, "spun");
+            AudioManager.Instance?.PlayLampHit();
             StartCoroutine(Spin());
         }
 

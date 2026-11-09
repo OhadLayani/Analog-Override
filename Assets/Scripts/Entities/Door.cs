@@ -72,6 +72,7 @@ namespace AnalogOverride.Entities
             }
 
             Open();
+            AudioManager.Instance?.PlayDoorOpen();
             AnalyticsLogger.Instance?.LogInteraction(name, "opened");
 
             if (savesCheckpointWhenOpened && source != null)
