@@ -55,6 +55,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private SoundClip timedDoorClose = new SoundClip();
     [Tooltip("A fence is hit open.")]
     [SerializeField] private SoundClip fenceHit = new SoundClip();
+    [Tooltip("A key is picked up (walked over, reached or hit).")]
+    [SerializeField] private SoundClip keyPickup = new SoundClip();
 
     private AudioSource musicSource;
     private AudioSource sfxSource;
@@ -187,10 +189,14 @@ public class AudioManager : MonoBehaviour
     public void PlayKeyKnockedDown() => PlaySfx(keyKnockedDown);
     public void PlayRoombaDockHit() => PlaySfx(roombaDockHit);
     public void PlayDoorOpen() => PlaySfx(doorOpen);
+
+    /// <summary>Length of the door-open clip in seconds (0 with no clip), so a Door can disappear when it ends.</summary>
+    public float DoorOpenSeconds => doorOpen.clip != null ? doorOpen.clip.length : 0f;
     public void PlaySwitchHit() => PlaySfx(switchHit);
     public void PlayTimedDoorOpen() => PlaySfx(timedDoorOpen);
     public void PlayTimedDoorClose() => PlaySfx(timedDoorClose);
     public void PlayFenceHit() => PlaySfx(fenceHit);
+    public void PlayKeyPickup() => PlaySfx(keyPickup);
 
     /// <summary>Starts or stops the looped walking sounds (plus the carpet layer on carpet); called every frame by the player.</summary>
     public void SetWalking(bool walking, bool onCarpet)

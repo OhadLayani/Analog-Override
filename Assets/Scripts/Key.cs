@@ -78,6 +78,7 @@ public class Key : MonoBehaviour, IInteractable, IAttackable
         }
 
         AnalyticsLogger.Instance?.LogKeyPickup(keyId);
+        AudioManager.Instance?.PlayKeyPickup();
 
         KeyCollected?.Invoke(keyId);
 

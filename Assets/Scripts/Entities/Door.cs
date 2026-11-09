@@ -1,3 +1,4 @@
+using System.Collections;
 using AnalogOverride.GridSystem;
 using UnityEngine;
 
@@ -36,6 +37,7 @@ namespace AnalogOverride.Entities
         [SerializeField] private bool savesCheckpointWhenOpened;
 
         private bool isOpen;
+        private bool opening; // unlocked, waiting for the open sound to end before it disappears
 
         protected override void Start()
         {
@@ -63,7 +65,7 @@ namespace AnalogOverride.Entities
 
         public void Interact(GridEntity source)
         {
-            if (isOpen) return;
+            if (isOpen || opening) return;
 
             if (GameManager.Instance == null || !GameManager.Instance.HasKey(keyId))
             {
@@ -71,8 +73,15 @@ namespace AnalogOverride.Entities
                 return;
             }
 
-            Open();
+            // The door stays (and keeps blocking) until its open sound has finished, then disappears.
+            opening = true;
             AudioManager.Instance?.PlayDoorOpen();
+            var wait = AudioManager.Instance != null ? AudioManager.Instance.DoorOpenSeconds : 0f;
+            if (wait > 0f)
+                StartCoroutine(OpenAfter(wait));
+            else
+                Open();
+
             AnalyticsLogger.Instance?.LogInteraction(name, "opened");
 
             if (savesCheckpointWhenOpened && source != null)
@@ -87,7 +96,13 @@ namespace AnalogOverride.Entities
         }
 
         /// <summary>"open" or "closed", for the room snapshot.</summary>
-        public string CaptureState() => isOpen ? "open" : "closed";
+        public string CaptureState() => isOpen || opening ? "open" : "closed";
+
+        private IEnumerator OpenAfter(float seconds)
+        {
+            yield return new WaitForSeconds(seconds);
+            if (!isOpen) Open();
+        }
 
         /// <summary>Re-opens a door that was open when the room was saved. A closed one is already as the scene made it.</summary>
         public void RestoreState(string state)

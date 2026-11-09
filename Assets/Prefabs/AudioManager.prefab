@@ -99,5 +99,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: c9e150e10caad40fc8cd9848537ff794, type: 3}
     volume: 1
   fenceHit:
-    clip: {fileID: 8300000, guid: 90e516c897e204f7980be3021dba3d31, type: 3}
+    clip: {fileID: 8300000, guid: 45668ddea676d49b482af9180491975a, type: 3}
+    volume: 1
+  keyPickup:
+    clip: {fileID: 8300000, guid: 197c6f3e23277490e88b18203317a3b1, type: 3}
     volume: 1
