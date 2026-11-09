@@ -232,6 +232,9 @@ public class CharacterController : GridEntity
                     // Tutorial task: mark "push" complete. No-op outside the Tutorial scene.
                     TutorialManager.Instance?.NotifyBlockPushed();
 
+                    // Before the charge: if it empties the spring, the push sound still plays, then the death sound.
+                    AudioManager.Instance?.PlayPush();
+
                     ChargePushEnergy(pushedWeight, onHighFriction);
                 }
                 else

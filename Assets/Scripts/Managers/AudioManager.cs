@@ -33,6 +33,8 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)] [SerializeField] private float walkVolumeOnCarpet = 0.5f;
     [SerializeField] private SoundClip attack = new SoundClip();
     [SerializeField] private SoundClip stretch = new SoundClip();
+    [Tooltip("Played once per successful push (one cell).")]
+    [SerializeField] private SoundClip push = new SoundClip();
     [Tooltip("Played once when a checkpoint charges the player.")]
     [SerializeField] private SoundClip checkpointCharge = new SoundClip();
     [Tooltip("Played once when the bars reach 0. Keeps playing through the level reload.")]
@@ -183,6 +185,7 @@ public class AudioManager : MonoBehaviour
     public void PlayButtonClick() => PlaySfx(buttonClick);
     public void PlayAttack() => PlaySfx(attack);
     public void PlayStretch() => PlaySfx(stretch);
+    public void PlayPush() => PlaySfx(push);
     public void PlayCheckpointCharge() => PlaySfx(checkpointCharge);
     public void PlayDeath() => PlaySfx(death);
     public void PlayLampHit() => PlaySfx(lampHit);

@@ -2099,66 +2099,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: AudioManager
       objectReference: {fileID: 0}
-    - target: {fileID: 8988004822541098622, guid: a95f601071a464ceea1473d4b003f1ad, type: 3}
-      propertyPath: walk.volume
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8988004822541098622, guid: a95f601071a464ceea1473d4b003f1ad, type: 3}
-      propertyPath: death.volume
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8988004822541098622, guid: a95f601071a464ceea1473d4b003f1ad, type: 3}
-      propertyPath: attack.volume
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8988004822541098622, guid: a95f601071a464ceea1473d4b003f1ad, type: 3}
-      propertyPath: keyPickup.clip
-      value: 
-      objectReference: {fileID: 8300000, guid: 197c6f3e23277490e88b18203317a3b1, type: 3}
-    - target: {fileID: 8988004822541098622, guid: a95f601071a464ceea1473d4b003f1ad, type: 3}
-      propertyPath: lampHit.volume
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 8988004822541098622, guid: a95f601071a464ceea1473d4b003f1ad, type: 3}
-      propertyPath: stretch.volume
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 8988004822541098622, guid: a95f601071a464ceea1473d4b003f1ad, type: 3}
-      propertyPath: fenceHit.volume
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 8988004822541098622, guid: a95f601071a464ceea1473d4b003f1ad, type: 3}
-      propertyPath: keyPickup.volume
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 8988004822541098622, guid: a95f601071a464ceea1473d4b003f1ad, type: 3}
-      propertyPath: walkVolumeOnCarpet
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8988004822541098622, guid: a95f601071a464ceea1473d4b003f1ad, type: 3}
-      propertyPath: roombaDockHit.volume
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 8988004822541098622, guid: a95f601071a464ceea1473d4b003f1ad, type: 3}
-      propertyPath: timedDoorOpen.volume
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8988004822541098622, guid: a95f601071a464ceea1473d4b003f1ad, type: 3}
-      propertyPath: keyKnockedDown.volume
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 8988004822541098622, guid: a95f601071a464ceea1473d4b003f1ad, type: 3}
-      propertyPath: timedDoorClose.volume
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8988004822541098622, guid: a95f601071a464ceea1473d4b003f1ad, type: 3}
-      propertyPath: musicByBuildIndex.Array.data[2].volume
-      value: 0.08
-      objectReference: {fileID: 0}
-    - target: {fileID: 8988004822541098622, guid: a95f601071a464ceea1473d4b003f1ad, type: 3}
-      propertyPath: musicByBuildIndex.Array.data[3].volume
-      value: 0.08
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
