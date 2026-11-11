@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f0717f65325bf4140b87772303e5bff2
+guid: ab6d8ee4415b0411b8e44a973491190a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8148060076482405682
-    second: spring bar 3 IN-GAME SIZE 365x57 (13) (6)_0
+      213: 7356476686383842368
+    second: spring bar 3 IN-GAME SIZE 365x57 (13) (10) (1)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: spring bar 3 IN-GAME SIZE 365x57 (13) (6)_0
+      name: spring bar 3 IN-GAME SIZE 365x57 (13) (10) (1)_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 214
-        height: 38
+        width: 163
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: eca59bcd7864cee80800000000000000
-      internalID: -8148060076482405682
+      spriteID: 0440a5ae194771660800000000000000
+      internalID: 7356476686383842368
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      spring bar 3 IN-GAME SIZE 365x57 (13) (6)_0: -8148060076482405682
+      spring bar 3 IN-GAME SIZE 365x57 (13) (10) (1)_0: 7356476686383842368
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
