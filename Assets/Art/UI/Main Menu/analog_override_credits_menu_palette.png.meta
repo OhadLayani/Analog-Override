@@ -1,0 +1,3809 @@
+fileFormatVersion: 2
+guid: bea0f63f00a8e40ed81df50fffdc3d8c
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6165322956330811469
+    second: analog_override_credits_menu_palette_0
+  - first:
+      213: -4785827627587662616
+    second: analog_override_credits_menu_palette_1
+  - first:
+      213: 7958215459941726825
+    second: analog_override_credits_menu_palette_2
+  - first:
+      213: 5264628539514956623
+    second: analog_override_credits_menu_palette_3
+  - first:
+      213: 1200840111124206732
+    second: analog_override_credits_menu_palette_4
+  - first:
+      213: 2514057708298027001
+    second: analog_override_credits_menu_palette_5
+  - first:
+      213: -8789891660769017166
+    second: analog_override_credits_menu_palette_6
+  - first:
+      213: 2207859795727028486
+    second: analog_override_credits_menu_palette_7
+  - first:
+      213: 7592026320819691397
+    second: analog_override_credits_menu_palette_8
+  - first:
+      213: 4384000696225420009
+    second: analog_override_credits_menu_palette_9
+  - first:
+      213: -1537352520365203556
+    second: analog_override_credits_menu_palette_10
+  - first:
+      213: 2548496079910359701
+    second: analog_override_credits_menu_palette_11
+  - first:
+      213: 9101200699310446430
+    second: analog_override_credits_menu_palette_12
+  - first:
+      213: -2898254687512046170
+    second: analog_override_credits_menu_palette_13
+  - first:
+      213: 4895469554249996185
+    second: analog_override_credits_menu_palette_14
+  - first:
+      213: -2540788910192757279
+    second: analog_override_credits_menu_palette_15
+  - first:
+      213: -6926126573332252811
+    second: analog_override_credits_menu_palette_16
+  - first:
+      213: 5623978502267656355
+    second: analog_override_credits_menu_palette_17
+  - first:
+      213: 6946638610200578582
+    second: analog_override_credits_menu_palette_18
+  - first:
+      213: 363507141756998035
+    second: analog_override_credits_menu_palette_19
+  - first:
+      213: 2834242050122459894
+    second: analog_override_credits_menu_palette_20
+  - first:
+      213: 2639962377461070270
+    second: analog_override_credits_menu_palette_21
+  - first:
+      213: 7130748750394738938
+    second: analog_override_credits_menu_palette_22
+  - first:
+      213: -483932543841610010
+    second: analog_override_credits_menu_palette_23
+  - first:
+      213: 6188166606348556083
+    second: analog_override_credits_menu_palette_24
+  - first:
+      213: -6990876289869936568
+    second: analog_override_credits_menu_palette_25
+  - first:
+      213: -8163631470025238652
+    second: analog_override_credits_menu_palette_26
+  - first:
+      213: 8453355827690205607
+    second: analog_override_credits_menu_palette_27
+  - first:
+      213: -2314611447754076813
+    second: analog_override_credits_menu_palette_28
+  - first:
+      213: -154512384807541200
+    second: analog_override_credits_menu_palette_29
+  - first:
+      213: 8001975759249652349
+    second: analog_override_credits_menu_palette_30
+  - first:
+      213: 1160639622196211218
+    second: analog_override_credits_menu_palette_31
+  - first:
+      213: 7334605534072559619
+    second: analog_override_credits_menu_palette_32
+  - first:
+      213: -5029683194999378938
+    second: analog_override_credits_menu_palette_33
+  - first:
+      213: -5624936960993299600
+    second: analog_override_credits_menu_palette_34
+  - first:
+      213: -2759118486103718757
+    second: analog_override_credits_menu_palette_35
+  - first:
+      213: 3662438987398210532
+    second: analog_override_credits_menu_palette_36
+  - first:
+      213: -9115805303997292090
+    second: analog_override_credits_menu_palette_37
+  - first:
+      213: 6772521268768929282
+    second: analog_override_credits_menu_palette_38
+  - first:
+      213: -162588933595392941
+    second: analog_override_credits_menu_palette_39
+  - first:
+      213: 3996269814186906677
+    second: analog_override_credits_menu_palette_40
+  - first:
+      213: -9183139305780003265
+    second: analog_override_credits_menu_palette_41
+  - first:
+      213: 3954760201586299886
+    second: analog_override_credits_menu_palette_42
+  - first:
+      213: 2387983218848310167
+    second: analog_override_credits_menu_palette_43
+  - first:
+      213: -7389879710482448162
+    second: analog_override_credits_menu_palette_44
+  - first:
+      213: 5371861639747369170
+    second: analog_override_credits_menu_palette_45
+  - first:
+      213: -6180537761616207001
+    second: analog_override_credits_menu_palette_46
+  - first:
+      213: -2504463993770110399
+    second: analog_override_credits_menu_palette_47
+  - first:
+      213: 9104797713875314664
+    second: analog_override_credits_menu_palette_48
+  - first:
+      213: -1316502230437033196
+    second: analog_override_credits_menu_palette_49
+  - first:
+      213: -7906113245610678413
+    second: analog_override_credits_menu_palette_50
+  - first:
+      213: 8026681985777803035
+    second: analog_override_credits_menu_palette_51
+  - first:
+      213: -6757786575014096389
+    second: analog_override_credits_menu_palette_52
+  - first:
+      213: -5155929387180818224
+    second: analog_override_credits_menu_palette_53
+  - first:
+      213: -5572867238245849708
+    second: analog_override_credits_menu_palette_54
+  - first:
+      213: 4047010899017287141
+    second: analog_override_credits_menu_palette_55
+  - first:
+      213: -5699554348941133124
+    second: analog_override_credits_menu_palette_56
+  - first:
+      213: -7930502057204679166
+    second: analog_override_credits_menu_palette_57
+  - first:
+      213: 1681459398639747316
+    second: analog_override_credits_menu_palette_58
+  - first:
+      213: 4540767248693304474
+    second: analog_override_credits_menu_palette_59
+  - first:
+      213: -2811810167032809478
+    second: analog_override_credits_menu_palette_60
+  - first:
+      213: 2637242999084567462
+    second: analog_override_credits_menu_palette_61
+  - first:
+      213: 6492330137981029769
+    second: analog_override_credits_menu_palette_62
+  - first:
+      213: -2895159888295058227
+    second: analog_override_credits_menu_palette_63
+  - first:
+      213: 6555460503964875560
+    second: analog_override_credits_menu_palette_64
+  - first:
+      213: -7771557067358738281
+    second: analog_override_credits_menu_palette_65
+  - first:
+      213: 8457452015920000063
+    second: analog_override_credits_menu_palette_66
+  - first:
+      213: -5451082347319092463
+    second: analog_override_credits_menu_palette_67
+  - first:
+      213: 150306477503012520
+    second: analog_override_credits_menu_palette_68
+  - first:
+      213: -666898293098069635
+    second: analog_override_credits_menu_palette_69
+  - first:
+      213: 3889040635114982317
+    second: analog_override_credits_menu_palette_70
+  - first:
+      213: -5654957479342972407
+    second: analog_override_credits_menu_palette_71
+  - first:
+      213: -4399067150800449929
+    second: analog_override_credits_menu_palette_72
+  - first:
+      213: 556126833492186205
+    second: analog_override_credits_menu_palette_73
+  - first:
+      213: 1437406255483216634
+    second: analog_override_credits_menu_palette_74
+  - first:
+      213: -6748294330940813795
+    second: analog_override_credits_menu_palette_75
+  - first:
+      213: 3846744632154996117
+    second: analog_override_credits_menu_palette_76
+  - first:
+      213: 2236670096421506147
+    second: analog_override_credits_menu_palette_77
+  - first:
+      213: -1276821236425934980
+    second: analog_override_credits_menu_palette_78
+  - first:
+      213: -100714165700051169
+    second: analog_override_credits_menu_palette_79
+  - first:
+      213: 6711112784265440219
+    second: analog_override_credits_menu_palette_80
+  - first:
+      213: 1437012735337098462
+    second: analog_override_credits_menu_palette_81
+  - first:
+      213: 1491917345907026850
+    second: analog_override_credits_menu_palette_82
+  - first:
+      213: -1401157056909800158
+    second: analog_override_credits_menu_palette_83
+  - first:
+      213: -4113098248609974041
+    second: analog_override_credits_menu_palette_84
+  - first:
+      213: 6332261656565722046
+    second: analog_override_credits_menu_palette_85
+  - first:
+      213: 3425329458378973444
+    second: analog_override_credits_menu_palette_86
+  - first:
+      213: -4113851677932046390
+    second: analog_override_credits_menu_palette_87
+  - first:
+      213: 695650824042284494
+    second: analog_override_credits_menu_palette_88
+  - first:
+      213: -8906620654898039127
+    second: analog_override_credits_menu_palette_89
+  - first:
+      213: -4420035356299336077
+    second: analog_override_credits_menu_palette_90
+  - first:
+      213: 9142568063492578131
+    second: analog_override_credits_menu_palette_91
+  - first:
+      213: 6376955195095986085
+    second: analog_override_credits_menu_palette_92
+  - first:
+      213: 7930015824367501601
+    second: analog_override_credits_menu_palette_93
+  - first:
+      213: 7056858256753229038
+    second: analog_override_credits_menu_palette_94
+  - first:
+      213: 1713416248549986387
+    second: analog_override_credits_menu_palette_95
+  - first:
+      213: -619443709971233930
+    second: analog_override_credits_menu_palette_96
+  - first:
+      213: -4083534372201221582
+    second: analog_override_credits_menu_palette_97
+  - first:
+      213: -7580331090947422705
+    second: analog_override_credits_menu_palette_98
+  - first:
+      213: 7687044900564549467
+    second: analog_override_credits_menu_palette_99
+  - first:
+      213: -5377937288820087092
+    second: analog_override_credits_menu_palette_100
+  - first:
+      213: 6824780683521704237
+    second: analog_override_credits_menu_palette_101
+  - first:
+      213: 2792939910974720725
+    second: analog_override_credits_menu_palette_102
+  - first:
+      213: -6463806563230282086
+    second: analog_override_credits_menu_palette_103
+  - first:
+      213: -4176579375718052818
+    second: analog_override_credits_menu_palette_104
+  - first:
+      213: 4847872303573023920
+    second: analog_override_credits_menu_palette_105
+  - first:
+      213: -2740076119814087993
+    second: analog_override_credits_menu_palette_106
+  - first:
+      213: 2129113150941472347
+    second: analog_override_credits_menu_palette_107
+  - first:
+      213: 8064732109317031501
+    second: analog_override_credits_menu_palette_108
+  - first:
+      213: 7769529648201566878
+    second: analog_override_credits_menu_palette_109
+  - first:
+      213: 1051567364760411321
+    second: analog_override_credits_menu_palette_110
+  - first:
+      213: -3293884484264287224
+    second: analog_override_credits_menu_palette_111
+  - first:
+      213: 8951659660920079080
+    second: analog_override_credits_menu_palette_112
+  - first:
+      213: 87402005602687711
+    second: analog_override_credits_menu_palette_113
+  - first:
+      213: 2468509070701052329
+    second: analog_override_credits_menu_palette_114
+  - first:
+      213: -2732799839732013965
+    second: analog_override_credits_menu_palette_115
+  - first:
+      213: 6823105110420991994
+    second: analog_override_credits_menu_palette_116
+  - first:
+      213: -4848374206650720400
+    second: analog_override_credits_menu_palette_117
+  - first:
+      213: 6283611818216483663
+    second: analog_override_credits_menu_palette_118
+  - first:
+      213: 8556872945802919618
+    second: analog_override_credits_menu_palette_119
+  - first:
+      213: -2153480202795011774
+    second: analog_override_credits_menu_palette_120
+  - first:
+      213: 5647998109249990120
+    second: analog_override_credits_menu_palette_121
+  - first:
+      213: -8741372953856246555
+    second: analog_override_credits_menu_palette_122
+  - first:
+      213: 2043980100215236110
+    second: analog_override_credits_menu_palette_123
+  - first:
+      213: -372860951874936646
+    second: analog_override_credits_menu_palette_124
+  - first:
+      213: 461952005052707489
+    second: analog_override_credits_menu_palette_125
+  - first:
+      213: -732905126580908229
+    second: analog_override_credits_menu_palette_126
+  - first:
+      213: 200661637814994298
+    second: analog_override_credits_menu_palette_127
+  - first:
+      213: 3753219622280085897
+    second: analog_override_credits_menu_palette_128
+  - first:
+      213: 4581705038577903353
+    second: analog_override_credits_menu_palette_129
+  - first:
+      213: 8807408609582451672
+    second: analog_override_credits_menu_palette_130
+  - first:
+      213: 4997225689905535257
+    second: analog_override_credits_menu_palette_131
+  - first:
+      213: 5973262044964253093
+    second: analog_override_credits_menu_palette_132
+  - first:
+      213: -138388221314024376
+    second: analog_override_credits_menu_palette_133
+  - first:
+      213: 79015378055127403
+    second: analog_override_credits_menu_palette_134
+  - first:
+      213: 1406357714305781591
+    second: analog_override_credits_menu_palette_135
+  - first:
+      213: -3465636801211652177
+    second: analog_override_credits_menu_palette_136
+  - first:
+      213: 6873775764822300171
+    second: analog_override_credits_menu_palette_137
+  - first:
+      213: -193304337982619131
+    second: analog_override_credits_menu_palette_138
+  - first:
+      213: 8865269777713911032
+    second: analog_override_credits_menu_palette_139
+  - first:
+      213: -3629254502285512042
+    second: analog_override_credits_menu_palette_140
+  - first:
+      213: 1991184534587582755
+    second: analog_override_credits_menu_palette_141
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_0
+      rect:
+        serializedVersion: 2
+        x: 759
+        y: 1135
+        width: 66
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bf375ebf6f507aa0800000000000000
+      internalID: -6165322956330811469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_1
+      rect:
+        serializedVersion: 2
+        x: 839
+        y: 1135
+        width: 50
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ec036d0123559db0800000000000000
+      internalID: -4785827627587662616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_2
+      rect:
+        serializedVersion: 2
+        x: 903
+        y: 1135
+        width: 50
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96a39dfdbc2417e60800000000000000
+      internalID: 7958215459941726825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_3
+      rect:
+        serializedVersion: 2
+        x: 967
+        y: 1135
+        width: 58
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4b2c2473c7bf0940800000000000000
+      internalID: 5264628539514956623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_4
+      rect:
+        serializedVersion: 2
+        x: 1071
+        y: 1135
+        width: 58
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c84599ff7bd3aa010800000000000000
+      internalID: 1200840111124206732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_5
+      rect:
+        serializedVersion: 2
+        x: 1143
+        y: 1135
+        width: 10
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ffbfe76a2ab3e220800000000000000
+      internalID: 2514057708298027001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_6
+      rect:
+        serializedVersion: 2
+        x: 1175
+        y: 1135
+        width: 58
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b2c1b9fa18040680800000000000000
+      internalID: -8789891660769017166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_7
+      rect:
+        serializedVersion: 2
+        x: 1247
+        y: 1135
+        width: 50
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6011d2659c4e3ae10800000000000000
+      internalID: 2207859795727028486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_8
+      rect:
+        serializedVersion: 2
+        x: 1311
+        y: 1135
+        width: 50
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58f9fd9e6bb4c5960800000000000000
+      internalID: 7592026320819691397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_9
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 1031
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e2d491e76917dc30800000000000000
+      internalID: 4384000696225420009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_10
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 1079
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9f9419270a3aaae0800000000000000
+      internalID: -1537352520365203556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_11
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 1031
+        width: 26
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5925882aea31e5320800000000000000
+      internalID: 2548496079910359701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_12
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 1031
+        width: 58
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e579fe7d0d5fd4e70800000000000000
+      internalID: 9101200699310446430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_13
+      rect:
+        serializedVersion: 2
+        x: 831
+        y: 1031
+        width: 26
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a5db32a7b457c7d0800000000000000
+      internalID: -2898254687512046170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_14
+      rect:
+        serializedVersion: 2
+        x: 919
+        y: 1031
+        width: 50
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9979fcd4f9330f340800000000000000
+      internalID: 4895469554249996185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_15
+      rect:
+        serializedVersion: 2
+        x: 1175
+        y: 1031
+        width: 50
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e575b6a2fd4dbcd0800000000000000
+      internalID: -2540788910192757279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_16
+      rect:
+        serializedVersion: 2
+        x: 1327
+        y: 1079
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5773327e39471ef90800000000000000
+      internalID: -6926126573332252811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_17
+      rect:
+        serializedVersion: 2
+        x: 1479
+        y: 1031
+        width: 58
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a8d81496a26c0e40800000000000000
+      internalID: 5623978502267656355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_18
+      rect:
+        serializedVersion: 2
+        x: 1567
+        y: 1031
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61ac408d20b676060800000000000000
+      internalID: 6946638610200578582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_19
+      rect:
+        serializedVersion: 2
+        x: 1991
+        y: 1079
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3915eb9c1df6b0500800000000000000
+      internalID: 363507141756998035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_20
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 1031
+        width: 74
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fa260dc020455720800000000000000
+      internalID: 2834242050122459894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_21
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 1015
+        width: 26
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb976f09bc703a420800000000000000
+      internalID: 2639962377461070270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_22
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 1031
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af8c6d9453285f260800000000000000
+      internalID: 7130748750394738938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_23
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 1031
+        width: 34
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e6d1155ae9b849f0800000000000000
+      internalID: -483932543841610010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_24
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 1031
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 337175efdb8c0e550800000000000000
+      internalID: 6188166606348556083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_25
+      rect:
+        serializedVersion: 2
+        x: 455
+        y: 1031
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8480a99bd0b6bfe90800000000000000
+      internalID: -6990876289869936568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_26
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 1031
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48712f74e64f4be80800000000000000
+      internalID: -8163631470025238652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_27
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 1015
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a1f375665a505570800000000000000
+      internalID: 8453355827690205607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_28
+      rect:
+        serializedVersion: 2
+        x: 607
+        y: 1031
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37dc09fc629d0efd0800000000000000
+      internalID: -2314611447754076813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_29
+      rect:
+        serializedVersion: 2
+        x: 655
+        y: 1031
+        width: 66
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 036e52efdcf0bddf0800000000000000
+      internalID: -154512384807541200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_30
+      rect:
+        serializedVersion: 2
+        x: 735
+        y: 1031
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7abc578e8abc0f60800000000000000
+      internalID: 8001975759249652349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_31
+      rect:
+        serializedVersion: 2
+        x: 783
+        y: 1031
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21eaf39469b6b1010800000000000000
+      internalID: 1160639622196211218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_32
+      rect:
+        serializedVersion: 2
+        x: 863
+        y: 1023
+        width: 18
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30852027fd0c9c560800000000000000
+      internalID: 7334605534072559619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_33
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 1031
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60c6f4558c9f23ab0800000000000000
+      internalID: -5029683194999378938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_34
+      rect:
+        serializedVersion: 2
+        x: 1023
+        y: 1031
+        width: 66
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 073770cd2a530f1b0800000000000000
+      internalID: -5624936960993299600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_35
+      rect:
+        serializedVersion: 2
+        x: 1103
+        y: 1031
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b940396fa54a5b9d0800000000000000
+      internalID: -2759118486103718757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_36
+      rect:
+        serializedVersion: 2
+        x: 1239
+        y: 1031
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e36967cad893d230800000000000000
+      internalID: 3662438987398210532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_37
+      rect:
+        serializedVersion: 2
+        x: 1287
+        y: 1031
+        width: 34
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c1ae95af572e7180800000000000000
+      internalID: -9115805303997292090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_38
+      rect:
+        serializedVersion: 2
+        x: 1327
+        y: 1031
+        width: 18
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 206ffba2634dcfd50800000000000000
+      internalID: 6772521268768929282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_39
+      rect:
+        serializedVersion: 2
+        x: 1351
+        y: 1015
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35413a0f93e5ebdf0800000000000000
+      internalID: -162588933595392941
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_40
+      rect:
+        serializedVersion: 2
+        x: 1407
+        y: 1031
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5341a3d093a957730800000000000000
+      internalID: 3996269814186906677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_41
+      rect:
+        serializedVersion: 2
+        x: 1623
+        y: 1031
+        width: 74
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3e3e0ca47fee8080800000000000000
+      internalID: -9183139305780003265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_42
+      rect:
+        serializedVersion: 2
+        x: 1703
+        y: 1015
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee3576b337122e630800000000000000
+      internalID: 3954760201586299886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_43
+      rect:
+        serializedVersion: 2
+        x: 1759
+        y: 1031
+        width: 74
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7932c01e512d32120800000000000000
+      internalID: 2387983218848310167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_44
+      rect:
+        serializedVersion: 2
+        x: 1839
+        y: 1031
+        width: 66
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed0c3db7e8fd17990800000000000000
+      internalID: -7389879710482448162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_45
+      rect:
+        serializedVersion: 2
+        x: 1919
+        y: 1031
+        width: 66
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d870b333bfac8a40800000000000000
+      internalID: 5371861639747369170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_46
+      rect:
+        serializedVersion: 2
+        x: 1991
+        y: 1031
+        width: 18
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7636af5d6a15a3aa0800000000000000
+      internalID: -6180537761616207001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_47
+      rect:
+        serializedVersion: 2
+        x: 2015
+        y: 1031
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1429392544b5e3dd0800000000000000
+      internalID: -2504463993770110399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_48
+      rect:
+        serializedVersion: 2
+        x: 2063
+        y: 1015
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e7a35f084dba5e70800000000000000
+      internalID: 9104797713875314664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_49
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 887
+        width: 74
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41b8ac05238dabde0800000000000000
+      internalID: -1316502230437033196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_50
+      rect:
+        serializedVersion: 2
+        x: 807
+        y: 887
+        width: 58
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3776d5934e7d74290800000000000000
+      internalID: -7906113245610678413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_51
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 887
+        width: 58
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1f10572db0846f60800000000000000
+      internalID: 8026681985777803035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_52
+      rect:
+        serializedVersion: 2
+        x: 1055
+        y: 887
+        width: 50
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf191601ae48732a0800000000000000
+      internalID: -6757786575014096389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_53
+      rect:
+        serializedVersion: 2
+        x: 1391
+        y: 959
+        width: 10
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d007162a857278b0800000000000000
+      internalID: -5155929387180818224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_54
+      rect:
+        serializedVersion: 2
+        x: 879
+        y: 887
+        width: 50
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 495a1fbe5c239a2b0800000000000000
+      internalID: -5572867238245849708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_55
+      rect:
+        serializedVersion: 2
+        x: 1119
+        y: 887
+        width: 50
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e54f0e78fed92830800000000000000
+      internalID: 4047010899017287141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_56
+      rect:
+        serializedVersion: 2
+        x: 1175
+        y: 863
+        width: 58
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbab455648d17e0b0800000000000000
+      internalID: -5699554348941133124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_57
+      rect:
+        serializedVersion: 2
+        x: 1247
+        y: 887
+        width: 50
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20e7fc5856231f190800000000000000
+      internalID: -7930502057204679166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_58
+      rect:
+        serializedVersion: 2
+        x: 1319
+        y: 887
+        width: 58
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f00a201a6eb55710800000000000000
+      internalID: 1681459398639747316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_59
+      rect:
+        serializedVersion: 2
+        x: 1391
+        y: 887
+        width: 10
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9c971231cb040f30800000000000000
+      internalID: 4540767248693304474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_60
+      rect:
+        serializedVersion: 2
+        x: 791
+        y: 783
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af77d2afc817af8d0800000000000000
+      internalID: -2811810167032809478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_61
+      rect:
+        serializedVersion: 2
+        x: 1215
+        y: 831
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ab42d2f88e599420800000000000000
+      internalID: 2637242999084567462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_62
+      rect:
+        serializedVersion: 2
+        x: 847
+        y: 783
+        width: 74
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98d0ce6dcd3691a50800000000000000
+      internalID: 6492330137981029769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_63
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 767
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc4a63abb6352d7d0800000000000000
+      internalID: -2895159888295058227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_64
+      rect:
+        serializedVersion: 2
+        x: 983
+        y: 783
+        width: 74
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82bfde5989ca9fa50800000000000000
+      internalID: 6555460503964875560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_65
+      rect:
+        serializedVersion: 2
+        x: 1063
+        y: 783
+        width: 66
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 798e760d502e52490800000000000000
+      internalID: -7771557067358738281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_66
+      rect:
+        serializedVersion: 2
+        x: 1143
+        y: 783
+        width: 66
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3ca2d98cc7ee5570800000000000000
+      internalID: 8457452015920000063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_67
+      rect:
+        serializedVersion: 2
+        x: 1215
+        y: 783
+        width: 18
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11b94a67c7dd954b0800000000000000
+      internalID: -5451082347319092463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_68
+      rect:
+        serializedVersion: 2
+        x: 1239
+        y: 783
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8aed107e1fef51200800000000000000
+      internalID: 150306477503012520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_69
+      rect:
+        serializedVersion: 2
+        x: 1287
+        y: 767
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d71439a2983beb6f0800000000000000
+      internalID: -666898293098069635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_70
+      rect:
+        serializedVersion: 2
+        x: 791
+        y: 639
+        width: 74
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dab86154ad5a8f530800000000000000
+      internalID: 3889040635114982317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_71
+      rect:
+        serializedVersion: 2
+        x: 879
+        y: 639
+        width: 58
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 902e2df322e8581b0800000000000000
+      internalID: -5654957479342972407
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_72
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 615
+        width: 58
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77e037dcbbf53f2c0800000000000000
+      internalID: -4399067150800449929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_73
+      rect:
+        serializedVersion: 2
+        x: 1047
+        y: 639
+        width: 82
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d545d589862c7b700800000000000000
+      internalID: 556126833492186205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_74
+      rect:
+        serializedVersion: 2
+        x: 1151
+        y: 639
+        width: 58
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af26008af51b2f310800000000000000
+      internalID: 1437406255483216634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_75
+      rect:
+        serializedVersion: 2
+        x: 1215
+        y: 639
+        width: 58
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1e8d7c5f0e3952a0800000000000000
+      internalID: -6748294330940813795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_76
+      rect:
+        serializedVersion: 2
+        x: 1287
+        y: 639
+        width: 50
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59d3d3dacd1626530800000000000000
+      internalID: 3846744632154996117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_77
+      rect:
+        serializedVersion: 2
+        x: 807
+        y: 535
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36c41f03a9f3a0f10800000000000000
+      internalID: 2236670096421506147
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_78
+      rect:
+        serializedVersion: 2
+        x: 999
+        y: 535
+        width: 18
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c773821b9d1d74ee0800000000000000
+      internalID: -1276821236425934980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_79
+      rect:
+        serializedVersion: 2
+        x: 1047
+        y: 535
+        width: 50
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1f3999fff03a9ef0800000000000000
+      internalID: -100714165700051169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_80
+      rect:
+        serializedVersion: 2
+        x: 1199
+        y: 583
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdb69b13589a22d50800000000000000
+      internalID: 6711112784265440219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_81
+      rect:
+        serializedVersion: 2
+        x: 855
+        y: 535
+        width: 90
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: edcea7b187b41f310800000000000000
+      internalID: 1437012735337098462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_82
+      rect:
+        serializedVersion: 2
+        x: 951
+        y: 535
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ab280debea54b410800000000000000
+      internalID: 1491917345907026850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_83
+      rect:
+        serializedVersion: 2
+        x: 1111
+        y: 535
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22d0c5494171e8ce0800000000000000
+      internalID: -1401157056909800158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_84
+      rect:
+        serializedVersion: 2
+        x: 1159
+        y: 535
+        width: 34
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e8325d5fe65be6c0800000000000000
+      internalID: -4113098248609974041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_85
+      rect:
+        serializedVersion: 2
+        x: 1199
+        y: 535
+        width: 18
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebb2d684d66b0e750800000000000000
+      internalID: 6332261656565722046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_86
+      rect:
+        serializedVersion: 2
+        x: 1223
+        y: 519
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4012c558ef6398f20800000000000000
+      internalID: 3425329458378973444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_87
+      rect:
+        serializedVersion: 2
+        x: 1271
+        y: 535
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac7373ee1b9a8e6c0800000000000000
+      internalID: -4113851677932046390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_88
+      rect:
+        serializedVersion: 2
+        x: 751
+        y: 391
+        width: 74
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec58fbe1db277a900800000000000000
+      internalID: 695650824042284494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_89
+      rect:
+        serializedVersion: 2
+        x: 831
+        y: 391
+        width: 58
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a635a324b3556480800000000000000
+      internalID: -8906620654898039127
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_90
+      rect:
+        serializedVersion: 2
+        x: 903
+        y: 463
+        width: 10
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3766c150341e8a2c0800000000000000
+      internalID: -4420035356299336077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_91
+      rect:
+        serializedVersion: 2
+        x: 1015
+        y: 391
+        width: 74
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35b5e4fd63de0ee70800000000000000
+      internalID: 9142568063492578131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_92
+      rect:
+        serializedVersion: 2
+        x: 1103
+        y: 391
+        width: 58
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5af2740a6fe7f7850800000000000000
+      internalID: 6376955195095986085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_93
+      rect:
+        serializedVersion: 2
+        x: 903
+        y: 391
+        width: 10
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 121c6a290631d0e60800000000000000
+      internalID: 7930015824367501601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_94
+      rect:
+        serializedVersion: 2
+        x: 935
+        y: 391
+        width: 34
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eecfe08123ffee160800000000000000
+      internalID: 7056858256753229038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_95
+      rect:
+        serializedVersion: 2
+        x: 1175
+        y: 391
+        width: 50
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 350543ffff647c710800000000000000
+      internalID: 1713416248549986387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_96
+      rect:
+        serializedVersion: 2
+        x: 1247
+        y: 391
+        width: 58
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67380dc4a3b4767f0800000000000000
+      internalID: -619443709971233930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_97
+      rect:
+        serializedVersion: 2
+        x: 1319
+        y: 391
+        width: 50
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23239dcbf1f5457c0800000000000000
+      internalID: -4083534372201221582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_98
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 287
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f06ca3cf8014dc690800000000000000
+      internalID: -7580331090947422705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_99
+      rect:
+        serializedVersion: 2
+        x: 671
+        y: 287
+        width: 18
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5fb0aefb9eddaa60800000000000000
+      internalID: 7687044900564549467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_100
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 287
+        width: 50
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc62d83878abd55b0800000000000000
+      internalID: -5377937288820087092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_101
+      rect:
+        serializedVersion: 2
+        x: 871
+        y: 335
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2142475fdd76be50800000000000000
+      internalID: 6824780683521704237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_102
+      rect:
+        serializedVersion: 2
+        x: 1047
+        y: 287
+        width: 58
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5dac8a82d0482c620800000000000000
+      internalID: 2792939910974720725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_103
+      rect:
+        serializedVersion: 2
+        x: 1215
+        y: 335
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9e02dd6d22fb46a0800000000000000
+      internalID: -6463806563230282086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_104
+      rect:
+        serializedVersion: 2
+        x: 1311
+        y: 287
+        width: 58
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2c4a1eaf2fc906c0800000000000000
+      internalID: -4176579375718052818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_105
+      rect:
+        serializedVersion: 2
+        x: 1399
+        y: 287
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bcbceacc2a174340800000000000000
+      internalID: 4847872303573023920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_106
+      rect:
+        serializedVersion: 2
+        x: 1599
+        y: 287
+        width: 42
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ca53fc594b49f9d0800000000000000
+      internalID: -2740076119814087993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_107
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 287
+        width: 90
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b56aa7851212c8d10800000000000000
+      internalID: 2129113150941472347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_108
+      rect:
+        serializedVersion: 2
+        x: 623
+        y: 287
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d464788ef1fabef60800000000000000
+      internalID: 8064732109317031501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_109
+      rect:
+        serializedVersion: 2
+        x: 783
+        y: 287
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9a8be0ec0ae2db60800000000000000
+      internalID: 7769529648201566878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_110
+      rect:
+        serializedVersion: 2
+        x: 831
+        y: 287
+        width: 34
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bc10f162fae79e00800000000000000
+      internalID: 1051567364760411321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_111
+      rect:
+        serializedVersion: 2
+        x: 871
+        y: 287
+        width: 18
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 804a1486385c942d0800000000000000
+      internalID: -3293884484264287224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_112
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 271
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e2c55f980faa3c70800000000000000
+      internalID: 8951659660920079080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_113
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 287
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdada9839a3863100800000000000000
+      internalID: 87402005602687711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_114
+      rect:
+        serializedVersion: 2
+        x: 999
+        y: 279
+        width: 18
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a147fbcbe7e14220800000000000000
+      internalID: 2468509070701052329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_115
+      rect:
+        serializedVersion: 2
+        x: 1119
+        y: 287
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37467865605231ad0800000000000000
+      internalID: -2732799839732013965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_116
+      rect:
+        serializedVersion: 2
+        x: 1175
+        y: 287
+        width: 34
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: affabc392f980be50800000000000000
+      internalID: 6823105110420991994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_117
+      rect:
+        serializedVersion: 2
+        x: 1215
+        y: 287
+        width: 18
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07fda6ac85d17bcb0800000000000000
+      internalID: -4848374206650720400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_118
+      rect:
+        serializedVersion: 2
+        x: 1239
+        y: 287
+        width: 34
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4b6d3b18afd33750800000000000000
+      internalID: 6283611818216483663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_119
+      rect:
+        serializedVersion: 2
+        x: 1447
+        y: 287
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cebbb2ab9e10c670800000000000000
+      internalID: 8556872945802919618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_120
+      rect:
+        serializedVersion: 2
+        x: 1495
+        y: 287
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24131994a2d4d12e0800000000000000
+      internalID: -2153480202795011774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_121
+      rect:
+        serializedVersion: 2
+        x: 1551
+        y: 287
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ed6ce12b58b16e40800000000000000
+      internalID: 5647998109249990120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_122
+      rect:
+        serializedVersion: 2
+        x: 607
+        y: 143
+        width: 66
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ecf03cbc9760b680800000000000000
+      internalID: -8741372953856246555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_123
+      rect:
+        serializedVersion: 2
+        x: 743
+        y: 143
+        width: 34
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e06eb49521dad5c10800000000000000
+      internalID: 2043980100215236110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_124
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 143
+        width: 10
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab061e490f453daf0800000000000000
+      internalID: -372860951874936646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_125
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 143
+        width: 74
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a2327ca6ee296600800000000000000
+      internalID: 461952005052707489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_126
+      rect:
+        serializedVersion: 2
+        x: 1191
+        y: 215
+        width: 10
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3f0514aba234d5f0800000000000000
+      internalID: -732905126580908229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_127
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 143
+        width: 58
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a75c20a42b4e8c200800000000000000
+      internalID: 200661637814994298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_128
+      rect:
+        serializedVersion: 2
+        x: 791
+        y: 143
+        width: 50
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 981c70e6c5d161430800000000000000
+      internalID: 3753219622280085897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_129
+      rect:
+        serializedVersion: 2
+        x: 855
+        y: 143
+        width: 58
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f6ad0a257c759f30800000000000000
+      internalID: 4581705038577903353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_130
+      rect:
+        serializedVersion: 2
+        x: 1079
+        y: 143
+        width: 34
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8db01ed77733a3a70800000000000000
+      internalID: 8807408609582451672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_131
+      rect:
+        serializedVersion: 2
+        x: 1119
+        y: 143
+        width: 58
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 919964dd946b95540800000000000000
+      internalID: 4997225689905535257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_132
+      rect:
+        serializedVersion: 2
+        x: 1191
+        y: 143
+        width: 10
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5adea64ae2a45e250800000000000000
+      internalID: 5973262044964253093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_133
+      rect:
+        serializedVersion: 2
+        x: 1223
+        y: 143
+        width: 50
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84cba7b55a8541ef0800000000000000
+      internalID: -138388221314024376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_134
+      rect:
+        serializedVersion: 2
+        x: 1279
+        y: 143
+        width: 90
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b61e4c45118b81100800000000000000
+      internalID: 79015378055127403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_135
+      rect:
+        serializedVersion: 2
+        x: 1391
+        y: 143
+        width: 50
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75f8354d3e2648310800000000000000
+      internalID: 1406357714305781591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_136
+      rect:
+        serializedVersion: 2
+        x: 1455
+        y: 143
+        width: 58
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa72247e0b597efc0800000000000000
+      internalID: -3465636801211652177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_137
+      rect:
+        serializedVersion: 2
+        x: 903
+        y: 39
+        width: 58
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b061ce7a3ae846f50800000000000000
+      internalID: 6873775764822300171
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_138
+      rect:
+        serializedVersion: 2
+        x: 967
+        y: 39
+        width: 58
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50201019abe315df0800000000000000
+      internalID: -193304337982619131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_139
+      rect:
+        serializedVersion: 2
+        x: 1063
+        y: 39
+        width: 58
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f4d4a284e3c70b70800000000000000
+      internalID: 8865269777713911032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_140
+      rect:
+        serializedVersion: 2
+        x: 1151
+        y: 39
+        width: 50
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 692f8cf324c42adc0800000000000000
+      internalID: -3629254502285512042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: analog_override_credits_menu_palette_141
+      rect:
+        serializedVersion: 2
+        x: 1207
+        y: 39
+        width: 18
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3292852d8cb12ab10800000000000000
+      internalID: 1991184534587582755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      analog_override_credits_menu_palette_0: -6165322956330811469
+      analog_override_credits_menu_palette_1: -4785827627587662616
+      analog_override_credits_menu_palette_10: -1537352520365203556
+      analog_override_credits_menu_palette_100: -5377937288820087092
+      analog_override_credits_menu_palette_101: 6824780683521704237
+      analog_override_credits_menu_palette_102: 2792939910974720725
+      analog_override_credits_menu_palette_103: -6463806563230282086
+      analog_override_credits_menu_palette_104: -4176579375718052818
+      analog_override_credits_menu_palette_105: 4847872303573023920
+      analog_override_credits_menu_palette_106: -2740076119814087993
+      analog_override_credits_menu_palette_107: 2129113150941472347
+      analog_override_credits_menu_palette_108: 8064732109317031501
+      analog_override_credits_menu_palette_109: 7769529648201566878
+      analog_override_credits_menu_palette_11: 2548496079910359701
+      analog_override_credits_menu_palette_110: 1051567364760411321
+      analog_override_credits_menu_palette_111: -3293884484264287224
+      analog_override_credits_menu_palette_112: 8951659660920079080
+      analog_override_credits_menu_palette_113: 87402005602687711
+      analog_override_credits_menu_palette_114: 2468509070701052329
+      analog_override_credits_menu_palette_115: -2732799839732013965
+      analog_override_credits_menu_palette_116: 6823105110420991994
+      analog_override_credits_menu_palette_117: -4848374206650720400
+      analog_override_credits_menu_palette_118: 6283611818216483663
+      analog_override_credits_menu_palette_119: 8556872945802919618
+      analog_override_credits_menu_palette_12: 9101200699310446430
+      analog_override_credits_menu_palette_120: -2153480202795011774
+      analog_override_credits_menu_palette_121: 5647998109249990120
+      analog_override_credits_menu_palette_122: -8741372953856246555
+      analog_override_credits_menu_palette_123: 2043980100215236110
+      analog_override_credits_menu_palette_124: -372860951874936646
+      analog_override_credits_menu_palette_125: 461952005052707489
+      analog_override_credits_menu_palette_126: -732905126580908229
+      analog_override_credits_menu_palette_127: 200661637814994298
+      analog_override_credits_menu_palette_128: 3753219622280085897
+      analog_override_credits_menu_palette_129: 4581705038577903353
+      analog_override_credits_menu_palette_13: -2898254687512046170
+      analog_override_credits_menu_palette_130: 8807408609582451672
+      analog_override_credits_menu_palette_131: 4997225689905535257
+      analog_override_credits_menu_palette_132: 5973262044964253093
+      analog_override_credits_menu_palette_133: -138388221314024376
+      analog_override_credits_menu_palette_134: 79015378055127403
+      analog_override_credits_menu_palette_135: 1406357714305781591
+      analog_override_credits_menu_palette_136: -3465636801211652177
+      analog_override_credits_menu_palette_137: 6873775764822300171
+      analog_override_credits_menu_palette_138: -193304337982619131
+      analog_override_credits_menu_palette_139: 8865269777713911032
+      analog_override_credits_menu_palette_14: 4895469554249996185
+      analog_override_credits_menu_palette_140: -3629254502285512042
+      analog_override_credits_menu_palette_141: 1991184534587582755
+      analog_override_credits_menu_palette_15: -2540788910192757279
+      analog_override_credits_menu_palette_16: -6926126573332252811
+      analog_override_credits_menu_palette_17: 5623978502267656355
+      analog_override_credits_menu_palette_18: 6946638610200578582
+      analog_override_credits_menu_palette_19: 363507141756998035
+      analog_override_credits_menu_palette_2: 7958215459941726825
+      analog_override_credits_menu_palette_20: 2834242050122459894
+      analog_override_credits_menu_palette_21: 2639962377461070270
+      analog_override_credits_menu_palette_22: 7130748750394738938
+      analog_override_credits_menu_palette_23: -483932543841610010
+      analog_override_credits_menu_palette_24: 6188166606348556083
+      analog_override_credits_menu_palette_25: -6990876289869936568
+      analog_override_credits_menu_palette_26: -8163631470025238652
+      analog_override_credits_menu_palette_27: 8453355827690205607
+      analog_override_credits_menu_palette_28: -2314611447754076813
+      analog_override_credits_menu_palette_29: -154512384807541200
+      analog_override_credits_menu_palette_3: 5264628539514956623
+      analog_override_credits_menu_palette_30: 8001975759249652349
+      analog_override_credits_menu_palette_31: 1160639622196211218
+      analog_override_credits_menu_palette_32: 7334605534072559619
+      analog_override_credits_menu_palette_33: -5029683194999378938
+      analog_override_credits_menu_palette_34: -5624936960993299600
+      analog_override_credits_menu_palette_35: -2759118486103718757
+      analog_override_credits_menu_palette_36: 3662438987398210532
+      analog_override_credits_menu_palette_37: -9115805303997292090
+      analog_override_credits_menu_palette_38: 6772521268768929282
+      analog_override_credits_menu_palette_39: -162588933595392941
+      analog_override_credits_menu_palette_4: 1200840111124206732
+      analog_override_credits_menu_palette_40: 3996269814186906677
+      analog_override_credits_menu_palette_41: -9183139305780003265
+      analog_override_credits_menu_palette_42: 3954760201586299886
+      analog_override_credits_menu_palette_43: 2387983218848310167
+      analog_override_credits_menu_palette_44: -7389879710482448162
+      analog_override_credits_menu_palette_45: 5371861639747369170
+      analog_override_credits_menu_palette_46: -6180537761616207001
+      analog_override_credits_menu_palette_47: -2504463993770110399
+      analog_override_credits_menu_palette_48: 9104797713875314664
+      analog_override_credits_menu_palette_49: -1316502230437033196
+      analog_override_credits_menu_palette_5: 2514057708298027001
+      analog_override_credits_menu_palette_50: -7906113245610678413
+      analog_override_credits_menu_palette_51: 8026681985777803035
+      analog_override_credits_menu_palette_52: -6757786575014096389
+      analog_override_credits_menu_palette_53: -5155929387180818224
+      analog_override_credits_menu_palette_54: -5572867238245849708
+      analog_override_credits_menu_palette_55: 4047010899017287141
+      analog_override_credits_menu_palette_56: -5699554348941133124
+      analog_override_credits_menu_palette_57: -7930502057204679166
+      analog_override_credits_menu_palette_58: 1681459398639747316
+      analog_override_credits_menu_palette_59: 4540767248693304474
+      analog_override_credits_menu_palette_6: -8789891660769017166
+      analog_override_credits_menu_palette_60: -2811810167032809478
+      analog_override_credits_menu_palette_61: 2637242999084567462
+      analog_override_credits_menu_palette_62: 6492330137981029769
+      analog_override_credits_menu_palette_63: -2895159888295058227
+      analog_override_credits_menu_palette_64: 6555460503964875560
+      analog_override_credits_menu_palette_65: -7771557067358738281
+      analog_override_credits_menu_palette_66: 8457452015920000063
+      analog_override_credits_menu_palette_67: -5451082347319092463
+      analog_override_credits_menu_palette_68: 150306477503012520
+      analog_override_credits_menu_palette_69: -666898293098069635
+      analog_override_credits_menu_palette_7: 2207859795727028486
+      analog_override_credits_menu_palette_70: 3889040635114982317
+      analog_override_credits_menu_palette_71: -5654957479342972407
+      analog_override_credits_menu_palette_72: -4399067150800449929
+      analog_override_credits_menu_palette_73: 556126833492186205
+      analog_override_credits_menu_palette_74: 1437406255483216634
+      analog_override_credits_menu_palette_75: -6748294330940813795
+      analog_override_credits_menu_palette_76: 3846744632154996117
+      analog_override_credits_menu_palette_77: 2236670096421506147
+      analog_override_credits_menu_palette_78: -1276821236425934980
+      analog_override_credits_menu_palette_79: -100714165700051169
+      analog_override_credits_menu_palette_8: 7592026320819691397
+      analog_override_credits_menu_palette_80: 6711112784265440219
+      analog_override_credits_menu_palette_81: 1437012735337098462
+      analog_override_credits_menu_palette_82: 1491917345907026850
+      analog_override_credits_menu_palette_83: -1401157056909800158
+      analog_override_credits_menu_palette_84: -4113098248609974041
+      analog_override_credits_menu_palette_85: 6332261656565722046
+      analog_override_credits_menu_palette_86: 3425329458378973444
+      analog_override_credits_menu_palette_87: -4113851677932046390
+      analog_override_credits_menu_palette_88: 695650824042284494
+      analog_override_credits_menu_palette_89: -8906620654898039127
+      analog_override_credits_menu_palette_9: 4384000696225420009
+      analog_override_credits_menu_palette_90: -4420035356299336077
+      analog_override_credits_menu_palette_91: 9142568063492578131
+      analog_override_credits_menu_palette_92: 6376955195095986085
+      analog_override_credits_menu_palette_93: 7930015824367501601
+      analog_override_credits_menu_palette_94: 7056858256753229038
+      analog_override_credits_menu_palette_95: 1713416248549986387
+      analog_override_credits_menu_palette_96: -619443709971233930
+      analog_override_credits_menu_palette_97: -4083534372201221582
+      analog_override_credits_menu_palette_98: -7580331090947422705
+      analog_override_credits_menu_palette_99: 7687044900564549467
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
