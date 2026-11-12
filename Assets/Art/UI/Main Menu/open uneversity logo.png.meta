@@ -1,0 +1,552 @@
+fileFormatVersion: 2
+guid: ef793a3fe570b42189efad244d5698fa
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -921485027835038798
+    second: open uneversity logo_0
+  - first:
+      213: 2188596840027912986
+    second: open uneversity logo_1
+  - first:
+      213: 2663242702628838631
+    second: open uneversity logo_2
+  - first:
+      213: -765389843216582498
+    second: open uneversity logo_3
+  - first:
+      213: -1860182169091689651
+    second: open uneversity logo_4
+  - first:
+      213: -5746924701336275935
+    second: open uneversity logo_5
+  - first:
+      213: 2202921066393051424
+    second: open uneversity logo_6
+  - first:
+      213: 4850002684619583924
+    second: open uneversity logo_7
+  - first:
+      213: 1424793350719890360
+    second: open uneversity logo_8
+  - first:
+      213: 1912973464498082349
+    second: open uneversity logo_9
+  - first:
+      213: -3558987726473228367
+    second: open uneversity logo_10
+  - first:
+      213: -4479087621449842099
+    second: open uneversity logo_11
+  - first:
+      213: 5374343365550407745
+    second: open uneversity logo_12
+  - first:
+      213: 5492469814362514607
+    second: open uneversity logo_13
+  - first:
+      213: -4312890987241502872
+    second: open uneversity logo_14
+  - first:
+      213: 3514005571250192033
+    second: open uneversity logo_15
+  - first:
+      213: -3323178138274288369
+    second: open uneversity logo_16
+  - first:
+      213: -4881268955731382244
+    second: open uneversity logo_17
+  - first:
+      213: 142654645517003724
+    second: open uneversity logo_18
+  - first:
+      213: -9155763008078349592
+    second: open uneversity logo_19
+  - first:
+      213: 987421010844937899
+    second: open uneversity logo_20
+  - first:
+      213: -5625094705231651779
+    second: open uneversity logo_21
+  - first:
+      213: 8304323469400317945
+    second: open uneversity logo_22
+  - first:
+      213: -8695638708298909486
+    second: open uneversity logo_23
+  - first:
+      213: 2502971477137758511
+    second: open uneversity logo_24
+  - first:
+      213: -3817430233759105699
+    second: open uneversity logo_25
+  - first:
+      213: -7179590962653629538
+    second: open uneversity logo_26
+  - first:
+      213: -1813291130441603208
+    second: open uneversity logo_27
+  - first:
+      213: 8388513849437541064
+    second: open uneversity logo_28
+  - first:
+      213: 7126965017332414661
+    second: open uneversity logo_29
+  - first:
+      213: 8521553600445827455
+    second: open uneversity logo_30
+  - first:
+      213: 2731523846074826654
+    second: open uneversity logo_31
+  - first:
+      213: 5366436091190651139
+    second: open uneversity logo_32
+  - first:
+      213: -4921026870908895361
+    second: open uneversity logo_33
+  - first:
+      213: -333581984107065716
+    second: open uneversity logo_34
+  - first:
+      213: -4976582662074493036
+    second: open uneversity logo_35
+  - first:
+      213: 7423470833385769880
+    second: open uneversity logo_36
+  - first:
+      213: 8452756359532506520
+    second: open uneversity logo_37
+  - first:
+      213: -6374976370192935002
+    second: open uneversity logo_38
+  - first:
+      213: -5129066673439448808
+    second: open uneversity logo_39
+  - first:
+      213: 8100611764126959467
+    second: open uneversity logo_40
+  - first:
+      213: -3088018611168659707
+    second: open uneversity logo_41
+  - first:
+      213: -6511369856492887756
+    second: open uneversity logo_42
+  - first:
+      213: -7358690577834897830
+    second: open uneversity logo_43
+  - first:
+      213: -4895834125958714292
+    second: open uneversity logo_44
+  - first:
+      213: -2815298247183565728
+    second: open uneversity logo_45
+  - first:
+      213: -6400808663088022008
+    second: open uneversity logo_46
+  - first:
+      213: -2127987550092317024
+    second: open uneversity logo_47
+  - first:
+      213: 6538727023690061550
+    second: open uneversity logo_48
+  - first:
+      213: 8346008957850586844
+    second: open uneversity logo_49
+  - first:
+      213: 8096965425622961049
+    second: open uneversity logo_50
+  - first:
+      213: -3320395894177185738
+    second: open uneversity logo_51
+  - first:
+      213: -1625052106107032724
+    second: open uneversity logo_52
+  - first:
+      213: -6147074884800262340
+    second: open uneversity logo_53
+  - first:
+      213: 4532756452990828764
+    second: open uneversity logo_54
+  - first:
+      213: 5214367972616040064
+    second: open uneversity logo_55
+  - first:
+      213: 6515059657318326645
+    second: open uneversity logo_56
+  - first:
+      213: -2765189016511341187
+    second: open uneversity logo_57
+  - first:
+      213: -1380589603253006787
+    second: open uneversity logo_58
+  - first:
+      213: 3422414334939151423
+    second: open uneversity logo_59
+  - first:
+      213: 8802607590583838243
+    second: open uneversity logo_60
+  - first:
+      213: -1227495220601806057
+    second: open uneversity logo_61
+  - first:
+      213: -8213200483226504930
+    second: open uneversity logo_62
+  - first:
+      213: -4709336816538183136
+    second: open uneversity logo_63
+  - first:
+      213: -8820250906126091523
+    second: open uneversity logo_64
+  - first:
+      213: -4520771051056710387
+    second: open uneversity logo_65
+  - first:
+      213: 5335452819808585204
+    second: open uneversity logo_66
+  - first:
+      213: -3918146786241777516
+    second: open uneversity logo_67
+  - first:
+      213: -2512708365814555624
+    second: open uneversity logo_68
+  - first:
+      213: 5815339267959795966
+    second: open uneversity logo_69
+  - first:
+      213: -2119218696341562748
+    second: open uneversity logo_70
+  - first:
+      213: -3548661803911478130
+    second: open uneversity logo_71
+  - first:
+      213: -7402957617012544261
+    second: open uneversity logo_72
+  - first:
+      213: 4385417198893126463
+    second: open uneversity logo_73
+  - first:
+      213: -6068025911888824481
+    second: open uneversity logo_74
+  - first:
+      213: 4128697839807599431
+    second: open uneversity logo_75
+  - first:
+      213: 7520047962879331671
+    second: open uneversity logo_76
+  - first:
+      213: 6411590997576819912
+    second: open uneversity logo_77
+  - first:
+      213: -8149001175278871072
+    second: open uneversity logo_78
+  - first:
+      213: -9029294095127912998
+    second: open uneversity logo_79
+  - first:
+      213: 2793930506196826803
+    second: open uneversity logo_80
+  - first:
+      213: 7051638103516320246
+    second: open uneversity logo_81
+  - first:
+      213: -4298970253157703585
+    second: open uneversity logo_82
+  - first:
+      213: -8787200623605202357
+    second: open uneversity logo_83
+  - first:
+      213: 2918699446061044403
+    second: open uneversity logo_84
+  - first:
+      213: 7541651166271974507
+    second: open uneversity logo_85
+  - first:
+      213: 1352398144337031647
+    second: open uneversity logo_86
+  - first:
+      213: 6056442241548456689
+    second: open uneversity logo_87
+  - first:
+      213: -7198724908348098592
+    second: open uneversity logo_88
+  - first:
+      213: 4531582241239802513
+    second: open uneversity logo_89
+  - first:
+      213: 8268578247730463352
+    second: open uneversity logo_90
+  - first:
+      213: 1845601440452649804
+    second: open uneversity logo_91
+  - first:
+      213: 4663645937308039533
+    second: open uneversity logo_92
+  - first:
+      213: 2487906631103021729
+    second: open uneversity logo_93
+  - first:
+      213: 6321284826604566722
+    second: open uneversity logo_94
+  - first:
+      213: 1252888430930671089
+    second: open uneversity logo_95
+  - first:
+      213: -5409694638617980968
+    second: open uneversity logo_96
+  - first:
+      213: -4759992146993163428
+    second: open uneversity logo_97
+  - first:
+      213: -5050351744800356853
+    second: open uneversity logo_98
+  - first:
+      213: 1221304208356508194
+    second: open uneversity logo_99
+  - first:
+      213: 442856115113509770
+    second: open uneversity logo_100
+  - first:
+      213: -4666996342959120841
+    second: open uneversity logo_101
+  - first:
+      213: -8903211216097821955
+    second: open uneversity logo_102
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: open uneversity logo_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 4012
+        height: 1050
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b33d0adf3a3633f0800000000000000
+      internalID: -921485027835038798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 70bbe735d964f48319b3e35cbf9d9d9e
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      open uneversity logo_0: -921485027835038798
+      open uneversity logo_1: 2188596840027912986
+      open uneversity logo_10: -3558987726473228367
+      open uneversity logo_100: 442856115113509770
+      open uneversity logo_101: -4666996342959120841
+      open uneversity logo_102: -8903211216097821955
+      open uneversity logo_103: 411589271
+      open uneversity logo_11: -4479087621449842099
+      open uneversity logo_12: 5374343365550407745
+      open uneversity logo_13: 5492469814362514607
+      open uneversity logo_14: -4312890987241502872
+      open uneversity logo_15: 3514005571250192033
+      open uneversity logo_16: -3323178138274288369
+      open uneversity logo_17: -4881268955731382244
+      open uneversity logo_18: 142654645517003724
+      open uneversity logo_19: -9155763008078349592
+      open uneversity logo_2: 2663242702628838631
+      open uneversity logo_20: 987421010844937899
+      open uneversity logo_21: -5625094705231651779
+      open uneversity logo_22: 8304323469400317945
+      open uneversity logo_23: -8695638708298909486
+      open uneversity logo_24: 2502971477137758511
+      open uneversity logo_25: -3817430233759105699
+      open uneversity logo_26: -7179590962653629538
+      open uneversity logo_27: -1813291130441603208
+      open uneversity logo_28: 8388513849437541064
+      open uneversity logo_29: 7126965017332414661
+      open uneversity logo_3: -765389843216582498
+      open uneversity logo_30: 8521553600445827455
+      open uneversity logo_31: 2731523846074826654
+      open uneversity logo_32: 5366436091190651139
+      open uneversity logo_33: -4921026870908895361
+      open uneversity logo_34: -333581984107065716
+      open uneversity logo_35: -4976582662074493036
+      open uneversity logo_36: 7423470833385769880
+      open uneversity logo_37: 8452756359532506520
+      open uneversity logo_38: -6374976370192935002
+      open uneversity logo_39: -5129066673439448808
+      open uneversity logo_4: -1860182169091689651
+      open uneversity logo_40: 8100611764126959467
+      open uneversity logo_41: -3088018611168659707
+      open uneversity logo_42: -6511369856492887756
+      open uneversity logo_43: -7358690577834897830
+      open uneversity logo_44: -4895834125958714292
+      open uneversity logo_45: -2815298247183565728
+      open uneversity logo_46: -6400808663088022008
+      open uneversity logo_47: -2127987550092317024
+      open uneversity logo_48: 6538727023690061550
+      open uneversity logo_49: 8346008957850586844
+      open uneversity logo_5: -5746924701336275935
+      open uneversity logo_50: 8096965425622961049
+      open uneversity logo_51: -3320395894177185738
+      open uneversity logo_52: -1625052106107032724
+      open uneversity logo_53: -6147074884800262340
+      open uneversity logo_54: 4532756452990828764
+      open uneversity logo_55: 5214367972616040064
+      open uneversity logo_56: 6515059657318326645
+      open uneversity logo_57: -2765189016511341187
+      open uneversity logo_58: -1380589603253006787
+      open uneversity logo_59: 3422414334939151423
+      open uneversity logo_6: 2202921066393051424
+      open uneversity logo_60: 8802607590583838243
+      open uneversity logo_61: -1227495220601806057
+      open uneversity logo_62: -8213200483226504930
+      open uneversity logo_63: -4709336816538183136
+      open uneversity logo_64: -8820250906126091523
+      open uneversity logo_65: -4520771051056710387
+      open uneversity logo_66: 5335452819808585204
+      open uneversity logo_67: -3918146786241777516
+      open uneversity logo_68: -2512708365814555624
+      open uneversity logo_69: 5815339267959795966
+      open uneversity logo_7: 4850002684619583924
+      open uneversity logo_70: -2119218696341562748
+      open uneversity logo_71: -3548661803911478130
+      open uneversity logo_72: -7402957617012544261
+      open uneversity logo_73: 4385417198893126463
+      open uneversity logo_74: -6068025911888824481
+      open uneversity logo_75: 4128697839807599431
+      open uneversity logo_76: 7520047962879331671
+      open uneversity logo_77: 6411590997576819912
+      open uneversity logo_78: -8149001175278871072
+      open uneversity logo_79: -9029294095127912998
+      open uneversity logo_8: 1424793350719890360
+      open uneversity logo_80: 2793930506196826803
+      open uneversity logo_81: 7051638103516320246
+      open uneversity logo_82: -4298970253157703585
+      open uneversity logo_83: -8787200623605202357
+      open uneversity logo_84: 2918699446061044403
+      open uneversity logo_85: 7541651166271974507
+      open uneversity logo_86: 1352398144337031647
+      open uneversity logo_87: 6056442241548456689
+      open uneversity logo_88: -7198724908348098592
+      open uneversity logo_89: 4531582241239802513
+      open uneversity logo_9: 1912973464498082349
+      open uneversity logo_90: 8268578247730463352
+      open uneversity logo_91: 1845601440452649804
+      open uneversity logo_92: 4663645937308039533
+      open uneversity logo_93: 2487906631103021729
+      open uneversity logo_94: 6321284826604566722
+      open uneversity logo_95: 1252888430930671089
+      open uneversity logo_96: -5409694638617980968
+      open uneversity logo_97: -4759992146993163428
+      open uneversity logo_98: -5050351744800356853
+      open uneversity logo_99: 1221304208356508194
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -12,6 +13,8 @@ using UnityEngine.UI;
 /// reloads the scene, destroying and recreating this component like everything else in it.
 /// Static fields survive that (no domain reload happens on a runtime scene load) — Start()
 /// re-applies them to the freshly recreated check images so a reset never undoes progress.
+/// Progress is kept only across a reload of the same scene: loading a different scene
+/// (e.g. the Main Menu or a level) or starting a new run clears it.
 /// </summary>
 [DefaultExecutionOrder(-40)] // After SpringManager (-50), before default (0) — consistent with the project's singleton ordering convention.
 public class TutorialManager : MonoBehaviour
@@ -25,7 +28,7 @@ public class TutorialManager : MonoBehaviour
     [Tooltip("Check image shown once the player has stood on the checkpoint.")]
     [SerializeField] private GameObject checkpointCheck;
 
-    [Tooltip("Check image shown once the player has reset the level via the pause menu.")]
+    [Tooltip("Check image shown once the player has opened and closed the pause menu (or reset from it).")]
     [SerializeField] private GameObject resetCheck;
 
     [Tooltip("Check image shown once the player has pushed the crate.")]
@@ -52,14 +55,45 @@ public class TutorialManager : MonoBehaviour
     // See the class doc comment for why these are static rather than instance fields.
     private static bool hasMoved;
     private static bool hasVisitedCheckpoint;
-    private static bool hasReset;
+    private static bool hasUsedPauseMenu;
     private static bool hasPushed;
     private static bool hasStretched;
     private static bool hasAttacked;
 
+    // Name of the last loaded scene, to tell a same-scene reload (keep progress) from a scene change (clear it).
+    private static string lastLoadedSceneName;
+
     // Resets whenever the hold breaks, so only one continuous hold counts — not instance
     // state that needs to survive a reset like the flags above.
     private float stretchHoldTimer;
+
+    /// <summary>Runs once per run before any scene loads: clears progress and starts watching scene loads.</summary>
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void InitProgressTracking()
+    {
+        ClearProgress();
+        lastLoadedSceneName = null;
+        // Domain reload is off in the Editor, so remove a subscription left over from the previous Play.
+        SceneManager.sceneLoaded -= OnAnySceneLoaded;
+        SceneManager.sceneLoaded += OnAnySceneLoaded;
+    }
+
+    /// <summary>Clears progress when a different scene loads; fires before Start, so Start shows the cleared state.</summary>
+    private static void OnAnySceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name != lastLoadedSceneName) ClearProgress();
+        lastLoadedSceneName = scene.name;
+    }
+
+    private static void ClearProgress()
+    {
+        hasMoved = false;
+        hasVisitedCheckpoint = false;
+        hasUsedPauseMenu = false;
+        hasPushed = false;
+        hasStretched = false;
+        hasAttacked = false;
+    }
 
     private void Awake()
     {
@@ -73,7 +107,7 @@ public class TutorialManager : MonoBehaviour
         // a blank slate.
         ApplyCheckState(moveCheck, hasMoved);
         ApplyCheckState(checkpointCheck, hasVisitedCheckpoint);
-        ApplyCheckState(resetCheck, hasReset);
+        ApplyCheckState(resetCheck, hasUsedPauseMenu);
         ApplyCheckState(pushCheck, hasPushed);
         ApplyCheckState(stretchCheck, hasStretched);
         ApplyCheckState(attackCheck, hasAttacked);
@@ -109,8 +143,8 @@ public class TutorialManager : MonoBehaviour
     /// <summary>Call when the player stands on the checkpoint — see Checkpoint.OnTriggerEnter2D.</summary>
     public void NotifyCheckpointVisited() => CompleteTask(ref hasVisitedCheckpoint, checkpointCheck);
 
-    /// <summary>Call when the player resets the level via the pause menu — see PauseMenu.ResetLevel.</summary>
-    public void NotifyLevelReset() => CompleteTask(ref hasReset, resetCheck);
+    /// <summary>Call when the player closes the pause menu or resets from it — see PauseMenu.</summary>
+    public void NotifyPauseMenuUsed() => CompleteTask(ref hasUsedPauseMenu, resetCheck);
 
     /// <summary>Call when the player successfully pushes the crate — see CharacterController.Update.</summary>
     public void NotifyBlockPushed() => CompleteTask(ref hasPushed, pushCheck);
@@ -136,6 +170,6 @@ public class TutorialManager : MonoBehaviour
     private void UpdateStartButton()
     {
         if (startButton != null)
-            startButton.interactable = hasMoved && hasVisitedCheckpoint && hasReset && hasPushed && hasStretched && hasAttacked;
+            startButton.interactable = hasMoved && hasVisitedCheckpoint && hasUsedPauseMenu && hasPushed && hasStretched && hasAttacked;
     }
 }

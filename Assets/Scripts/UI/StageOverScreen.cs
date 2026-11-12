@@ -11,6 +11,9 @@ public class StageOverScreen : MonoBehaviour
 
     [SerializeField] private GameObject stageOverUI;
 
+    /// <summary>True while the stage-complete panel is on screen.</summary>
+    public bool IsShowing => stageOverUI != null && stageOverUI.activeSelf;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)

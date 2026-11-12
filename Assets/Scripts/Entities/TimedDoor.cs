@@ -53,18 +53,23 @@ namespace AnalogOverride.Entities
             ShowFrame(0);
         }
 
-        /// <summary>Opens the door for its window. Returns false (and does nothing) if it's already opening, open or closing.</summary>
-        public bool OpenBriefly()
+        /// <summary>Opens the door for its window, after `delaySeconds` (it's busy during the delay too). Returns false (and does nothing) if it's already busy.</summary>
+        public bool OpenBriefly(float delaySeconds = 0f)
         {
             if (IsBusy) return false;
 
             IsBusy = true;
-            StartCoroutine(Cycle());
+            StartCoroutine(Cycle(delaySeconds));
             return true;
         }
 
-        private IEnumerator Cycle()
+        private IEnumerator Cycle(float delaySeconds)
         {
+            if (delaySeconds > 0f)
+                yield return new WaitForSeconds(delaySeconds);
+
+            AudioManager.Instance?.PlayTimedDoorOpen();
+
             var lastFrame = frames != null ? frames.Length - 1 : 0;
 
             for (var i = 1; i <= lastFrame; i++)
@@ -87,6 +92,8 @@ namespace AnalogOverride.Entities
             if (footprint != null) footprint.enabled = true;
             furniture.enabled = true;
             furniture.RefreshFootprint();
+
+            AudioManager.Instance?.PlayTimedDoorClose();
 
             for (var i = lastFrame - 1; i >= 0; i--)
             {

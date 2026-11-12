@@ -18,6 +18,10 @@ namespace AnalogOverride.Entities
         [Tooltip("The door this switch opens.")]
         [SerializeField] private TimedDoor door;
 
+        [Tooltip("When the hit zooms the camera out, seconds the door waits before opening, so it's in view. Match the Cinemachine Brain's Default Blend time. No wait if already zoomed out.")]
+        [Min(0f)]
+        [SerializeField] private float zoomWaitSeconds = 0.5f;
+
         /// <summary>Hittable only while the door is closed and idle.</summary>
         public bool IsAlive => door != null && !door.IsBusy;
 
@@ -43,7 +47,14 @@ namespace AnalogOverride.Entities
 
         public void TakeDamage(int amount)
         {
-            if (door != null && door.OpenBriefly())
+            if (door == null || door.IsBusy) return;
+
+            AudioManager.Instance?.PlaySwitchHit();
+
+            // Zoom out (and stay out) so the door is in view; give the camera time to get there.
+            var zoomedNow = ZoomToggle.Instance != null && ZoomToggle.Instance.ZoomOut();
+
+            if (door.OpenBriefly(zoomedNow ? zoomWaitSeconds : 0f))
             {
                 AnalyticsLogger.Instance?.LogInteraction(name, "pressed");
                 ShowSprite(onSprite);

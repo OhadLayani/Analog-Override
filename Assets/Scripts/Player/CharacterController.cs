@@ -158,6 +158,7 @@ public class CharacterController : GridEntity
     protected override void OnDisable()
     {
         base.OnDisable();
+        AudioManager.Instance?.SetWalking(false, false);
         if (springManager != null)
         {
             springManager.BarsReachedZero -= HandleBarsReachedZero;
@@ -197,6 +198,7 @@ public class CharacterController : GridEntity
         {
             ChargeBars(stretchEnergyCost);
             BeginStretch();
+            AudioManager.Instance?.PlayStretch();
         }
 
         // Planted while stretched: no walking, no turning — only PlayerAttack still acts.
@@ -229,6 +231,9 @@ public class CharacterController : GridEntity
                 {
                     // Tutorial task: mark "push" complete. No-op outside the Tutorial scene.
                     TutorialManager.Instance?.NotifyBlockPushed();
+
+                    // Before the charge: if it empties the spring, the push sound still plays, then the death sound.
+                    AudioManager.Instance?.PlayPush();
 
                     ChargePushEnergy(pushedWeight, onHighFriction);
                 }
@@ -392,6 +397,9 @@ public class CharacterController : GridEntity
         // Stunned reads as idle even while the knockback slide is still moving the character.
         IsWalking = !IsStretching && !IsStunned && (hasInput || IsMoving);
 
+        bool onCarpet = GridManager.Instance != null && GridManager.Instance.IsHighFriction(CurrentCell);
+        AudioManager.Instance?.SetWalking(IsWalking, onCarpet);
+
         if (animator == null) return;
 
         int value;
@@ -426,6 +434,8 @@ public class CharacterController : GridEntity
     {
         Debug.Log("GAME OVER");
         AnalyticsLogger.Instance?.LogDeath();
+        // Played before the reload; the AudioManager survives it, so the sound plays to its end.
+        AudioManager.Instance?.PlayDeath();
         // A death fully resets the level, same as Reset Level in the pause menu
         if (GameManager.Instance != null)
         {

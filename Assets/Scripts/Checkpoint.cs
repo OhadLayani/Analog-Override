@@ -60,6 +60,7 @@ public class Checkpoint : MonoBehaviour
             if (usesLeft <= 0) return;
 
             AnalyticsLogger.Instance?.LogCheckpointVisit();
+            AudioManager.Instance?.PlayCheckpointCharge();
 
             // Tutorial task: mark "checkpoint" complete. No-op outside the Tutorial scene.
             TutorialManager.Instance?.NotifyCheckpointVisited();

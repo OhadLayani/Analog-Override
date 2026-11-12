@@ -61,6 +61,7 @@ namespace AnalogOverride.Entities
 
             opened = true;
             AnalyticsLogger.Instance?.LogInteraction(name, "opened");
+            AudioManager.Instance?.PlayFenceHit();
             StartCoroutine(Open());
         }
 

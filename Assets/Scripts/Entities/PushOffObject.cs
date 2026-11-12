@@ -110,7 +110,12 @@ namespace AnalogOverride.Entities
             onSweptAway?.Invoke();
 
             // Switched off, not destroyed, so a level reset (scene reload) brings it back like everything else.
-            StartCoroutine(FlyThen(sweptAwayReplacement.transform.position, SwapForReplacement));
+            StartCoroutine(FlyThen(sweptAwayReplacement.transform.position, () =>
+            {
+                // Here, not in SwapForReplacement, so a room-snapshot restore stays silent.
+                AudioManager.Instance?.PlayKeyKnockedDown();
+                SwapForReplacement();
+            }));
         }
 
         private void SwapForReplacement()

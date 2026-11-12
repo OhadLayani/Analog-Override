@@ -96,6 +96,10 @@ namespace AnalogOverride.Entities
         public void TakeDamage(int amount)
         {
             AnalyticsLogger.Instance?.LogRoombaDockTriggered(name);
+            AudioManager.Instance?.PlayRoombaDockHit();
+
+            // Zoom out (and stay out) so the player sees the roombas coming.
+            ZoomToggle.Instance?.ZoomOut();
 
             foreach (var roomba in roombas)
             {
